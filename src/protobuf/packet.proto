@@ -7,13 +7,6 @@ syntax = "proto3";
   패킷 명세
 */
 
-
-message C2SRegisterRequest {
-    string id = 1;
-    string password = 2;
-    string email = 3;
-}
-
 message C2SRegisterRequest {
     string id = 1;
     string password = 2;
