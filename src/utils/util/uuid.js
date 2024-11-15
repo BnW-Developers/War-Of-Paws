@@ -1,5 +1,4 @@
 // 유닛 인스턴스 ID 생성을 위한 int형 uuid 생성 함수
-
 import Snowflake from 'snowflake-id';
 
 const snowflake = new Snowflake.default({

@@ -1,3 +1,3 @@
-const attackBaseRequest = (socket) => {};
+const attackBaseRequest = (socket, payload) => {};
 
 export default attackBaseRequest;
