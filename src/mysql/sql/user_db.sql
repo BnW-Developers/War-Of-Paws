@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS User (
+    pk          INT AUTO_INCREMENT PRIMARY KEY,
+    user_id     VARCHAR(36) UNIQUE NOT NULL,
+    password    VARCHAR(60) NOT NULL,
+    email       VARCHAR(255) NOT NULL,
+    high_score  INT DEFAULT 0,
+    create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS User_Record
+(
+    game_id     VARCHAR(36) UNIQUE PRIMARY KEY NOT NULL,
+    win_user_id     VARCHAR(36) UNIQUE NOT NULL,
+    lose_user_id     VARCHAR(36) UNIQUE NOT NULL,    
+    create_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

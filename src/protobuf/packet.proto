@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+// TODO: 게임 데이터 명세가 필요하다면 추가해야 함.
+
+
+/* 
+  패킷 명세
+*/
+
+message C2SRegisterRequest {
+    string id = 1;
+    string password = 2;
+    string email = 3;
+}
+message S2CRegisterResponse {
+    string message = 1;
+}
+message C2SLoginRequest {
+    string id = 1;
+    string password = 2;
+}
+message S2CLoginResponse {
+    string message = 1;
+}
+message C2SMatchRequest {
+
+}
+message S2CMatchNotification {
+    string opponentName = 1;
+}
+message C2SGameStartRequest {
+    int32 timestamp = 1;
+}
+message S2CGameStartNotification {
+
+}
+message C2SPurchaseBuildingRequest {
+    int32 assetId = 1;
+}
+message S2CPurchaseBuildingResponse {
+    int32 assetId = 1;
+}
+message S2CAddEnemyBuildingNotification {
+    int32 assetId = 1;
+}
+message C2SSpawnUnitRequest {
+    int32 assetId = 1;
+    bool toTop = 2;
+}
+message S2CSpawnUnitResponse {
+    int32 assetId = 1;
+    int32 instanceId = 2;
+    bool toTop = 3;
+}
+message S2CSpawnEnemyUnitNotification {
+    int32 assetId = 1;
+    int32 instanceId = 2;
+    bool toTop = 3;
+}
+message C2SAttackUnitRequest {
+    int32 unitId =1;
+    int32 opponentId = 2;
+}
+message S2CAttackUnitResponse {
+    int32 unitId = 1;
+    int32 opponentId = 2;
+}
+message S2CEnemyUnitAttackNotification {
+    int32 unitId = 1;
+    int32 opponentId = 2;
+}
+message C2SUnitDeathNotification {
+    int32 instanceId = 1;
+}
+message S2CEnemyUnitDeathNotification {
+    int32 instanceId = 1;
+}
+message C2SEnterCheckpointNotification {
+    int32 checkpointId = 1;
+    int unitId = 2;
+}
+message S2CTryOccupationNotification {
+    int32 checkpointId = 1;
+    bool isOpponent = 2;
+}
+message S2CPauseOccupationNotification {
+    int32 checkpointId = 1;
+    bool pause = 2;
+}
+message S2COccupationTimerResetNotification {
+    int32 checkpointId = 1;
+}
+message S2COccupationSuccessNotification {
+    int32 checkpointId = 1;
+    bool isOpponent = 2;
+}
+message C2SAttackBaseRequest {
+    int32 unitId = 1;
+}
+message S2CAttackBaseResponse {
+    int32 unitId = 1;
+}
+message S2CBaseAttackedNotification {
+    int32 unitId = 1;
+}
+message S2CGameOverNotification {
+    bool isWin = 1;
+}
+message C2SGameEndNotification {
+
+}
+
+// 최상위 GamePacket 메시지
+message GamePacket {
+    oneof payload {
+        // 회원가입
+        C2SRegisterRequest registerRequest = 1;
+        S2CRegisterResponse registerResponse = 2;
+
+        // 로그인
+        C2SLoginRequest loginRequest = 3;
+        S2CLoginResponse loginResponse = 4;
+
+        // 매칭
+        C2SMatchRequest matchRequest = 5;
+        S2CMatchNotification matchNotification = 6;
+
+        // 게임 시작
+        C2SGameStartRequest gameStartRequest = 7;
+        S2CGameStartNotification gameStartNotification = 8;
+
+        // 건물 구매
+        C2SPurchaseBuildingRequest purchaseBuildingRequest = 9;
+        S2CPurchaseBuildingResponse purchaseBuildingResponse = 10;
+        S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 11;
+
+        // 유닛 생성
+        C2SSpawnUnitRequest spawnUnitRequest = 12;
+        S2CSpawnUnitResponse spawnUnitResponse = 13;
+        S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 14;
+        
+        // 유닛 공격
+        C2SAttackUnitRequest attackUnitRequest = 15;
+        S2CAttackUnitResponse attackUnitResponse = 16;
+        S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 17;
+
+        // 유닛 사망
+        C2SUnitDeathNotification unitDeathNotification = 18;
+        S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 19;
+
+        // 체크포인트 점령
+        C2SEnterCheckpointNotification enterCheckpointNotification = 20;
+        S2CTryOccupationNotification tryOccupationNotification = 21;
+        S2CPauseOccupationNotification pauseOccupationNotification = 22;
+        S2COccupationTimerResetNotification occupationTimerResetNotification = 23;
+        S2COccupationSuccessNotification occupationSuccessNotification = 24;
+
+        // 성채공격
+        C2SAttackBaseRequest attackBaseRequest = 25;
+        S2CAttackBaseResponse attackBaseResponse = 26;
+        S2CBaseAttackedNotification baseAttackedNotification = 27;
+
+        // 게임 종료
+        S2CGameOverNotification gameOverNotification = 28;
+        C2SGameEndNotification gameEndNotification = 29;
+    }
+}
+
+
