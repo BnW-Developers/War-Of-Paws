@@ -18,6 +18,22 @@ class User {
   getNextSequence() {
     return ++this.sequence;
   }
+
+  getCurrentGameId() {
+    return this.currentGameId;
+  }
+
+  setCurrentGameId(gameId) {
+    this.currentGameId = gameId;
+  }
+
+  isMatchMaking() {
+    return this.matchMaking;
+  }
+
+  setMatchMaking(isMatchMaking) {
+    this.matchMaking = isMatchMaking;
+  }
 }
 
 export default User;
