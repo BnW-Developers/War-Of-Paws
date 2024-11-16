@@ -19,10 +19,14 @@
     "lodash": "^4.17.21",
     "long": "^5.2.3",
     "mysql2": "^3.11.3",
-    "nodemon": "^3.1.7",
     "protobufjs": "^7.4.0",
     "snowflake-id": "^1.1.0",
     "uuid": "^11.0.2"
   },
-  "repository": "https://github.com/BnW-Developers/Royal-Siege-Server"
+  "repository": "https://github.com/BnW-Developers/Royal-Siege-Server",
+  "devDependencies": {
+    "eslint": "^9.15.0",
+    "nodemon": "^3.1.7",
+    "prettier": "^3.3.3"
+  }
 }
