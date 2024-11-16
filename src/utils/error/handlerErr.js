@@ -8,9 +8,14 @@ export const handleErr = (socket, err) => {
   let errorMessage = err.message;
 
   if (err.code) {
-    if (!findValueInObject(errCodes, err.code)) throw new Error('Invalid Error Code');
+    if (!findValueInObject(errCodes, err.code)) {
+      console.error(`Error Code: ${err.code} is not defined in errCodes`);
+      return;
+    }
+
     errorCode = err.code;
-    console.error(`Error Type:${type} Code: ${responseCode}, Message : ${message}`);
+    console.error(`Code: ${errorCode}, Message : ${errorMessage}`);
+
     socket.write(
       createResponse(PACKET_TYPE.ERROR_NOTIFICATION, socket.sequence++, {
         errorCode,
