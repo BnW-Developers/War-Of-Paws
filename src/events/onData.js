@@ -1,10 +1,12 @@
 import { parsePacket } from '../utils/parser/packetParser.js';
 import { config } from '../config/config.js';
-import { GamePacket, GlobalFailCode } from '../init/loadProto.js';
+import { GamePacket } from '../init/loadProto.js';
 import CustomErr from '../utils/error/customErr.js';
 import { getHandlers } from '../init/loadHandlers.js';
 import { snakeToCamel } from './../utils/formatter/snakeToCamel.js';
 import { PACKET_TYPE_REVERSED } from '../constants/header.js';
+import { errCodes } from '../utils/error/errCodes.js';
+import { handleErr } from './../utils/error/handlerErr.js';
 
 export const onData = (socket) => (data) => {
   // 기존 버퍼에 데이터 추가
@@ -26,7 +28,13 @@ export const onData = (socket) => (data) => {
     const { version, packetType, payload } = packet;
 
     if (version !== config.client.version) {
-      throw new CustomErr(GlobalFailCode.INVALID_REQUEST, 'Check to version');
+      throw new CustomErr(errCodes.CLIENT_VERSION_MISMATCH, 'Check to version');
+    }
+    if (!PACKET_TYPE_REVERSED[packetType]) {
+      throw new CustomErr(errCodes.UNKNOWN_PACKET_TYPE, 'Unknown packet type');
+    }
+    if (!payload || !GamePacket.decode(payload)) {
+      throw new CustomErr(errCodes.PACKET_DECODE_ERR, 'Packet decode error');
     }
 
     const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
@@ -35,8 +43,9 @@ export const onData = (socket) => (data) => {
     const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };
     handler(socket, decodedPayload);
 
+    // 시퀀스 처리 부분 -> 이 부분은 추후에 UDP 전환 시 추가 고려
     // handleIncomingPacket(socket, packet);
   } catch (err) {
-    // TODO: 에러 핸들링을 어떻게 할 것인지 구상 필요 ( handleErr 재설계 )
+    handleErr(socket, err);
   }
 };
