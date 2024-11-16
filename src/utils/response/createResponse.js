@@ -6,7 +6,9 @@ import { snakeToCamel } from './../formatter/snakeToCamel.js';
 // TODO: 시퀀스 서버 to 클라이언트 관리할 지 결정 후 변경 필요
 // 예시: createResponse(PACKET_TYPE.REGISTER_RESPONSE, socket.sequence++, data);
 
-export const createResponse = (Type,seq, data = null) => {
+export const createResponse = (Type, seq, data = null) => {
+  if (!PACKET_TYPE_REVERSED.has(Type)) throw new Error('Invalid Packet Type');
+
   const typeName = PACKET_TYPE_REVERSED[Type];
   const camel = snakeToCamel(typeName);
 
@@ -32,12 +34,5 @@ export const createResponse = (Type,seq, data = null) => {
   const payloadLength = Buffer.alloc(config.packet.payloadLength);
   payloadLength.writeUInt32BE(payload.length, 0);
 
-  return Buffer.concat([
-    packetType,
-    versionLength,
-    version,
-    sequence,
-    payloadLength,
-    payload,
-  ]);
+  return Buffer.concat([packetType, versionLength, version, sequence, payloadLength, payload]);
 };
