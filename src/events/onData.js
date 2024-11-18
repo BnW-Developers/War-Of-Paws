@@ -40,6 +40,11 @@ export const onData = (socket) => (data) => {
     const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
     const handlers = getHandlers();
     const handler = handlers[payloadName];
+
+    if (!handler) {
+      throw new CustomErr(errCodes.HANDLER_NOT_FOUND, 'Handler not found');
+    }
+
     const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };
     handler(socket, decodedPayload);
 
