@@ -29,14 +29,14 @@ message C2SRegisterRequest {
     string email = 3;
 }
 message S2CRegisterResponse {
-    string message = 1;
+    
 }
 message C2SLoginRequest {
     string id = 1;
     string password = 2;
 }
 message S2CLoginResponse {
-    string message = 1;
+    string token = 1;
 }
 message C2SMatchRequest {
 
@@ -65,59 +65,58 @@ message C2SSpawnUnitRequest {
 }
 message S2CSpawnUnitResponse {
     int32 assetId = 1;
-    int32 instanceId = 2;
+    int32 unitId = 2;
     bool toTop = 3;
 }
 message S2CSpawnEnemyUnitNotification {
     int32 assetId = 1;
-    int32 instanceId = 2;
+    int32 unitId = 2;
     bool toTop = 3;
 }
 message C2SAttackUnitRequest {
     int32 unitId =1;
-    int32 opponentId = 2;
+    int32 opponentUnitId = 2;
 }
 message S2CAttackUnitResponse {
-    int32 unitId = 1;
-    int32 opponentId = 2;
+    int32 opponentUnitHp = 1;
 }
 message S2CEnemyUnitAttackNotification {
     int32 unitId = 1;
-    int32 opponentId = 2;
+    int32 opponentUnitId = 2;
+    int32 unitHp = 3;
 }
 message C2SUnitDeathNotification {
-    int32 instanceId = 1;
+    int32 unitId = 1;
 }
 message S2CEnemyUnitDeathNotification {
-    int32 instanceId = 1;
+    int32 unitId = 1;
 }
 message C2SEnterCheckpointNotification {
-    int32 checkpointId = 1;
+    bool isTop = 1;
     int unitId = 2;
 }
 message S2CTryOccupationNotification {
-    int32 checkpointId = 1;
+    bool isTop = 1;
     bool isOpponent = 2;
 }
 message S2CPauseOccupationNotification {
-    int32 checkpointId = 1;
-    bool pause = 2;
+    bool isTop = 1;
 }
 message S2COccupationTimerResetNotification {
-    int32 checkpointId = 1;
+    bool isTop = 1;
 }
 message S2COccupationSuccessNotification {
-    int32 checkpointId = 1;
+    bool isTop = 1;
     bool isOpponent = 2;
 }
 message C2SAttackBaseRequest {
     int32 unitId = 1;
 }
 message S2CAttackBaseResponse {
-    int32 unitId = 1;
+    int32 opponentBaseHp = 1;
 }
 message S2CBaseAttackedNotification {
-    int32 unitId = 1;
+    int32 baseHp = 1;
 }
 message S2CGameOverNotification {
     bool isWin = 1;
@@ -130,6 +129,10 @@ message C2SLocationNotification {
 }
 message S2CLocationSyncNotification {
     repeated UnitPostion unitPostions = 1;
+}
+
+message S2C_MINERAL_SYNC_NOTIFICATION {
+    int32 mineral = 1;
 }
 
 // 최상위 GamePacket 메시지
@@ -192,6 +195,9 @@ message GamePacket {
         // 위치 동기화
         C2SLocationNotification locationNotification = 31;
         S2CLocationSyncNotification locationSyncNotification = 32;
+
+        // 미네랄 동기화
+        S2C_MINERAL_SYNC_NOTIFICATION mineralSyncNotification = 33;
     }
 }
 
