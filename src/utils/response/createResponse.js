@@ -26,14 +26,13 @@ export const createResponse = (Type, seq, data = null) => {
   versionLength.writeUInt8(vLen, 0);
 
   const version = Buffer.alloc(vLen);
-  // Buffer.from(config.client.version).copy(version);
-  Buffer.from('1.0.1').copy(version);
+  Buffer.from(config.client.version).copy(version);
 
   const sequence = Buffer.alloc(config.packet.sequence);
   sequence.writeUInt32BE(seq, 0); // 현재는 시퀀스 관리 없이 증가
 
   const payloadLength = Buffer.alloc(config.packet.payloadLength);
-  payloadLength.writeUInt32BE(payload.length, 0);
+  payloadLength.writeUInt16BE(payload.length, 0);
 
   return Buffer.concat([packetType, versionLength, version, sequence, payloadLength, payload]);
 };

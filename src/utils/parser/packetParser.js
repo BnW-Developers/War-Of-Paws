@@ -25,7 +25,7 @@ export const parsePacket = (socket) => {
 
   // payloadLength
   if (socket.buffer.length < offset + config.packet.payloadLength) return null;
-  const payloadLength = socket.buffer.readUInt32BE(offset);
+  const payloadLength = socket.buffer.readUInt16BE(offset);
   offset += config.packet.payloadLength;
 
   // payload
@@ -41,7 +41,6 @@ export const parsePacket = (socket) => {
     packetType,
     version,
     sequence,
-    errorCode,
     payload,
   };
 };
