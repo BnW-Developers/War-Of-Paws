@@ -47,4 +47,7 @@ export const config = {
     salt: SALT,
     secret_key: SECRET_KEY,
   },
+  game: {
+    maxPlayers: 2,
+  },
 };

@@ -1,6 +1,5 @@
+import { config } from '../../config/config.js';
 import PlayerGameData from './PlayerGameData.class.js';
-
-const MAX_PLAYERS = 2;
 
 class Game {
   constructor(gameId) {
@@ -14,7 +13,7 @@ class Game {
   }
 
   addUser(user) {
-    if (this.players.size >= MAX_PLAYERS) {
+    if (this.players.size >= config.game.maxPlayers) {
       throw new Error('Game is full');
     }
 
@@ -24,7 +23,7 @@ class Game {
 
     // TODO: redis에 게임 상태 저장
 
-    if (this.players.size >= MAX_PLAYERS) {
+    if (this.players.size >= config.game.maxPlayers) {
       this.startGame();
     }
   }
