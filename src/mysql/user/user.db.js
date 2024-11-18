@@ -1,5 +1,5 @@
 import pools from '../createPool.js';
-import { timeFormat } from '../utils.js';
+import { timeFormat, toCamelCase } from '../utils.js';
 import { SQL_QUERIES } from './user.queries.js';
 
 /**
