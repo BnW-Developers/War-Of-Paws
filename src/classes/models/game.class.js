@@ -1,11 +1,11 @@
-import { config } from '../../config/config.js';
 import PlayerGameData from './PlayerGameData.class.js';
+import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 
 class Game {
   constructor(gameId) {
     this.gameId = gameId;
     this.players = new Map();
-    this.isStarted = false;
+    this.inProgress = false;
   }
 
   getGameId() {
@@ -13,7 +13,7 @@ class Game {
   }
 
   addUser(user) {
-    if (this.players.size >= config.game.maxPlayers) {
+    if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
       throw new Error('Game is full');
     }
 
@@ -23,7 +23,7 @@ class Game {
 
     // TODO: redis에 게임 상태 저장
 
-    if (this.players.size >= config.game.maxPlayers) {
+    if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
       this.startGame();
     }
   }
@@ -50,7 +50,7 @@ class Game {
   }
 
   startGame() {
-    this.isStarted = true;
+    this.inProgress = true;
 
     // TODO: 매치 완료 패킷 전송
   }
