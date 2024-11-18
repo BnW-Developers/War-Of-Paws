@@ -5,7 +5,7 @@ class Game {
   constructor(gameId) {
     this.gameId = gameId;
     this.players = new Map();
-    this.state = 'waiting';
+    this.isStarted = false;
   }
 
   getGameId() {
@@ -50,7 +50,7 @@ class Game {
   }
 
   startGame() {
-    this.state = 'playing';
+    this.isStarted = true;
 
     // TODO: 매치 완료 패킷 전송
   }
