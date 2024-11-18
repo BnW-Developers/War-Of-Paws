@@ -11,7 +11,6 @@ import {
   SECRET_KEY,
 } from '../constants/env.js';
 import {
-  PACKET_ERROR_CODE,
   PACKET_PAYLOAD_LENGTH,
   PACKET_SEQUENCE,
   PACKET_TYPE_LENGTH,
@@ -30,7 +29,6 @@ export const config = {
     typeLength: PACKET_TYPE_LENGTH,
     versionLength: PACKET_VERSION_LENGTH,
     sequence: PACKET_SEQUENCE,
-    errorCode: PACKET_ERROR_CODE,
     payloadLength: PACKET_PAYLOAD_LENGTH,
   },
   database: {

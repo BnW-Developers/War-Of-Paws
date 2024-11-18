@@ -4,8 +4,11 @@ import { GamePacket } from '../../init/loadProto.js';
 import { snakeToCamel } from './../formatter/snakeToCamel.js';
 
 // TODO: 시퀀스 서버 to 클라이언트 관리할 지 결정 후 변경 필요
+// 예시: createResponse(PACKET_TYPE.REGISTER_RESPONSE, socket.sequence++, data);
 
-export const createResponse = (Type, seq, data = null, err = null) => {
+export const createResponse = (Type, seq, data = null) => {
+  if (!PACKET_TYPE_REVERSED[Type]) throw new Error('Invalid Packet Type');
+
   const typeName = PACKET_TYPE_REVERSED[Type];
   const camel = snakeToCamel(typeName);
 
@@ -26,21 +29,10 @@ export const createResponse = (Type, seq, data = null, err = null) => {
   Buffer.from(config.client.version).copy(version);
 
   const sequence = Buffer.alloc(config.packet.sequence);
-  sequence.writeUInt32BE(seq++, 0); // 현재는 시퀀스 관리 없이 증가
-
-  const errorCode = Buffer.alloc(config.packet.errorCode);
-  errorCode.writeUInt8(err || 0, 0);
+  sequence.writeUInt32BE(seq, 0); // 현재는 시퀀스 관리 없이 증가
 
   const payloadLength = Buffer.alloc(config.packet.payloadLength);
-  payloadLength.writeUInt32BE(payload.length, 0);
+  payloadLength.writeUInt16BE(payload.length, 0);
 
-  return Buffer.concat([
-    packetType,
-    versionLength,
-    version,
-    sequence,
-    errorCode,
-    payloadLength,
-    payload,
-  ]);
+  return Buffer.concat([packetType, versionLength, version, sequence, payloadLength, payload]);
 };

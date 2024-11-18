@@ -42,7 +42,6 @@ export const loadProtos = async () => {
 
     getTypes(root);
     GamePacket = root.lookupType('GamePacket');
-    GlobalFailCode = root.lookupEnum('GlobalFailCode');
 
     const date = new Date();
     console.log(`[${formatDate(date)} - LOAD] Success to load protobuf files`);
