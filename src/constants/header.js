@@ -61,6 +61,7 @@ export const PACKET_TYPE = {
   // 상태 동기화
   LOCATION_NOTIFICATION: 31,
   LOCATION_SYNC_NOTIFICATION: 32,
+  MINERAL_SYNC_NOTIFICATION: 33,
 };
 
 export const PACKET_TYPE_REVERSED = Object.fromEntries(
