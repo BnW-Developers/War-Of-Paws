@@ -29,7 +29,7 @@ const purchaseBuildingRequest = (socket, payload) => {
   */
 
   // gameState는 Redis로?
-  gameState = gameSession.players[userId];
+  gameState = gameSession.getGameState(userId);
   if (!gameState) {
     const message = 'Player state not found';
     logger.error(message);
