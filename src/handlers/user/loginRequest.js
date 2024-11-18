@@ -4,6 +4,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createJWT } from '../../utils/jwt/createToken.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import bcrypt from 'bcrypt';
 
 const loginRequest = async (socket, payload) => {
   try {

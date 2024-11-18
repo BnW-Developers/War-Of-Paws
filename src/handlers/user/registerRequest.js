@@ -4,6 +4,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { validateSignUp } from '../../utils/joi/validateSignUp.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import bcrypt from 'bcrypt';
 
 const registerRequest = async (socket, payload) => {
   try {
