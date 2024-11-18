@@ -1,5 +1,5 @@
 // 유저의 게임 데이터를 담는 클래스
-class GameState {
+class PlayerGameData {
   constructor(userInstance) {
     this.userId = userInstance.userId;
     this.socket = userInstance.socket;
@@ -11,8 +11,8 @@ class GameState {
     this.buildings = [];
     this.units = [];
     this.baseHp = 1000;
-    this.capturedPoints = [];
+    this.capturedCheckPoints = [];
   }
 }
 
-export default GameState;
+export default PlayerGameData;

@@ -1,4 +1,4 @@
-import GameState from './gameState.class.js';
+import PlayerGameData from './PlayerGameData.class.js';
 
 const MAX_PLAYERS = 2;
 
@@ -18,7 +18,7 @@ class Game {
       throw new Error('Game is full');
     }
 
-    const gameState = new GameState(user);
+    const gameState = new PlayerGameData(user);
     this.players.set(user.userId, gameState);
     user.setCurrentGameId(this.gameId);
 
