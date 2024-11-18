@@ -55,6 +55,9 @@ export const PACKET_TYPE = {
   // 게임 종료
   GAME_OVER_NOTIFICATION: 28,
   GAME_END_NOTIFICATION: 29,
+
+  // 에러
+  ERROR_NOTIFICATION: 30,
 };
 
 export const PACKET_TYPE_REVERSED = Object.fromEntries(

@@ -10,7 +10,7 @@ const spawnUnitRequest = (socket, payload) => {
   if (!gameSession) {
     const message = 'Game session not found';
     logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR, sequence, { message }));
+    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
     return;
   }
 
@@ -19,7 +19,7 @@ const spawnUnitRequest = (socket, payload) => {
   if (!gameState) {
     const message = 'Player state not found';
     logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR, sequence, { message }));
+    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
     return;
   }
 
@@ -28,7 +28,7 @@ const spawnUnitRequest = (socket, payload) => {
   if (unit === undefined) {
     const message = 'Invalid unit assetId';
     logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR, sequence, { message }));
+    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
     return;
   }
 
@@ -36,7 +36,7 @@ const spawnUnitRequest = (socket, payload) => {
   if (gameState.mineral < unit.cost) {
     const message = 'Not enough minerals';
     logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR, sequence, { message }));
+    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
     return;
   }
 
@@ -55,7 +55,7 @@ const spawnUnitRequest = (socket, payload) => {
   if (!opponnetSocket) {
     const message = 'Opponent socket not found';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, message);
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, message);
     return;
   }
   opponnetSocket.write(

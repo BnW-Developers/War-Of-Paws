@@ -12,7 +12,7 @@ const purchaseBuildingRequest = (socket, payload) => {
   if (!gameSession) {
     const message = 'Game session not found';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, { message }); // 에러 패킷이 있으니 err 파라미터는 없어도 되지 않을까?
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }); // 에러 패킷이 있으니 err 파라미터는 없어도 되지 않을까?
   }
 
   /* 반복되는 형태 함수로 묶기 고려해보기.
@@ -33,7 +33,7 @@ const purchaseBuildingRequest = (socket, payload) => {
   if (!gameState) {
     const message = 'Player state not found';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, { message });
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
     return;
   }
 
@@ -43,14 +43,14 @@ const purchaseBuildingRequest = (socket, payload) => {
   if (buildingCost === undefined) {
     const message = 'Invalid building assetId';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, { message });
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
   }
 
   // 여기에 이미 구매한 건물인지 체크?
   if (gameState.buildings.includes(assetId)) {
     const message = 'Building already purchased';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, { message });
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
     return;
   }
 
@@ -58,7 +58,7 @@ const purchaseBuildingRequest = (socket, payload) => {
   if (gameState.mineral < buildingCost) {
     const message = 'Not enough minerals';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, { message });
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
     return;
   }
 
@@ -78,7 +78,7 @@ const purchaseBuildingRequest = (socket, payload) => {
   if (!opponnetSocket) {
     const message = 'Opponent socket not found';
     logger.error(message);
-    createResponse(PACKET_TYPE.ERROR, sequence, message);
+    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, message);
     return;
   }
   opponnetSocket.write(
