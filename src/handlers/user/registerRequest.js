@@ -19,6 +19,7 @@ const registerRequest = async (socket, payload) => {
     const user = await findUserById(id);
     if (user) {
       // 같은 id를 가진 유저가 이미 존재하는 경우
+      // TODO globalFailCode
       throw new CustomErr(0, '이미 존재하는 아이디입니다.');
     }
 

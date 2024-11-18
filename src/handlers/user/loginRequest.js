@@ -7,6 +7,7 @@ import { createResponse } from '../../utils/response/createResponse.js';
 
 const loginRequest = async (socket, payload) => {
   try {
+    // C2SLoginRequest
     const { id, password } = payload;
 
     // id가 db에 존재하는지 확인
