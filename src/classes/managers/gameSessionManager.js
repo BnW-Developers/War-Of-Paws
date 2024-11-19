@@ -1,5 +1,6 @@
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
+import userSessionManager from './userSessionManager.js';
 
 class GameSessionManager {
   constructor() {
@@ -30,6 +31,19 @@ class GameSessionManager {
   // gameId에 해당하는 게임 세션 반환 (없으면 null)
   getGameSessionByGameId(gameId) {
     return this.gameSessions.get(gameId) || null;
+  }
+
+  /**
+   * socket에 해당하는 유저가 플레이중인 게임세션을 반환
+   * @param {net.Socket} socket
+   * @returns {Game}
+   */
+  getGameSessionBySocket(socket) {
+    const user = userSessionManager.getUserBySocket(socket);
+    // user = undefined일 경우 예외처리
+    const gameId = user.getCurrentGameId();
+    const gameSession = this.getGameSessionByGameId(gameId);
+    return gameSession;
   }
 }
 
