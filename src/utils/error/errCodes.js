@@ -48,4 +48,7 @@ export const errCodes = {
   // Location 관련 에러
   INVALID_LOCATION_DATA: 11000, // 잘못된 위치 데이터
   LOCATION_UPDATE_FAILED: 11001, // 위치 업데이트 실패
+
+  // 게임에셋 관련 에러
+  INVALID_ASSET_TYPE: 11300, // 잘못된 에셋 타입
 };
