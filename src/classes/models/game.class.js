@@ -12,6 +12,10 @@ class Game {
     return this.gameId;
   }
 
+  isInProgress() {
+    return this.inProgress;
+  }
+
   addUser(user) {
     if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
       throw new Error('Game is full');
