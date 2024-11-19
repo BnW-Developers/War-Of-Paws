@@ -21,8 +21,8 @@ class Game {
       throw new Error('Game is full');
     }
 
-    const gameState = new PlayerGameData(user);
-    this.players.set(user.userId, gameState);
+    const playerGameData = new PlayerGameData(user);
+    this.players.set(user.userId, playerGameData);
     user.setCurrentGameId(this.gameId);
 
     // TODO: redis에 게임 상태 저장
