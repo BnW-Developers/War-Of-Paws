@@ -1,4 +1,5 @@
 import logger from '../../utils/logger.js';
+import SendPacket from './sendPacket.class';
 
 class SendPacket {
   constructor() {
@@ -41,5 +42,7 @@ class SendPacket {
     });
   }
 }
+const sendPacket = new SendPacket();
+Object.freeze(sendPacket);
 
-export default SendPacket;
+export default sendPacket;
