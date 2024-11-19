@@ -42,7 +42,7 @@ class Game {
   }
 
   // userId로 게임 세션의 다른 유저 검색
-  getOpponentUserByUserId(userId) {
+  getOpponentGameDataByUserId(userId) {
     // Map에서 자신(userId)을 제외한 다른 유저를 반환
     for (const [key, value] of this.players.entries()) {
       if (key !== userId) {
