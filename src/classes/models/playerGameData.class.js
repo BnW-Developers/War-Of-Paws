@@ -16,6 +16,14 @@ class PlayerGameData {
     this.capturedCheckPoints = [];
   }
 
+  getUserId() {
+    return this.userId;
+  }
+
+  getSocket() {
+    return this.socket;
+  }
+
   addUnit(assetId, toTop) {
     const unit = new Unit(assetId, toTop);
     const unitId = unit.getUnitId();
@@ -28,10 +36,6 @@ class PlayerGameData {
 
   removeUnit(unitId) {
     return this.units.delete(unitId);
-  }
-
-  getSocket() {
-    return this.socket;
   }
 }
 
