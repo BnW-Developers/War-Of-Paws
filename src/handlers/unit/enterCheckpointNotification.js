@@ -1,5 +1,5 @@
 import userSessionManager from '../../classes/managers/userSessionManager.js';
-import gameSessionManager from './../../classes/managers/gameSessionManager';
+import gameSessionManager from './../../classes/managers/gameSessionManager.js';
 
 const enterCheckpointNotification = (socket, payload) => {
   const { isTop, unitId } = payload;
