@@ -13,6 +13,15 @@ message UnitPostion {
     int32 unitId = 1;
     Position position = 2;
 }
+message UnitInfo {
+    int32 unitId = 1;
+    int32 unitHp = 2;
+}
+
+message OpponetUnitInfo {
+    int32 opponentUnitId = 1;
+    int32 opponentUnitHp = 2;
+}
 
 /* 
   패킷 명세
@@ -75,15 +84,13 @@ message S2CSpawnEnemyUnitNotification {
 }
 message C2SAttackUnitRequest {
     int32 unitId =1;
-    int32 opponentUnitId = 2;
+    repeated int32 opponentUnitId = 2;
 }
 message S2CAttackUnitResponse {
-    int32 opponentUnitHp = 1;
+    repeated OpponetUnitInfo opponentUnitInfos = 1;
 }
 message S2CEnemyUnitAttackNotification {
-    int32 unitId = 1;
-    int32 opponentUnitId = 2;
-    int32 unitHp = 3;
+   repeated UnitInfo unitInfos = 1;
 }
 message C2SUnitDeathNotification {
     int32 unitId = 1;
