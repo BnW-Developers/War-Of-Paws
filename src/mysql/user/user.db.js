@@ -1,5 +1,6 @@
+import { formatDate } from '../../utils/formatter/dateFormatter.js';
 import pools from '../createPool.js';
-import { timeFormat, toCamelCase } from '../utils.js';
+import { toCamelCase } from '../utils.js';
 import { SQL_QUERIES } from './user.queries.js';
 
 /**
@@ -24,6 +25,6 @@ export const findUserById = async (userId) => {
  */
 
 export const createUser = async (id, password, email) => {
-  const created_at = timeFormat(new Date());
+  const created_at = formatDate(new Date());
   return await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [id, password, email, created_at]);
 };
