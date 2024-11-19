@@ -28,7 +28,7 @@ class GameSessionManager {
   }
 
   // gameId에 해당하는 게임 세션 반환 (없으면 null)
-  getGameSessionById(gameId) {
+  getGameSessionByGameId(gameId) {
     return this.gameSessions.get(gameId) || null;
   }
 }
