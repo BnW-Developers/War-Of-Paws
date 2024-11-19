@@ -83,7 +83,7 @@ class CheckPoint {
   clearOccupation() {
     this.#status = this.currentStatus;
     console.log(`${this.name}점령초기화 현재 상태: ${this.#status}`);
-    this.timer.clear();
+    this.timer.allClear();
     // TODO: 점령 타이머 초기화 패킷 전송
   }
   pauseOccupation() {
@@ -101,7 +101,7 @@ class CheckPoint {
     this.#status = `occupied${this.#status.replace('attempting', '')}`;
     console.log(`${this.name}점령완료 현재 상태: ${this.#status}`);
     this.currentStatus = this.#status;
-    this.timer.clear();
+    this.timer.allClear();
     // TODO: 점령완료 패킷 전송
   }
 }
