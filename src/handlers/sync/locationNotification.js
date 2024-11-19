@@ -78,7 +78,7 @@ const locationNotification = (socket, payload) => {
       // 검증: 상대방 유저의 플레이어 데이터가 존재하는가?
       const opponentGameData = gameSession.getOpponentGameDataByUserId(userId);
       if (!opponentGameData) {
-        throw new customErr(
+        throw new CustomErr(
           errCodes.OPPONENT_GAME_DATA_NOT_FOUND,
           '상대방의 게임 데이터를 찾을 수 없습니다',
         );
@@ -88,7 +88,7 @@ const locationNotification = (socket, payload) => {
       // 검증: 상대방의 소켓이 존재하는가?
       const opponentSocket = opponentGameData.getSocket();
       if (!opponentSocket) {
-        throw new customErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, '상대방의 소켓을 찾을 수 없습니다');
+        throw new CustomErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, '상대방의 소켓을 찾을 수 없습니다');
       }
 
       // 위치동기화 실행
