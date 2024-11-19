@@ -18,11 +18,6 @@ message UnitInfo {
     int32 unitHp = 2;
 }
 
-message OpponetUnitInfo {
-    int32 opponentUnitId = 1;
-    int32 opponentUnitHp = 2;
-}
-
 /* 
   패킷 명세
 */
@@ -51,7 +46,7 @@ message C2SMatchRequest {
 
 }
 message S2CMatchNotification {
-    string opponentName = 1;
+    string opponentId = 1;
 }
 message C2SGameStartRequest {
     int32 timestamp = 1;
@@ -87,7 +82,7 @@ message C2SAttackUnitRequest {
     repeated int32 opponentUnitId = 2;
 }
 message S2CAttackUnitResponse {
-    repeated OpponetUnitInfo opponentUnitInfos = 1;
+    repeated UnitInfo opponentUnitInfos = 1;
 }
 message S2CEnemyUnitAttackNotification {
    repeated UnitInfo unitInfos = 1;
