@@ -1,3 +1,5 @@
+import logger from '../../utils/logger.js';
+
 // 유저의 게임 데이터를 담는 클래스
 class PlayerGameData {
   constructor(userInstance) {
@@ -12,6 +14,54 @@ class PlayerGameData {
     this.units = [];
     this.baseHp = 1000;
     this.capturedCheckPoints = [];
+
+    this.unitIdCounter = 0;
+  }
+
+  generateUnitId() {
+    this.unitIdCounter += 1;
+    return this.unitIdCounter;
+  }
+
+  addUnit(assetId, attack, hp, toTop, position) {
+    const unitId = this.generateUnitId();
+
+    const newUnit = {
+      assetId, // 유닛 종류
+      unitId, // 유닛 인스턴스 id
+      ownerId: this.userId, // 소유한 유저의 id
+      attack,
+      hp,
+      toTop,
+      position,
+    };
+
+    this.units.push(newUnit);
+    return unitId; // 생성된 유닛의 ID 반환
+  }
+
+  removeUnit(unitId) {
+    const unitIndex = this.units.findIndex((unit) => unit.unitId === unitId);
+
+    if (unitIndex === -1) {
+      // 유닛을 찾을 수 없을 때 처리
+      logger.warn(`Unit with ID ${unitId} not found`);
+      return false; // 실패
+    }
+
+    this.units.splice(unitIndex, 1); // 유닛 제거
+    return true; // 성공
+  }
+
+  getUnitById(unitId) {
+    const unit = this.units.find((unit) => unit.unitId === unitId);
+
+    if (!unit) {
+      logger.warn(`Unit with ID ${unitId} not found`);
+      return null; // 유닛이 없으면 null 반환
+    }
+
+    return unit; // 유닛 객체 반환
   }
 }
 

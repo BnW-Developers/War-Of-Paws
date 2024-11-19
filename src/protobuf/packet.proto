@@ -103,11 +103,11 @@ message S2CEnemyUnitAttackNotification {
 }
 
 message S2CUnitDeathNotification {
-  int32 unitId = 1;
+  repeated int32 deathUnitId = 1;
 }
 
 message S2CEnemyUnitDeathNotification {
-  int32 unitId = 1;
+  repeated int32 opponentDeathUnitId = 1;
 }
 
 message C2SEnterCheckpointNotification {
