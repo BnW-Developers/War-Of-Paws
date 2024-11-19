@@ -1,4 +1,4 @@
-import PlayerGameData from './PlayerGameData.class.js';
+import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 
 class Game {
