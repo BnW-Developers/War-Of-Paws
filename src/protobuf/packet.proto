@@ -112,7 +112,7 @@ message S2CEnemyUnitDeathNotification {
 
 message C2SEnterCheckpointNotification {
   bool isTop = 1;
-  int unitId = 2;
+  int32s unitId = 2;
 }
 
 message S2CTryOccupationNotification {
