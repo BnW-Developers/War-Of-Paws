@@ -9,7 +9,7 @@ message Position {
     int32 x = 1;
     int32 y = 2;
 }
-message UnitPostion {
+message UnitPosition {
     int32 unitId = 1;
     Position position = 2;
 }
@@ -87,7 +87,7 @@ message S2CAttackUnitResponse {
 message S2CEnemyUnitAttackNotification {
    repeated UnitInfo unitInfos = 1;
 }
-message C2SUnitDeathNotification {
+message S2CUnitDeathNotification {
     int32 unitId = 1;
 }
 message S2CEnemyUnitDeathNotification {
@@ -127,13 +127,13 @@ message C2SGameEndNotification {
 
 }
 message C2SLocationNotification {
-    repeated UnitPostion unitPostions = 1;
+    repeated UnitPosition unitPositions = 1;
 }
 message S2CLocationSyncNotification {
-    repeated UnitPostion unitPostions = 1;
+    repeated UnitPosition unitPositions = 1;
 }
 
-message S2C_MINERAL_SYNC_NOTIFICATION {
+message S2CMineralSyncNotification {
     int32 mineral = 1;
 }
 
@@ -175,7 +175,7 @@ message GamePacket {
         S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 18;
 
         // 유닛 사망
-        C2SUnitDeathNotification unitDeathNotification = 19;
+        S2CUnitDeathNotification unitDeathNotification = 19;
         S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 20;
 
         // 체크포인트 점령
@@ -199,7 +199,7 @@ message GamePacket {
         S2CLocationSyncNotification locationSyncNotification = 32;
 
         // 미네랄 동기화
-        S2C_MINERAL_SYNC_NOTIFICATION mineralSyncNotification = 33;
+        S2CMineralSyncNotification mineralSyncNotification = 33;
     }
 }
 
