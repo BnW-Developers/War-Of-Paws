@@ -3,7 +3,7 @@ syntax = "proto3";
 // TODO: 게임 데이터 명세가 필요하다면 추가해야 함.
 
 /*
-    게임 데이터 명세
+  게임 데이터 명세
 */
 message Position {
   int32 x = 1;
@@ -164,7 +164,9 @@ message S2CMineralSyncNotification {
   int32 mineral = 1;
 }
 
-// 최상위 GamePacket 메시지
+/*
+  최상위 GamePacket 메시지
+*/
 message GamePacket {
   oneof payload {
     // 에러
