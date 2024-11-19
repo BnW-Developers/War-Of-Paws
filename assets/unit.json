@@ -1,0 +1,39 @@
+{
+  "name": "building",
+  "version": "1.0.0",
+  "data": [
+    {
+      "id": 1001,
+      "DisplayName": "전사",
+      "Description": "체력이 높은 근접 공격 유닛",
+      "maxHp": 80,
+      "atk": 10,
+      "cd": 1000,
+      "spd": 150,
+      "def": 2,
+      "cost": 50
+    },
+    {
+      "id": 1002,
+      "DisplayName": "궁수",
+      "Description": "체력이 약하지만 공격력이 높은 원거리 공격 유닛",
+      "maxHp": 50,
+      "atk": 15,
+      "cd": 1000,
+      "spd": 150,
+      "def": 0,
+      "cost": 100
+    },
+    {
+      "id": 1003,
+      "DisplayName": "마법사",
+      "Description": "체력이 약하고 이동속도가 느리지만 강력한 원거리 범위 공격이 가능한 유닛",
+      "maxHp": 50,
+      "atk": 20,
+      "cd": 1500,
+      "spd": 100,
+      "def": 0,
+      "cost": 200
+    }
+  ]
+}
