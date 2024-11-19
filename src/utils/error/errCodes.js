@@ -11,12 +11,11 @@ export const errCodes = {
 
   // Register 관련 에러
   DUPLICATE_USER_ID: 10100, // 중복된 사용자 ID
-  EMAIL_ALREADY_IN_USE: 10101, // 이미 사용 중인 이메일
-  INVALID_PASSWORD_FORMAT: 10102, // 비밀번호 형식 위반
+  INVALID_REGISTER_FORMAT: 10102, // PAYLOAD 형식 위반
 
   // Login 관련 에러
   INVALID_CREDENTIALS: 10200, // 잘못된 사용자 ID 또는 비밀번호
-  ACCOUNT_NOT_VERIFIED: 10201, // 일치하는 계정 없음
+  ALREADY_LOGIN: 10201, // 이미 로그인 된 계정
 
   // Match 관련 에러
   MATCH_NOT_FOUND: 10300, // 매칭 상대를 찾을 수 없음
