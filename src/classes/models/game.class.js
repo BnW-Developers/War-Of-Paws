@@ -37,7 +37,7 @@ class Game {
   }
 
   // userId로 게임 세션에서 유저 검색
-  getUserByUserId(userId) {
+  getPlayerGameDataByUserId(userId) {
     return this.players.get(userId);
   }
 
