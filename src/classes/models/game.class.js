@@ -50,6 +50,10 @@ class Game {
     return this.players.delete(userId);
   }
 
+  getCheckPointManager() {
+    return this.checkPointManager;
+  }
+
   startGame() {
     this.inProgress = true;
 
