@@ -46,7 +46,7 @@ class Game {
     // Map에서 자신(userId)을 제외한 다른 유저를 반환
     for (const [key, value] of this.players.entries()) {
       if (key !== userId) {
-        return value; // GameState 객체 반환
+        return value; // PlayerGameData 객체 반환
       }
     }
     return null; // 상대방이 없는 경우
