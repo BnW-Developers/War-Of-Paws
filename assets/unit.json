@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "data": [
     {
-      "id": 1001,
+      "id": 2001,
       "DisplayName": "전사",
       "Description": "체력이 높은 근접 공격 유닛",
       "maxHp": 80,
@@ -14,7 +14,7 @@
       "cost": 50
     },
     {
-      "id": 1002,
+      "id": 2002,
       "DisplayName": "궁수",
       "Description": "체력이 약하지만 공격력이 높은 원거리 공격 유닛",
       "maxHp": 50,
@@ -25,7 +25,7 @@
       "cost": 100
     },
     {
-      "id": 1003,
+      "id": 2003,
       "DisplayName": "마법사",
       "Description": "체력이 약하고 이동속도가 느리지만 강력한 원거리 범위 공격이 가능한 유닛",
       "maxHp": 50,
