@@ -22,7 +22,6 @@ class Timer {
     if (!this.timer) return;
     this.clear();
     this.remainingTime -= Date.now() - this.startTime;
-    this.status = false;
   }
 
   resume() {
@@ -35,6 +34,11 @@ class Timer {
     clearTimeout(this.timer);
     this.timer = null;
     this.status = false;
+  }
+
+  allClear() {
+    this.clear();
+    this.remainingTime = this.duration;
   }
 }
 
