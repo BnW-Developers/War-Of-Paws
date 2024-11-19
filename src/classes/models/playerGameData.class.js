@@ -29,6 +29,10 @@ class PlayerGameData {
   removeUnit(unitId) {
     return this.units.delete(unitId);
   }
+
+  getSocket() {
+    return this.socket;
+  }
 }
 
 export default PlayerGameData;
