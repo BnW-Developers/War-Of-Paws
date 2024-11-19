@@ -6,201 +6,228 @@ syntax = "proto3";
     게임 데이터 명세
 */
 message Position {
-    int32 x = 1;
-    int32 y = 2;
+  int32 x = 1;
+  int32 y = 2;
 }
-message UnitPostion {
-    int32 unitId = 1;
-    Position position = 2;
+
+message UnitPosition {
+  int32 unitId = 1;
+  Position position = 2;
 }
+
 message UnitInfo {
-    int32 unitId = 1;
-    int32 unitHp = 2;
+  int32 unitId = 1;
+  int32 unitHp = 2;
 }
 
 /* 
   패킷 명세
 */
-
 message S2CErrorNotification {
-    int32 errorCode = 1;
-    string errorMessage = 2;
+  int32 errorCode = 1;
+  string errorMessage = 2;
 }
 
 message C2SRegisterRequest {
-    string id = 1;
-    string password = 2;
-    string email = 3;
+  string id = 1;
+  string password = 2;
+  string email = 3;
 }
+
 message S2CRegisterResponse {
-    
 }
+
 message C2SLoginRequest {
-    string id = 1;
-    string password = 2;
+  string id = 1;
+  string password = 2;
 }
+
 message S2CLoginResponse {
-    string token = 1;
+  string token = 1;
 }
+
 message C2SMatchRequest {
-
 }
+
 message S2CMatchNotification {
-    string opponentId = 1;
+  string opponentId = 1;
 }
+
 message C2SGameStartRequest {
-    int32 timestamp = 1;
+  int32 timestamp = 1;
 }
+
 message S2CGameStartNotification {
-
 }
+
 message C2SPurchaseBuildingRequest {
-    int32 assetId = 1;
+  int32 assetId = 1;
 }
+
 message S2CPurchaseBuildingResponse {
-    int32 assetId = 1;
+  int32 assetId = 1;
 }
+
 message S2CAddEnemyBuildingNotification {
-    int32 assetId = 1;
+  int32 assetId = 1;
 }
+
 message C2SSpawnUnitRequest {
-    int32 assetId = 1;
-    bool toTop = 2;
+  int32 assetId = 1;
+  bool toTop = 2;
 }
+
 message S2CSpawnUnitResponse {
-    int32 assetId = 1;
-    int32 unitId = 2;
-    bool toTop = 3;
+  int32 assetId = 1;
+  int32 unitId = 2;
+  bool toTop = 3;
 }
+
 message S2CSpawnEnemyUnitNotification {
-    int32 assetId = 1;
-    int32 unitId = 2;
-    bool toTop = 3;
+  int32 assetId = 1;
+  int32 unitId = 2;
+  bool toTop = 3;
 }
+
 message C2SAttackUnitRequest {
-    int32 unitId =1;
-    repeated int32 opponentUnitId = 2;
+  int32 unitId =1;
+  repeated int32 opponentUnitId = 2;
 }
+
 message S2CAttackUnitResponse {
-    repeated UnitInfo opponentUnitInfos = 1;
+  repeated UnitInfo opponentUnitInfos = 1;
 }
+
 message S2CEnemyUnitAttackNotification {
-   repeated UnitInfo unitInfos = 1;
+  repeated UnitInfo unitInfos = 1;
 }
-message C2SUnitDeathNotification {
-    int32 unitId = 1;
+
+message S2CUnitDeathNotification {
+  int32 unitId = 1;
 }
+
 message S2CEnemyUnitDeathNotification {
-    int32 unitId = 1;
+  int32 unitId = 1;
 }
+
 message C2SEnterCheckpointNotification {
-    bool isTop = 1;
-    int unitId = 2;
+  bool isTop = 1;
+  int unitId = 2;
 }
+
 message S2CTryOccupationNotification {
-    bool isTop = 1;
-    bool isOpponent = 2;
+  bool isTop = 1;
+  bool isOpponent = 2;
 }
+
 message S2CPauseOccupationNotification {
-    bool isTop = 1;
+  bool isTop = 1;
 }
+
 message S2COccupationTimerResetNotification {
-    bool isTop = 1;
+  bool isTop = 1;
 }
+
 message S2COccupationSuccessNotification {
-    bool isTop = 1;
-    bool isOpponent = 2;
+  bool isTop = 1;
+  bool isOpponent = 2;
 }
+
 message C2SAttackBaseRequest {
-    int32 unitId = 1;
+  int32 unitId = 1;
 }
+
 message S2CAttackBaseResponse {
-    int32 opponentBaseHp = 1;
+  int32 opponentBaseHp = 1;
 }
+
 message S2CBaseAttackedNotification {
-    int32 baseHp = 1;
+  int32 baseHp = 1;
 }
+
 message S2CGameOverNotification {
-    bool isWin = 1;
+  bool isWin = 1;
 }
+
 message C2SGameEndNotification {
-
 }
+
 message C2SLocationNotification {
-    repeated UnitPostion unitPostions = 1;
-}
-message S2CLocationSyncNotification {
-    repeated UnitPostion unitPostions = 1;
+  repeated UnitPosition unitPositions = 1;
 }
 
-message S2C_MINERAL_SYNC_NOTIFICATION {
-    int32 mineral = 1;
+message S2CLocationSyncNotification {
+  repeated UnitPosition unitPositions = 1;
+}
+
+message S2CMineralSyncNotification {
+  int32 mineral = 1;
 }
 
 // 최상위 GamePacket 메시지
 message GamePacket {
-    oneof payload {
-        // 에러
-        S2CErrorNotification errorNotification = 1;
+  oneof payload {
+    // 에러
+    S2CErrorNotification errorNotification = 1;
 
-        // 회원가입
-        C2SRegisterRequest registerRequest = 2;
-        S2CRegisterResponse registerResponse = 3;
+    // 회원가입
+    C2SRegisterRequest registerRequest = 2;
+    S2CRegisterResponse registerResponse = 3;
 
-        // 로그인
-        C2SLoginRequest loginRequest = 4;
-        S2CLoginResponse loginResponse = 5;
+    // 로그인
+    C2SLoginRequest loginRequest = 4;
+    S2CLoginResponse loginResponse = 5;
 
-        // 매칭
-        C2SMatchRequest matchRequest = 6;
-        S2CMatchNotification matchNotification = 7;
+    // 매칭
+    C2SMatchRequest matchRequest = 6;
+    S2CMatchNotification matchNotification = 7;
 
-        // 게임 시작
-        C2SGameStartRequest gameStartRequest = 8;
-        S2CGameStartNotification gameStartNotification = 9;
+    // 게임 시작
+    C2SGameStartRequest gameStartRequest = 8;
+    S2CGameStartNotification gameStartNotification = 9;
 
-        // 건물 구매
-        C2SPurchaseBuildingRequest purchaseBuildingRequest = 10;
-        S2CPurchaseBuildingResponse purchaseBuildingResponse = 11;
-        S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 12;
+    // 건물 구매
+    C2SPurchaseBuildingRequest purchaseBuildingRequest = 10;
+    S2CPurchaseBuildingResponse purchaseBuildingResponse = 11;
+    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 12;
 
-        // 유닛 생성
-        C2SSpawnUnitRequest spawnUnitRequest = 13;
-        S2CSpawnUnitResponse spawnUnitResponse = 14;
-        S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 15;
-        
-        // 유닛 공격
-        C2SAttackUnitRequest attackUnitRequest = 16;
-        S2CAttackUnitResponse attackUnitResponse = 17;
-        S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 18;
+    // 유닛 생성
+    C2SSpawnUnitRequest spawnUnitRequest = 13;
+    S2CSpawnUnitResponse spawnUnitResponse = 14;
+    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 15;
+    
+    // 유닛 공격
+    C2SAttackUnitRequest attackUnitRequest = 16;
+    S2CAttackUnitResponse attackUnitResponse = 17;
+    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 18;
 
-        // 유닛 사망
-        C2SUnitDeathNotification unitDeathNotification = 19;
-        S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 20;
+    // 유닛 사망
+    S2CUnitDeathNotification unitDeathNotification = 19;
+    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 20;
 
-        // 체크포인트 점령
-        C2SEnterCheckpointNotification enterCheckpointNotification = 21;
-        S2CTryOccupationNotification tryOccupationNotification = 22;
-        S2CPauseOccupationNotification pauseOccupationNotification = 23;
-        S2COccupationTimerResetNotification occupationTimerResetNotification = 24;
-        S2COccupationSuccessNotification occupationSuccessNotification = 25;
+    // 체크포인트 점령
+    C2SEnterCheckpointNotification enterCheckpointNotification = 21;
+    S2CTryOccupationNotification tryOccupationNotification = 22;
+    S2CPauseOccupationNotification pauseOccupationNotification = 23;
+    S2COccupationTimerResetNotification occupationTimerResetNotification = 24;
+    S2COccupationSuccessNotification occupationSuccessNotification = 25;
 
-        // 성채공격
-        C2SAttackBaseRequest attackBaseRequest = 26;
-        S2CAttackBaseResponse attackBaseResponse = 27;
-        S2CBaseAttackedNotification baseAttackedNotification = 28;
+    // 성채공격
+    C2SAttackBaseRequest attackBaseRequest = 26;
+    S2CAttackBaseResponse attackBaseResponse = 27;
+    S2CBaseAttackedNotification baseAttackedNotification = 28;
 
-        // 게임 종료
-        S2CGameOverNotification gameOverNotification = 29;
-        C2SGameEndNotification gameEndNotification = 30;
+    // 게임 종료
+    S2CGameOverNotification gameOverNotification = 29;
+    C2SGameEndNotification gameEndNotification = 30;
 
-        // 위치 동기화
-        C2SLocationNotification locationNotification = 31;
-        S2CLocationSyncNotification locationSyncNotification = 32;
+    // 위치 동기화
+    C2SLocationNotification locationNotification = 31;
+    S2CLocationSyncNotification locationSyncNotification = 32;
 
-        // 미네랄 동기화
-        S2C_MINERAL_SYNC_NOTIFICATION mineralSyncNotification = 33;
-    }
+    // 미네랄 동기화
+    S2CMineralSyncNotification mineralSyncNotification = 33;
+  }
 }
 
 

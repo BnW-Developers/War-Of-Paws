@@ -5,7 +5,7 @@ export const PACKET_PAYLOAD_LENGTH = 2;
 
 // TODO: S2C,C2S 넣을건지 확인 후 수정 필요.
 
-export const PACKET_TYPE = {
+export const PACKET_TYPE = Object.freeze({
   // 에러
   ERROR_NOTIFICATION: 1,
 
@@ -62,7 +62,7 @@ export const PACKET_TYPE = {
   LOCATION_NOTIFICATION: 31,
   LOCATION_SYNC_NOTIFICATION: 32,
   MINERAL_SYNC_NOTIFICATION: 33,
-};
+});
 
 export const PACKET_TYPE_REVERSED = Object.fromEntries(
   Object.entries(PACKET_TYPE).map(([key, value]) => [value, key]),
