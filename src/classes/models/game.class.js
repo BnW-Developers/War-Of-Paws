@@ -12,6 +12,10 @@ class Game {
     return this.gameId;
   }
 
+  getPlayerGameData(userId) {
+    return this.players.get(userId);
+  }
+
   isInProgress() {
     return this.inProgress;
   }
