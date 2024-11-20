@@ -63,6 +63,19 @@ class PlayerGameData {
 
     return unit; // 유닛 객체 반환
   }
+
+  spentMineral(mineral) {
+    this.minerals -= mineral;
+    return this.minerals;
+  }
+
+  getMineral() {
+    return this.minerals;
+  }
+
+  addBuilding(assetId) {
+    this.buildings.push(assetId);
+  }
 }
 
 export default PlayerGameData;
