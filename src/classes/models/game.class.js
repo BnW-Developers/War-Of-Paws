@@ -1,5 +1,5 @@
-import PlayerGameData from './PlayerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
+import PlayerGameData from './playerGameData.class.js';
 
 class Game {
   constructor(gameId) {
