@@ -1,9 +1,9 @@
-import { handleErr } from '../../utils/error/handlerErr.js';
 import gameSessionManager from '../../classes/managers/gameSessionManager';
-import { errCodes } from '../../utils/error/errCodes.js';
-import CustomErr from '../../utils/error/customErr';
-import userSessionManager from '../../classes/managers/userSessionManager';
 import locationSyncManager from '../../classes/managers/locationSyncManager.js';
+import userSessionManager from '../../classes/managers/userSessionManager';
+import CustomErr from '../../utils/error/customErr';
+import { errCodes } from '../../utils/error/errCodes.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
 
 /**
  * 위치 동기화 핸들러
@@ -76,17 +76,18 @@ const locationNotification = (socket, payload) => {
     // 두 클라이언트로부터 위치값을 모두 받았을 때 상태동기화 실행
     if (locationSyncManager.isSyncReady(gameId)) {
       // 검증: 상대방 유저의 플레이어 데이터가 존재하는가?
-      const opponentGameData = gameSession.getOpponentGameDataByUserId(userId);
+      const opponentUser = gameSession.getOpponentUserByUserId(userId);
+      const opponentGameData = opponentUser.getPlayerGameData();
       if (!opponentGameData) {
         throw new CustomErr(
           errCodes.OPPONENT_GAME_DATA_NOT_FOUND,
           '상대방의 게임 데이터를 찾을 수 없습니다',
         );
       }
-      const opponentId = opponentGameData.getUserId();
+      const opponentId = opponentUser.getUserId();
 
       // 검증: 상대방의 소켓이 존재하는가?
-      const opponentSocket = opponentGameData.getSocket();
+      const opponentSocket = opponentUser.getSocket();
       if (!opponentSocket) {
         throw new CustomErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, '상대방의 소켓을 찾을 수 없습니다');
       }
