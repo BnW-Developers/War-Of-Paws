@@ -1,10 +1,9 @@
-import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 
 class Game {
   constructor(gameId) {
     this.gameId = gameId;
-    this.players = new Map();
+    this.players = [];
     this.inProgress = false;
     this.checkPointManager = null;
   }
@@ -26,8 +25,7 @@ class Game {
       throw new Error('Game is full');
     }
 
-    const playerGameData = new PlayerGameData(user);
-    this.players.set(user.userId, playerGameData);
+    this.players.set(user.userId, user);
     user.setCurrentGameId(this.gameId);
 
     // TODO: redis에 게임 상태 저장
@@ -43,11 +41,11 @@ class Game {
   }
 
   // userId로 게임 세션의 다른 유저 검색
-  getOpponentGameDataByUserId(userId) {
+  getOpponentUserByUserId(userId) {
     // Map에서 자신(userId)을 제외한 다른 유저를 반환
     for (const [key, value] of this.players.entries()) {
       if (key !== userId) {
-        return value; // PlayerGameData 객체 반환
+        return value; // User 객체 반환
       }
     }
     return null; // 상대방이 없는 경우

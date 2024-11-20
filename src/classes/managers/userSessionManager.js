@@ -1,3 +1,4 @@
+import PlayerGameData from '../models/playerGameData.class.js';
 import User from '../models/user.class.js';
 
 class UserSessionManager {
@@ -15,7 +16,8 @@ class UserSessionManager {
   }
 
   addUser(socket, userId) {
-    const user = new User(socket, userId);
+    const playerGameData = new PlayerGameData();
+    const user = new User(socket, userId, playerGameData);
     this.userSessions.set(userId, user);
   }
 
