@@ -6,6 +6,7 @@ class Game {
     this.gameId = gameId;
     this.players = new Map();
     this.inProgress = false;
+    this.checkPointManager = null;
   }
 
   getGameId() {
@@ -57,9 +58,16 @@ class Game {
     return this.players.delete(userId);
   }
 
+  getCheckPointManager() {
+    return this.checkPointManager;
+  }
+
   startGame() {
     this.inProgress = true;
 
+    // 체크포인트 매니저 생성
+    const player = [...this.players.values()];
+    this.checkPointManager = new CheckPointManager(player[0], player[1]);
     // TODO: 매치 완료 패킷 전송
   }
 }

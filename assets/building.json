@@ -1,0 +1,24 @@
+{
+  "name": "building",
+  "version": "1.0.0",
+  "data": [
+    {
+      "id": 1001,
+      "DisplayName": "전사 건물",
+      "Description": "전사를 생산하기 위해 필요한 건물",
+      "cost": 100
+    },
+    {
+      "id": 1002,
+      "DisplayName": "궁수 건물",
+      "Description": "궁수를 생산하기 위해 필요한 건물",
+      "cost": 150
+    },
+    {
+      "id": 1003,
+      "DisplayName": "마법사 건물",
+      "Description": "마법사를 생산하기 위해 필요한 건물",
+      "cost": 250
+    }
+  ]
+}
