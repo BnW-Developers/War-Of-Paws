@@ -49,6 +49,18 @@ export const errCodes = {
   INVALID_LOCATION_DATA: 11000, // 잘못된 위치 데이터
   LOCATION_UPDATE_FAILED: 11001, // 위치 업데이트 실패
 
+  UNOWNED_UNIT: 11002, // 유저가 보유하지 않은 유닛
+
+  // GameSession 관련 에러
+  GAME_NOT_FOUND: 11100, // 유저가 플레이중인 게임을 찾지 못함
+  GAME_NOT_IN_PROGRESS: 11101, // 현재 진행중인 게임이 아님
+  PLAYER_GAME_DATA_NOT_FOUND: 11102, // 유저의 게임 데이터를 찾지 못함
+  OPPONENT_GAME_DATA_NOT_FOUND: 11103, // 상대방의 게임 데이터를 찾지 못함
+  OPPONENT_SOCKET_NOT_FOUND: 11104, // 상대방의 소켓을 찾지 못함
+
+  // UserSession 관련 에러
+  USER_NOT_FOUND: 11200, // 유저를 찾지 못함
+
   // 게임에셋 관련 에러
   INVALID_ASSET_TYPE: 11300, // 잘못된 에셋 타입
 };
