@@ -26,53 +26,44 @@ const purchaseBuildingRequest = (socket, payload) => {
       throw new CustomErr(errCodes.GAME_NOT_ACTIVE, 'Game Session not found');
     }
 
-    // assetId로 dataTable에서 해당 건물의 골드 가져오기 + dataTable에 존재하는 assetId인지도 검증 가능
-    // 건물의 가격.. 유닛 스탯..
-    const buildingCost = dataTable.getBuildingCost(assetId);
-    if (buildingCost === undefined) {
-      const message = 'Invalid building assetId';
-      logger.error(message);
-      createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
-    }
-
-    // 여기에 이미 구매한 건물인지 체크?
-    if (gameState.buildings.includes(assetId)) {
-      const message = 'Building already purchased';
-      logger.error(message);
-      createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
-      return;
+    // assetId 적합성 확인
+    // TODO: JSON 생기면 getBuildingCost 함수 구현
+    const buildingCost = playerState.getBuildingCost(assetId);
+    if (buildingCost === undefined || gameState.buildings.includes(assetId)) {
+      throw new CustomErr(errCodes.ASSET_NOT_FOUND, 'Invalid building assetId');
     }
 
     // 골드가 충분한지 확인
-    if (gameState.mineral < buildingCost) {
-      const message = 'Not enough minerals';
-      logger.error(message);
-      createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message });
-      return;
+    if (gameState.getMineral() < buildingCost) {
+      throw new CustomErr(errCodes.BUILDING_INSUFFICIENT_FUNDS, 'Not enough minerals');
     }
 
     // 골드 차감
-    gameState.addMineral(-buildingCost);
+    gameState.spentMineral(buildingCost);
 
     // buildings에 추가
     gameState.addBuilding(assetId);
 
-    socket.write(createResponse(PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, sequence, { assetId }));
-    // createResponse => sendResponse로 함수명을 바꾸고 socket을 인자로 줘서
-    // sendResponse(socket, packetType, payload, ...) 로 사용하는 것 ??
+    const packet = createResponse(PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, socket.sequence++, {
+      assetId,
+    });
+    sendPacket.enQueue(socket, packet);
 
     const opponentUser = gameSession.getOpponentUserByUserId(userId);
     const opponnetSocket = opponentUser.getSocket();
 
     if (!opponnetSocket) {
-      const message = 'Opponent socket not found';
-      logger.error(message);
-      createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, message);
-      return;
+      throw new CustomErr(errCodes.SOCKET_ERR, 'Opponent Socket not found');
     }
-    opponnetSocket.write(
-      createResponse(PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, sequence, { assetId }),
+
+    const opponentPacket = createResponse(
+      PACKET_TYPE.ADD_ENEMY_BUILDING_NOTIFICATION,
+      socket.sequence++,
+      {
+        assetId,
+      },
     );
+    sendPacket.enQueue(socket, opponentPacket);
   } catch (err) {
     handleErr(socket, err);
   }
