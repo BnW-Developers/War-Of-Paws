@@ -48,4 +48,8 @@ export const errCodes = {
   // Location 관련 에러
   INVALID_LOCATION_DATA: 11000, // 잘못된 위치 데이터
   LOCATION_UPDATE_FAILED: 11001, // 위치 업데이트 실패
+
+  // Game과 User Session 관련 에러
+  GAME_SESSION_NOT_FOUND: 12000, // 게임 세션을 찾을 수 없음
+  USER_SESSION_NOT_FOUND: 12001, // 유저 세션을 찾을 수 없음
 };
