@@ -58,7 +58,7 @@ class Game {
     // 타이머 만료 시 게임 취소
     if (this.startRequestUsers.size < GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
       // TODO: 게임 취소 패킷 추가
-      //this.cancleGame();
+      //this.cancelGame();
     }
   }
 
@@ -103,7 +103,7 @@ class Game {
     this.checkPointManager = new CheckPointManager(player[0], player[1]);
   }
 
-  cancleGame() {
+  cancelGame() {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
