@@ -7,7 +7,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
 import { errCodes } from './../../utils/error/errCodes.js';
-
+import CheckPointManager from '../services/CheckPointManager.class';
 
 class Game {
   constructor(gameId) {
