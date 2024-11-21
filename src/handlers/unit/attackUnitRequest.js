@@ -1,4 +1,6 @@
+import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
 import { errCodes } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createResponse } from '../../utils/response/createResponse.js';
@@ -6,32 +8,12 @@ import { createResponse } from '../../utils/response/createResponse.js';
 const attackUnitRequest = (socket, payload) => {
   try {
     const { unitId, opponentUnitIds } = payload; // 여러 대상 유닛 처리
-    if (!user) {
-      throw new CustomErr(errCodes.USER_SESSION_NOT_FOUND, 'User not found');
-    }
 
-    // 게임 세션 가져오기
-    const gameSession = gameSessionManager.getGameSessionById(user.getCurrentGameId());
-    if (!gameSession) {
-      throw new CustomErr(errCodes.GAME_NOT_ACTIVE, 'Game session not found');
-    }
+    const { playerGameData, opponentPlayerGameData } =
+      gameSessionManager.getAllPlayerGameDataBySocket(socket);
 
-    // 플레이어 상태 가져오기
-    const playerGameData = user.getPlayerGameData();
-    if (!playerGameData) {
+    if (!playerGameData || !opponentPlayerGameData)
       throw new CustomErr(errCodes.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
-    }
-
-    // 상대방 상태 가져오기
-    const opponentUser = gameSession.getOpponentUserByUserId(user.getUserId());
-    if (!opponentUser) {
-      throw new CustomErr(errCodes.OPPONENT_NOT_FOUND, 'Opponent not found');
-    }
-
-    const opponentPlayerGameData = opponentUser.getPlayerGameData();
-    if (!opponentPlayerGameData) {
-      throw new CustomErr(errCodes.OPPONENT_GAME_DATA_NOT_FOUND, 'Opponent state not found');
-    }
 
     // 공격 유닛 가져오기
     const attackUnit = playerGameData.getUnitById(unitId);
@@ -60,13 +42,13 @@ const attackUnitRequest = (socket, payload) => {
     }
 
     // 공격 알림
-    // TODO: 근데 이거 왜 돌려주는 거였지..? 건망증 GOAT..
+    // TODO: 근데 이거 RESPONSE 왜 돌려주는 거였지..? 건망증 GOAT..
     const attackResponsePacket = createResponse(PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       opponentUnitInfos,
     });
     sendPacket.enQueue(socket, attackResponsePacket);
 
-    // 상대방 공격 알림
+    // 상대방 공격 Notification
     const opponentSocket = opponentUser.getSocket();
     if (!opponentSocket) {
       throw new CustomErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, 'Opponent socket not found');
@@ -76,20 +58,18 @@ const attackUnitRequest = (socket, payload) => {
     });
     sendPacket.enQueue(opponentSocket, opponentNotificationPacket);
 
-    // A, B 클라이언트에게 사망 알림
+    // 사망한 유닛이 있다면, A, B 클라이언트에게 사망 알림
     if (deathNotifications.length > 0) {
       const deathNotificationPacket = createResponse(PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
         deathUnitId: deathNotifications,
       });
       sendPacket.enQueue(socket, deathNotificationPacket);
 
-      if (opponentSocket) {
-        const opponentDeathNotificationPacket = createResponse(
-          PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION,
-          { opponentDeathUnitId: deathNotifications },
-        );
-        sendPacket.enQueue(opponentSocket, opponentDeathNotificationPacket);
-      }
+      const opponentDeathNotificationPacket = createResponse(
+        PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION,
+        { opponentDeathUnitId: deathNotifications },
+      );
+      sendPacket.enQueue(opponentSocket, opponentDeathNotificationPacket);
     }
   } catch (err) {
     handleErr(socket, err);
