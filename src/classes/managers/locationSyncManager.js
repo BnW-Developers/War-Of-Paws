@@ -39,6 +39,8 @@ class LocationSyncManager {
 
   /**
    * 해당 게임세션의 위치동기화 실행 준비여부를 반환
+   *
+   * 위치 동기화 실행 준비조건: 모든 유닛의 동기화 위치값 산출 완료
    * @param {number} gameId
    * @returns {boolean}
    */
