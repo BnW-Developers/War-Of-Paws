@@ -24,7 +24,7 @@ const spawnUnitRequest = (socket, payload) => {
     throw new CustomErr(errCodes.UNIT_INSUFFICIENT_FUNDS, 'Not enough minerals');
   }
 
-  playerGameData.spentMineral(unitData.cost);
+  playerGameData.spendMineral(unitData.cost);
   // addUnit 함수에서 unit의 instanceId를 발급
   const unitId = playerGameData.addUnit(assetId, toTop);
 

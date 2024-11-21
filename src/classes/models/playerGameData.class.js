@@ -57,7 +57,7 @@ class PlayerGameData {
     return unit; // 유닛 객체 반환
   }
 
-  spentMineral(mineral) {
+  spendMineral(mineral) {
     this.minerals -= mineral;
     return this.minerals;
   }
@@ -69,7 +69,7 @@ class PlayerGameData {
   addBuilding(assetId) {
     this.buildings.push(assetId);
   }
-    
+
   getUserId() {
     return this.userId;
   }
@@ -77,8 +77,6 @@ class PlayerGameData {
   getSocket() {
     return this.socket;
   }
-
- 
 
   getUnit(unitId) {
     return this.units.get(unitId);
