@@ -42,6 +42,5 @@ class SendPacket {
   }
 }
 const sendPacket = new SendPacket();
-Object.freeze(sendPacket);
 
 export default sendPacket;
