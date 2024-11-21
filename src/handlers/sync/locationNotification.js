@@ -33,7 +33,9 @@ const locationNotification = (socket, payload) => {
     // 동기화할 위치값
     const syncPositions = [];
 
+    // 각 유닛의 동기화 위치값을 계산
     for (const unitPosition of unitPositions) {
+      // 클라이언트에서 보낸 유닛의 위치
       const { unitId, position } = unitPosition;
 
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
@@ -42,10 +44,10 @@ const locationNotification = (socket, payload) => {
         throw new CustomErr(errCodes.UNOWNED_UNIT, '유저가 보유한 유닛이 아닙니다.');
       }
 
-      const actualPosition = [position.x, 0, position.z];
+      const actualPosition = [position.x, 0, position.z]; // 실제 위치 (보유 클라이언트 기준)
       // TODO: 서버에서 예측한 유닛의 위치값
-      const expectedPosition = [0, 0, 0]; // x, y, z
-      const marginOfError = [0, 0, 0]; // x, y, z
+      const expectedPosition = [0, 0, 0]; // 예상 위치 (서버의 계산 기준)
+      const marginOfError = [0, 0, 0]; // 오차 범위
 
       // 서버의 계산값과 비교하여 위치값을 보정
       const { adjustedPosition, modified } = locationSyncManager.adjustPosition(
@@ -54,16 +56,16 @@ const locationNotification = (socket, payload) => {
         marginOfError,
       );
 
+      // 보정한 위치를 동기화 위치 배열에 추가
       const syncPosition = { unitId, position: adjustedPosition, modified };
       syncPositions.push(syncPosition);
     }
 
-    // 보정한 위치를 동기화 위치 배열에 추가
+    // 동기화 위치값을 서버에 저장
     locationSyncManager.addSyncPositions(gameId, userId, syncPositions);
 
-    // 양 플레이어로부터 위치패킷을 받고 처리했다면 (모든 유닛의 동기화 위치값이 산출되었다면) 위치 동기화 실행
+    // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
     if (locationSyncManager.isSyncReady(gameId)) {
-      // 위치동기화 실행
       locationSyncManager.syncPositions(gameId, userId, opponentId, socket, opponentSocket);
     }
   } catch (err) {
