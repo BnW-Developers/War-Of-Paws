@@ -23,7 +23,7 @@ class LocationSyncManager {
    * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
    */
   addSyncPositions(gameId, userId, unitPositions) {
-    // syncPositions 초기화
+    // 동기화 위치값 초기화
     if (!this.positionsToSync.has(gameId)) {
       this.positionsToSync.set(gameId, new Map());
     }
@@ -33,7 +33,7 @@ class LocationSyncManager {
       throw new Error('이미 해당 클라이언트의 위치값을 기록했습니다: userid', userId);
     }
 
-    // 해당 유저의 동기화 위치값 기록
+    // 해당 유저의 동기화 위치값 저장
     this.positionsToSync.get(gameId).set(userId, unitPositions);
   }
 
@@ -67,7 +67,6 @@ class LocationSyncManager {
 
     // 본인 (User) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const userSyncPosition of userSyncPositions) {
-      // 위치가 바뀌지 않았을 경우 전송하지 않음
       if (!userSyncPosition.modified) {
         continue;
       }
@@ -87,7 +86,6 @@ class LocationSyncManager {
 
     // 본인 (Opponent) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const opponentSyncPosition of opponentSyncPositions) {
-      // 위치가 바뀌지 않았을 경우 전송하지 않음
       if (!opponentSyncPosition.modified) {
         continue;
       }
