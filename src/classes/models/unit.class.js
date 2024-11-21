@@ -1,19 +1,26 @@
 class Unit {
   static idCounter = 1;
 
-  constructor(assetId, toTop) {
-    // TODO: 데이터테이블 추가시 assetId로 조회한 데이터로 프로퍼티 초기화
-    this.assetId = assetId;
-    this.instanceId = Unit.idCounter++;
-    this.maxHp = 100;
-    this.hp = 100;
-    this.attackPower = 25;
-    // TODO: 방향 (toTop)에 따른 초기위치 클라이언트에서 구현된 유닛 경로에 맞춰서 조정
+  constructor(unitData, toTop) {
+    this.assetId = unitData.id;
+    this.displayName = unitData.DisplayName;
+    this.description = unitData.Description;
+    this.maxHp = unitData.maxHp;
+    this.hp = unitData.maxHp;
+    this.attackPower = unitData.atk;
+    this.def = unitData.def;
+    this.speed = unitData.spd;
+    this.cooldown = unitData.cd;
+    this.cost = unitData.cost;
+
+    // toTop에 의한 초기 위치 설정
     this.position = toTop ? { x: 0, y: 0, z: 10 } : { x: 0, y: 0, z: -10 };
+
+    this.unitId = Unit.idCounter++;
   }
 
   getUnitId() {
-    return this.instanceId;
+    return this.unitId;
   }
 
   getHp() {
