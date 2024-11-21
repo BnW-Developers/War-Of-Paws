@@ -102,18 +102,16 @@ class LocationSyncManager {
     }
 
     // 3. 패킷 전송
-    const user = userSessionManager.getUserByUserId(userId);
     const userPacket = createResponse(
       PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
-      user.getNextSequence(),
+      socket.sequence++,
       userPacketData,
     );
     sendPacket.enQueue(socket, userPacket);
 
-    const opponent = userSessionManager.getUserByUserId(opponentId);
     const opponentPacket = createResponse(
       PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
-      opponent.getNextSequence(),
+      opponentSocket.sequence++,
       opponentPacketData,
     );
     sendPacket.enQueue(opponentSocket, opponentPacket);
