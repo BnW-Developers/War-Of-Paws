@@ -185,6 +185,7 @@ class MatchingSystem {
     try {
       // 유저 매치매이킹 상태 업데이트 (true)
       user.setIsMatchmaking(true);
+      user.setCurrentSpecies(species.toUpperCase());
 
       const userId = user.getUserId();
       // 종족에 따른 queueKey 결정
