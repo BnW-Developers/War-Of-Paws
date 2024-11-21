@@ -1,5 +1,4 @@
 import logger from '../../utils/logger.js';
-import SendPacket from './sendPacket.class';
 
 class SendPacket {
   constructor() {
