@@ -3,7 +3,7 @@ import logger from '../../utils/logger.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
 const attackUnitRequest = (socket, payload) => {
-  const { unitId, opponentUnitIds, sequence } = payload; // 여러 대상 유닛 처리
+  const { unitId, opponentUnitIds } = payload; // 여러 대상 유닛 처리
   const user = getUserBySocket(socket);
   const userId = user.getUserId();
 
