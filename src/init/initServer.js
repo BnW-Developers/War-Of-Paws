@@ -3,7 +3,7 @@ import { formatDate } from '../utils/formatter/dateFormatter.js';
 import { loadHandlers } from './loadHandlers.js';
 import { loadProtos } from './loadProto.js';
 import pools from './../mysql/createPool.js';
-import { loadGameAssets } from './loadAssets';
+import { loadGameAssets } from './loadAssets.js';
 
 export const initServer = async () => {
   try {

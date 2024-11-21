@@ -1,7 +1,7 @@
 import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 import CustomErr from '../../utils/error/customErr.js';
-import { errCodes } from './../../utils/error/errCodes';
+import { errCodes } from './../../utils/error/errCodes.js';
 
 class Game {
   constructor(gameId) {
