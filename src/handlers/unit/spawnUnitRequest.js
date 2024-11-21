@@ -1,66 +1,55 @@
+import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { errCodes } from '../../utils/error/errCodes.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
 const spawnUnitRequest = (socket, payload) => {
   const { assetId, toTop } = payload;
-  const user = getUserBySocket(socket);
-  const userId = user.getUserId();
 
-  const gameSession = getGameSessionByUserId(userId);
-  if (!gameSession) {
-    const message = 'Game session not found';
-    logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
-    return;
+  const { playerGameData, opponentPlayerGameData } =
+    gameSessionManager.getAllPlayerGameDataBySocket(socket);
+  if (!playerGameData || !opponentPlayerGameData)
+    throw new CustomErr(errCodes.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
+
+  // 유닛 데이터 검증
+  // TODO: JSON 파일 업데이트 되면 할 것.
+  const unitData = dataTable.getUnit(assetId);
+  if (!unitData) {
+    throw new CustomErr(errCodes.INVALID_ASSET_ID, 'Invalid unit assetId');
   }
 
-  // 유저 상태 가져오기
-  const gameState = gameSession.getGameState(userId);
-  if (!gameState) {
-    const message = 'Player state not found';
-    logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
-    return;
+  // 골드 확인
+  if (playerGameData.getMineral() < unitData.cost) {
+    throw new CustomErr(errCodes.UNIT_INSUFFICIENT_FUNDS, 'Not enough minerals');
   }
 
-  // assetId 검증
-  const unit = dataTable.getUnit(assetId); // unit은 객체? cost, hp, attack?
-  if (unit === undefined) {
-    const message = 'Invalid unit assetId';
-    logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
-    return;
-  }
-
-  // 골드가 충분한지 검증
-  if (gameState.mineral < unit.cost) {
-    const message = 'Not enough minerals';
-    logger.error(message);
-    socket.write(createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, { message }));
-    return;
-  }
-
-  gameState.addMineral(-unit.cost);
+  playerGameData.spentMineral(unitData.cost);
   // addUnit 함수에서 unit의 instanceId를 발급
-  const instanceId = gameState.addUnit(assetId, toTop);
+  const unitId = playerGameData.addUnit(assetId, toTop);
 
-  // 응답 전송
-  const responseData = { assetId, instanceId, toTop };
-  socket.write(createResponse(PACKET_TYPE.SPAWN_UNIT_RESPONSE, sequence, responseData));
+  const spawnUnitPacket = createResponse(PACKET_TYPE.SPAWN_UNIT_RESPONSE, socket.sequence++, {
+    assetId,
+    unitId,
+    toTop,
+  });
+  sendPacket.enQueue(socket, spawnUnitPacket); // sendPacket으로 응답 처리
 
-  // 상대방 알림
-  const opponentUser = gameSession.getOpponentUserByUserId(userId);
-  const opponnetSocket = opponentUser.getSocket();
-
-  if (!opponnetSocket) {
-    const message = 'Opponent socket not found';
-    logger.error(message);
-    createResponse(PACKET_TYPE.ERROR_NOTIFICATION, sequence, message);
-    return;
+  const opponentSocket = opponentPlayerGameData.getSocket();
+  if (!opponentSocket) {
+    throw new CustomErr(errCodes.SOCKET_ERR, 'Opponent socket not found');
   }
-  opponnetSocket.write(
-    createResponse(PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION, sequence, responseData),
+
+  const spawnEnemyUnitPacket = createResponse(
+    PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION,
+    opponentSocket.sequence++,
+    {
+      assetId,
+      unitId,
+      toTop,
+    },
   );
+  sendPacket.enQueue(opponentSocket, spawnEnemyUnitPacket); // sendPacket으로 상대방 알림 처리
 };
 
 export default spawnUnitRequest;

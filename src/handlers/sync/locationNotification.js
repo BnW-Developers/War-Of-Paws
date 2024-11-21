@@ -1,8 +1,8 @@
 import { handleErr } from '../../utils/error/handlerErr.js';
-import gameSessionManager from '../../classes/managers/gameSessionManager';
+import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import { errCodes } from '../../utils/error/errCodes.js';
-import CustomErr from '../../utils/error/customErr';
-import userSessionManager from '../../classes/managers/userSessionManager';
+import CustomErr from '../../utils/error/customErr.js';
+import userSessionManager from '../../classes/managers/userSessionManager.js';
 import locationSyncManager from '../../classes/managers/locationSyncManager.js';
 
 /**

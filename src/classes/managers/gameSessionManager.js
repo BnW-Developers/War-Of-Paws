@@ -1,3 +1,5 @@
+import CustomErr from '../../utils/error/customErr.js';
+import { errCodes } from '../../utils/error/errCodes.js';
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
 import userSessionManager from './userSessionManager.js';
@@ -40,10 +42,20 @@ class GameSessionManager {
    */
   getGameSessionBySocket(socket) {
     const user = userSessionManager.getUserBySocket(socket);
-    // user = undefined일 경우 예외처리
+    if (!user)
+      throw new CustomErr(
+        errCodes.USER_NOT_FOUND,
+        '유저 세션에서 유저 정보를 가져오는데 실패했습니다.',
+      );
     const gameId = user.getCurrentGameId();
     const gameSession = this.getGameSessionByGameId(gameId);
     return gameSession;
+  }
+
+  getAllPlayerGameDataBySocket(socket) {
+    // 각각 메서드에서 문제가 있을 경우 에러를 던져주기 때문에 그대로 흘림.
+    const gameSession = this.getGameSessionBySocket(socket);
+    return gameSession.getAllPlayerGameDataBySocket(socket);
   }
 }
 

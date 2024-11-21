@@ -1,8 +1,8 @@
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../response/createResponse.js';
 import { findValueInObject } from '../util/findValueInObject.js';
-import { errCodes } from './errCodes.js';
 import logger from './../logger.js';
+import { errCodes } from './errCodes.js';
 
 export const handleErr = (socket, err) => {
   let errorCode;

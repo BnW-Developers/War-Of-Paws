@@ -63,4 +63,9 @@ export const errCodes = {
 
   // 게임에셋 관련 에러
   INVALID_ASSET_TYPE: 11300, // 잘못된 에셋 타입
+  
+  // Game과 User Session 관련 에러
+  GAME_SESSION_NOT_FOUND: 11400, // 게임 세션을 찾을 수 없음
+  USER_SESSION_NOT_FOUND: 11401, // 유저 세션을 찾을 수 없음
+
 };

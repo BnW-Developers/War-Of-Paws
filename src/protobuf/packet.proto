@@ -91,7 +91,7 @@ message S2CSpawnEnemyUnitNotification {
 
 message C2SAttackUnitRequest {
   int32 unitId =1;
-  repeated int32 opponentUnitId = 2;
+  repeated int32 opponentUnitIds = 2;
 }
 
 message S2CAttackUnitResponse {
@@ -138,7 +138,7 @@ message C2SAttackBaseRequest {
 }
 
 message S2CAttackBaseResponse {
-  int32 opponentBaseHp = 1;
+  int32 baseHp = 1;
 }
 
 message S2CBaseAttackedNotification {
