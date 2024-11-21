@@ -8,11 +8,13 @@ import { createJWT } from '../../utils/jwt/createToken.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import bcrypt from 'bcrypt';
 import sendPacket from './../../classes/models/sendPacket.class.js';
+import logger from '../../utils/logger.js';
 
 const loginRequest = async (socket, payload) => {
   try {
     // C2SLoginRequest
     const { id, password } = payload;
+    logger.info(`login request id: ${id}`);
 
     // id가 db에 존재하는지 확인
     const user = await findUserById(id);
@@ -46,6 +48,7 @@ const loginRequest = async (socket, payload) => {
     // jwt 토큰 발급
     const token = createJWT(id);
 
+    logger.info(`login success id: ${id}`);
     // 응답 전송
     const response = createResponse(PACKET_TYPE.LOGIN_RESPONSE, 1, { token });
     sendPacket.enQueue(socket, response);

@@ -4,6 +4,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { errCodes } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { validateSignUp } from '../../utils/joi/validateSignUp.js';
+import logger from '../../utils/logger.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import bcrypt from 'bcrypt';
 
@@ -11,6 +12,7 @@ const registerRequest = async (socket, payload) => {
   try {
     // C2SRegisterRequest
     const { id, email, password } = payload;
+    logger.info(`register request id: ${id}`);
 
     // id, email, password가 정해진 형식과 다를 경우 오류
     if (!validateSignUp(payload)) {
@@ -29,6 +31,7 @@ const registerRequest = async (socket, payload) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     await createUser(id, hashedPassword, email);
 
+    logger.info(`register success id: ${id}`);
     // 응답 전송
     const response = createResponse(PACKET_TYPE.REGISTER_RESPONSE, 1, {});
     sendPacket.enQueue(socket, response);
