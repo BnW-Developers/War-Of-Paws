@@ -33,19 +33,6 @@ class PlayerGameData {
     return unitId;
   }
 
-  removeUnit(unitId) {
-    const unitIndex = this.units.findIndex((unit) => unit.unitId === unitId);
-
-    if (unitIndex === -1) {
-      // 유닛을 찾을 수 없을 때 처리
-      logger.warn(`Unit with ID ${unitId} not found`);
-      return false; // 실패
-    }
-
-    this.units.splice(unitIndex, 1); // 유닛 제거
-    return true; // 성공
-  }
-
   getUnitById(unitId) {
     const unit = this.units.find((unit) => unit.unitId === unitId);
 
