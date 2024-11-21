@@ -36,7 +36,6 @@ const locationNotification = (socket, payload) => {
     }
 
     // 검증: 게임이 진행중인가?
-    const gameState = gameSession.state;
     if (!gameSession.isInProgress()) {
       throw new CustomErr(errCodes.GAME_NOT_IN_PROGRESS, `진행중인 게임이 아닙니다.`);
     }
