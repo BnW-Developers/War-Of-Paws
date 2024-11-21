@@ -27,6 +27,17 @@ class Unit {
   getPosition() {
     return this.position;
   }
+
+  // 체력 감소 메서드
+  applyDamage(damage) {
+    this.hp = Math.max(0, this.hp - damage); // 체력은 0 이하로 감소하지 않음
+    return this.hp;
+  }
+
+  // 사망 여부 확인 메서드
+  isDead() {
+    return this.hp <= 0;
+  }
 }
 
 export default Unit;
