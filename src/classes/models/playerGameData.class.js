@@ -1,4 +1,5 @@
 import logger from '../../utils/logger.js';
+import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
 class PlayerGameData {
@@ -11,7 +12,7 @@ class PlayerGameData {
     this.minerals = 100;
     this.mineralRate = 1;
     this.buildings = [];
-    this.units = [];
+    this.units = new Map();
     this.baseHp = 1000;
     this.capturedCheckPoints = [];
 
@@ -23,21 +24,13 @@ class PlayerGameData {
     return this.unitIdCounter;
   }
 
+  // TODO: load JSON 업데이트 되면 인자로 unitData 객체 받아서 unit Class 생성
   addUnit(assetId, attack, hp, toTop, position) {
-    const unitId = this.generateUnitId();
-
-    const newUnit = {
-      assetId, // 유닛 종류
-      unitId, // 유닛 인스턴스 id
-      ownerId: this.userId, // 소유한 유저의 id
-      attack,
-      hp,
-      toTop,
-      position,
-    };
-
-    this.units.push(newUnit);
-    return unitId; // 생성된 유닛의 ID 반환
+    // 여기에 unitData 생성자에 넣어주기
+    const newUnit = new Unit(assetId, toTop);
+    const unitId = unit.getUnitId();
+    this.units.set(unitId, newUnit);
+    return unitId;
   }
 
   removeUnit(unitId) {
@@ -75,6 +68,24 @@ class PlayerGameData {
 
   addBuilding(assetId) {
     this.buildings.push(assetId);
+  }
+    
+  getUserId() {
+    return this.userId;
+  }
+
+  getSocket() {
+    return this.socket;
+  }
+
+ 
+
+  getUnit(unitId) {
+    return this.units.get(unitId);
+  }
+
+  removeUnit(unitId) {
+    return this.units.delete(unitId);
   }
 }
 

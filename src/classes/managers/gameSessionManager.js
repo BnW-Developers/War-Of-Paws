@@ -1,5 +1,8 @@
+import CustomErr from '../../utils/error/customErr.js';
+import { errCodes } from '../../utils/error/errCodes.js';
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
+import userSessionManager from './userSessionManager.js';
 
 class GameSessionManager {
   constructor() {
@@ -28,8 +31,31 @@ class GameSessionManager {
   }
 
   // gameId에 해당하는 게임 세션 반환 (없으면 null)
-  getGameSessionById(gameId) {
+  getGameSessionByGameId(gameId) {
     return this.gameSessions.get(gameId) || null;
+  }
+
+  /**
+   * socket에 해당하는 유저가 플레이중인 게임세션을 반환
+   * @param {net.Socket} socket
+   * @returns {Game}
+   */
+  getGameSessionBySocket(socket) {
+    const user = userSessionManager.getUserBySocket(socket);
+    if (!user)
+      throw new CustomErr(
+        errCodes.USER_NOT_FOUND,
+        '유저 세션에서 유저 정보를 가져오는데 실패했습니다.',
+      );
+    const gameId = user.getCurrentGameId();
+    const gameSession = this.getGameSessionByGameId(gameId);
+    return gameSession;
+  }
+
+  getAllPlayerGameDataBySocket(socket) {
+    // 각각 메서드에서 문제가 있을 경우 에러를 던져주기 때문에 그대로 흘림.
+    const gameSession = this.getGameSessionBySocket(socket);
+    return gameSession.getAllPlayerGameDataBySocket(socket);
   }
 }
 
