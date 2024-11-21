@@ -49,7 +49,7 @@ const attackUnitRequest = (socket, payload) => {
     sendPacket.enQueue(socket, attackResponsePacket);
 
     // 상대방 공격 Notification
-    const opponentSocket = opponentUser.getSocket();
+    const opponentSocket = opponentPlayerGameData.getSocket();
     if (!opponentSocket) {
       throw new CustomErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, 'Opponent socket not found');
     }
