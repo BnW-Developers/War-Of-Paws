@@ -1,5 +1,6 @@
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import sendPacket from '../models/sendPacket.class.js';
 import userSessionManager from './userSessionManager.js';
 
 class LocationSyncManager {
@@ -107,7 +108,7 @@ class LocationSyncManager {
       user.getNextSequence(),
       userPacketData,
     );
-    socket.write(userPacket);
+    sendPacket.enQueue(socket, userPacket);
 
     const opponent = userSessionManager.getUserByUserId(opponentId);
     const opponentPacket = createResponse(
@@ -115,7 +116,7 @@ class LocationSyncManager {
       opponent.getNextSequence(),
       opponentPacketData,
     );
-    opponentSocket.write(opponentPacket);
+    sendPacket.enQueue(opponentSocket, opponentPacket);
 
     // 4. 해당 게임의 동기화 위치값 초기화
     this.positionsToSync.set(gameId, new Map());
