@@ -59,7 +59,6 @@ class MatchingSystem {
       const dogUsers = this.parseQueueData(dogQueue);
       queues['DOG'] = dogUsers;
 
-      console.log('queues: ', queues);
       return queues;
     } catch (err) {
       err.message = 'getAllQueues Error: ' + err.message;
@@ -101,6 +100,7 @@ class MatchingSystem {
   // 매칭 시간 처리 핸들러
   async handleMatchTimeout(userId, species) {
     try {
+      logger.info(`match timeout id: ${userId}`);
       await this.removeUser(userId, species);
 
       const user = userSessionManager.getUserByUserId(userId);
@@ -145,7 +145,6 @@ class MatchingSystem {
   }
 
   handleMatchComplete(user1Id, user2Id) {
-    console.log('user1Id, user2Id: ', user1Id, user2Id);
     // 유저 id로 유저 인스턴스 불러오기
     const user1 = userSessionManager.getUserByUserId(user1Id);
     const user2 = userSessionManager.getUserByUserId(user2Id);
