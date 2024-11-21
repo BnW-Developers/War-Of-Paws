@@ -1,7 +1,5 @@
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-import sendPacket from '../models/sendPacket.class.js';
-import userSessionManager from './userSessionManager.js';
 
 class LocationSyncManager {
   constructor() {
@@ -50,14 +48,15 @@ class LocationSyncManager {
   }
 
   /**
-   * 동기화할 위치값을 각 클라이언트로 전송
+   * 각 클라이언트로 전송할 위치 동기화 패킷을 작성
    * @param {number} gameId
    * @param {string} userId
    * @param {string} opponentId
    * @param {net.Socket} socket
    * @param {net.Socket} opponentSocket
+   * @return {{userPacket: Buffer, opponentPacket: Buffer}}
    */
-  syncPositions(gameId, userId, opponentId, socket, opponentSocket) {
+  createLocationSyncPacket(gameId, userId, opponentId, socket, opponentSocket) {
     // 해당 게임의 모든 동기화 위치값
     const allSyncPositions = this.positionsToSync.get(gameId);
     const userSyncPositions = allSyncPositions.get(userId);
@@ -101,22 +100,27 @@ class LocationSyncManager {
       opponentPacketData.unitPositions.push({ unitId, position });
     }
 
-    // 3. 패킷 전송
+    // 3. 패킷 작성 및 반환
     const userPacket = createResponse(
       PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
       socket.sequence++,
       userPacketData,
     );
-    sendPacket.enQueue(socket, userPacket);
 
     const opponentPacket = createResponse(
       PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
       opponentSocket.sequence++,
       opponentPacketData,
     );
-    sendPacket.enQueue(opponentSocket, opponentPacket);
 
-    // 4. 해당 게임의 동기화 위치값 초기화
+    return { userPacket, opponentPacket };
+  }
+
+  /**
+   * 위치 동기화 완료 후 서버에 저장한 동기화 위치값을 리셋
+   * @param {number} gameId
+   */
+  resetSyncPositions(gameId) {
     this.positionsToSync.set(gameId, new Map());
   }
 

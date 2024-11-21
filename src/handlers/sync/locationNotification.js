@@ -3,6 +3,7 @@ import { errCodes } from '../../utils/error/errCodes.js';
 import CustomErr from '../../utils/error/customErr.js';
 import locationSyncManager from '../../classes/managers/locationSyncManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
+import sendPacket from '../../classes/models/sendPacket.class.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -66,7 +67,20 @@ const locationNotification = (socket, payload) => {
 
     // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
     if (locationSyncManager.isSyncReady(gameId)) {
-      locationSyncManager.syncPositions(gameId, userId, opponentId, socket, opponentSocket);
+      // 패킷 작성 및 전송
+      const { userPacket, opponentPacket } = locationSyncManager.createLocationSyncPacket(
+        gameId,
+        userId,
+        opponentId,
+        socket,
+        opponentSocket,
+      );
+
+      sendPacket.enQueue(socket, userPacket);
+      sendPacket.enQueue(opponentSocket, opponentPacket);
+
+      // 서버에 저장한 동기화 위치값 초기화
+      this.resetSyncPositions(gameId);
     }
   } catch (err) {
     handleErr(socket, err);
