@@ -7,7 +7,6 @@ import { createResponse } from '../../utils/response/createResponse.js';
 
 const purchaseBuildingRequest = (socket, payload) => {
   try {
-    // sequence 처리 물어보기.
     const { assetId } = payload;
 
     const { playerGameData, opponentPlayerGameData } =
