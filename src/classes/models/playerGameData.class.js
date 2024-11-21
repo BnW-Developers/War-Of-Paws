@@ -28,8 +28,9 @@ class PlayerGameData {
   addUnit(assetId, attack, hp, toTop, position) {
     // 여기에 unitData 생성자에 넣어주기
     const newUnit = new Unit(assetId, toTop);
-    this.units.push(newUnit);
-    return newUnit.getUnitId(); // 생성된 유닛의 ID 반환
+    const unitId = unit.getUnitId();
+    this.units.set(unitId, newUnit);
+    return unitId;
   }
 
   removeUnit(unitId) {
@@ -56,6 +57,19 @@ class PlayerGameData {
     return unit; // 유닛 객체 반환
   }
 
+  spentMineral(mineral) {
+    this.minerals -= mineral;
+    return this.minerals;
+  }
+
+  getMineral() {
+    return this.minerals;
+  }
+
+  addBuilding(assetId) {
+    this.buildings.push(assetId);
+  }
+    
   getUserId() {
     return this.userId;
   }
@@ -64,11 +78,7 @@ class PlayerGameData {
     return this.socket;
   }
 
-  addUnit(assetId, toTop) {
-    const unit = new Unit(assetId, toTop);
-    const unitId = unit.getUnitId();
-    this.units.set(unitId, unit);
-  }
+ 
 
   getUnit(unitId) {
     return this.units.get(unitId);
