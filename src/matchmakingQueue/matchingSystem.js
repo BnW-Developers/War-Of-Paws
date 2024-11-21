@@ -19,7 +19,7 @@ class MatchingSystem {
     // 매칭 관련 상수
     this.CAT_QUEUE_KEY = 'matching:queue:cat';
     this.DOG_QUEUE_KEY = 'matching:queue:dog';
-    this.MAX_WAIT_TIME = 5 * 1000; // 5분
+    this.MAX_WAIT_TIME = 5 * 60 * 1000; // 5분
     this.MATCH_INTERVAL = 500; // 500ms마다 매치 시도
 
     this.matchingLoop();
