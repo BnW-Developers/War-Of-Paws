@@ -27,9 +27,9 @@ class PlayerGameData {
   // TODO: load JSON 업데이트 되면 인자로 unitData 객체 받아서 unit Class 생성
   addUnit(assetId, attack, hp, toTop, position) {
     // 여기에 unitData 생성자에 넣어주기
-    const newUnit = new Unit(assetId, toTop);
+    const unit = new Unit(assetId, toTop);
     const unitId = unit.getUnitId();
-    this.units.set(unitId, newUnit);
+    this.units.set(unitId, unit);
     return unitId;
   }
 
@@ -69,7 +69,7 @@ class PlayerGameData {
   addBuilding(assetId) {
     this.buildings.push(assetId);
   }
-    
+
   getUserId() {
     return this.userId;
   }
@@ -77,8 +77,6 @@ class PlayerGameData {
   getSocket() {
     return this.socket;
   }
-
- 
 
   getUnit(unitId) {
     return this.units.get(unitId);
