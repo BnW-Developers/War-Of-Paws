@@ -31,7 +31,7 @@ const registerRequest = async (socket, payload) => {
 
     // 응답 전송
     const response = createResponse(PACKET_TYPE.REGISTER_RESPONSE, 1, {});
-    socket.write(response);
+    sendPacket.enQueue(socket, response);
   } catch (err) {
     handleErr(socket, err);
   }

@@ -7,6 +7,7 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import { createJWT } from '../../utils/jwt/createToken.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import bcrypt from 'bcrypt';
+import sendPacket from './../../classes/models/sendPacket.class.js';
 
 const loginRequest = async (socket, payload) => {
   try {
@@ -47,7 +48,7 @@ const loginRequest = async (socket, payload) => {
 
     // 응답 전송
     const response = createResponse(PACKET_TYPE.LOGIN_RESPONSE, 1, { token });
-    socket.write(response);
+    sendPacket.enQueue(socket, response);
   } catch (err) {
     handleErr(socket, err);
   }
