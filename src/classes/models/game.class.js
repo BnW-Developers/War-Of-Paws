@@ -125,6 +125,16 @@ class Game {
     return this.players.get(userId);
   }
 
+  getOpponentUserId(userId) {
+    // Map에서 자신(userId)을 제외한 다른 유저를 반환
+    for (const key of this.players.keys()) {
+      if (key !== userId) {
+        return key;
+      }
+    }
+    return null; // 상대방이 없는 경우
+  }
+
   // userId로 게임 세션의 다른 유저 검색
   getOpponentGameDataByUserId(userId) {
     // Map에서 자신(userId)을 제외한 다른 유저를 반환
