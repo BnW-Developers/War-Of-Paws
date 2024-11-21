@@ -6,7 +6,21 @@ import userSessionManager from '../../classes/managers/userSessionManager.js';
 import locationSyncManager from '../../classes/managers/locationSyncManager.js';
 
 /**
- * 위치 동기화 핸들러
+ * **위치 동기화 핸들러**
+ * 
+ * <위치 동기화 과정>
+     1. 모든 유닛의 동기화 위치값 산출
+        - `locationNotification`: 해당 플레이어가 보유한 유닛들의 현재 위치값을 수신 
+        - `adjustPosition()`: 위치값을 보정
+        - `addSyncPositions()`: 보정한 위치값 및 보정 여부를 서버에 저장
+        - 위 과정을 두 플레이어가 모두 완료
+     2. `isSyncReady()`: 위 과정을 완료했는지 확인
+     3. `syncPositions()`: 위치 동기화 실행
+        - 각 플레이어에게 새로운 위치값을 전송
+          - 보유한 (직접 소환한) 유닛의 경우 위치가 보정된 위치값만 전송
+          - 보유하지 않은 (상대방 진영의) 유닛의 경우 모든 위치값을 전송
+        - 서버에 저장한 동기화 위치값을 삭제
+     4. 각 플레이어는 수신한 위치값으로 해당 유닛들의 위치를 수정 (보간 적용)
  * @param {net.Socket} socket
  * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}[]}}} payload
  */
@@ -43,7 +57,9 @@ const locationNotification = (socket, payload) => {
     // 해당 클라이언트가 보유한 유닛들의 위치
     const { unitPositions } = payload;
 
+    // 동기화할 위치값
     const syncPositions = [];
+
     for (const unitPosition of unitPositions) {
       const { unitId, position } = unitPosition;
 
@@ -72,7 +88,7 @@ const locationNotification = (socket, payload) => {
     // 보정한 위치를 동기화 위치 배열에 추가
     locationSyncManager.addSyncPositions(gameId, userId, syncPositions);
 
-    // 두 클라이언트로부터 위치값을 모두 받았을 때 상태동기화 실행
+    // 양 플레이어로부터 위치패킷을 받고 처리했다면 (모든 유닛의 동기화 위치값이 산출되었다면) 위치 동기화 실행
     if (locationSyncManager.isSyncReady(gameId)) {
       // 검증: 상대방 유저의 플레이어 데이터가 존재하는가?
       const opponentGameData = gameSession.getOpponentGameDataByUserId(userId);
