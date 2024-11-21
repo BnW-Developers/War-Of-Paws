@@ -1,12 +1,20 @@
 import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
+import userSessionManager from '../managers/userSessionManager.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import gameSessionManager from '../managers/gameSessionManager.js';
 import CustomErr from '../../utils/error/customErr.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import logger from '../../utils/logger.js';
 import { errCodes } from './../../utils/error/errCodes.js';
+
 
 class Game {
   constructor(gameId) {
     this.gameId = gameId;
     this.players = new Map();
+    this.startRequestUsers = new Set();
+    this.startRequestTimer = null;
     this.inProgress = false;
     this.checkPointManager = null;
   }
@@ -32,11 +40,84 @@ class Game {
     this.players.set(user.userId, playerGameData);
     user.setCurrentGameId(this.gameId);
 
-    // TODO: redis에 게임 상태 저장
-
+    // 유저들의 gameStartRequest를 기다림
     if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
+      this.setupGameStartTimer();
+    }
+  }
+
+  // 유저들의 gameStartRequest를 기다림
+  setupGameStartTimer() {
+    // 게임 시작 타이머 (30초 대기)
+    this.startRequestTimer = setTimeout(() => {
+      this.checkGameStart();
+    }, GAME_CONSTANTS.GAME_START_TIMEOUT);
+  }
+
+  checkGameStart() {
+    // 타이머 만료 시 게임 취소
+    if (this.startRequestUsers.size < GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
+      // TODO: 게임 취소 패킷 추가
+      //this.cancleGame();
+    }
+  }
+
+  async handleGameStartRequest(userId) {
+    if (!this.players.has(userId)) return;
+
+    this.startRequestUsers.add(userId);
+
+    // 모든 플레이어가 게임 시작 요청을 보냈다면
+    if (this.startRequestUsers.size >= GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
       this.startGame();
     }
+  }
+
+  startGame() {
+    logger.info(`start game users: ${[...this.startRequestUsers]}`);
+    // 타이머 제거
+    if (this.startRequestTimer) {
+      clearTimeout(this.startRequestTimer);
+    }
+
+    this.inProgress = true;
+
+    // 각 플레이어에게 게임 시작 알림
+    for (const [userId, _] of this.players) {
+      const user = userSessionManager.getUserByUserId(userId);
+      if (user) {
+        const response = createResponse(
+          PACKET_TYPE.GAME_START_NOTIFICATION,
+          user.getNextSequence(),
+        );
+        user.getSocket().write(response);
+      }
+    }
+
+    this.startGameProgress();
+  }
+
+  startGameProgress() {
+    // 체크포인트 매니저 생성
+    const player = [...this.players.values()];
+    this.checkPointManager = new CheckPointManager(player[0], player[1]);
+  }
+
+  cancleGame() {
+    for (const [userId, _] of this.players) {
+      const user = userSessionManager.getUserByUserId(userId);
+      if (user) {
+        const response = createResponse(PACKET_TYPE.MATCH_CANCELLED, user.getNextSequence(), {
+          message: 'Game start timeout',
+        });
+        user.getSocket().write(response);
+
+        user.setCurrentGameId(null);
+      }
+    }
+
+    // 게임 세션 제거
+    gameSessionManager.removeGameSession(this.gameId);
   }
 
   // userId로 게임 세션에서 유저 검색
@@ -82,15 +163,6 @@ class Game {
 
   getCheckPointManager() {
     return this.checkPointManager;
-  }
-
-  startGame() {
-    this.inProgress = true;
-
-    // 체크포인트 매니저 생성
-    const player = [...this.players.values()];
-    this.checkPointManager = new CheckPointManager(player[0], player[1]);
-    // TODO: 매치 완료 패킷 전송
   }
 }
 
