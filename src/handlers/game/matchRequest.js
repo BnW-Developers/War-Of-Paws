@@ -12,7 +12,7 @@ const matchRequest = async (socket, payload) => {
     }
     logger.info(`match request id: ${user.getUserId()}`);
 
-    const result = await matchingSystem.addQueue(user.getUserId(), species);
+    const result = await matchingSystem.addQueue(user, species);
     if (result.success) {
       logger.info(`user ${user.getUserId()} add queue result: ${result.message}`);
     } else {

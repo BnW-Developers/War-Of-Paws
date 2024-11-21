@@ -181,8 +181,13 @@ class MatchingSystem {
   }
 
   // 종족에 맞는 매칭 큐에 유저 등록
-  async addQueue(userId, species) {
+  async addQueue(user, species) {
     try {
+      // 유저 매치매이킹 상태 업데이트 (true)
+      user.setIsMatchmaking(true);
+
+      const userId = user.getUserId();
+      // 종족에 따른 queueKey 결정
       const queueKey = species.toUpperCase() === 'CAT' ? this.CAT_QUEUE_KEY : this.DOG_QUEUE_KEY;
       const timestamp = Date.now();
       // sorted set에 유저 저장. score: timestamp, value: userId
@@ -197,6 +202,10 @@ class MatchingSystem {
   // 매칭 큐에서 유저 삭제
   async removeUser(userId, species) {
     try {
+      // 유저 매치매이킹 상태 업데이트 (false)
+      const user = userSessionManager.getUserByUserId(userId);
+      user.setIsMatchmaking(false);
+
       const queueKey = species === 'CAT' ? this.CAT_QUEUE_KEY : this.DOG_QUEUE_KEY;
       await this.redis.zrem(queueKey, userId);
     } catch (err) {
