@@ -7,6 +7,7 @@ import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 import { createResponse } from '../utils/response/createResponse.js';
 import CustomErr from './../utils/error/customErr.js';
+import sendPacket from './../classes/models/sendPacket.class.js';
 
 class MatchingSystem {
   constructor() {
@@ -175,8 +176,8 @@ class MatchingSystem {
       //opponentspecies: species1,
     });
 
-    user1.getSocket().write(response1);
-    user2.getSocket().write(response2);
+    sendPacket.enQueue(user1.getSocket(), response1);
+    sendPacket.enQueue(user2.getSocket(), response2);
   }
 
   // 종족에 맞는 매칭 큐에 유저 등록
