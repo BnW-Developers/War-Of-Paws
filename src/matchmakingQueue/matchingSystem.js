@@ -1,9 +1,12 @@
+import gameSessionManager from '../classes/managers/gameSessionManager.js';
 import userSessionManager from '../classes/managers/userSessionManager.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import redisClient from '../redis/redisClient.js';
+import { errCodes } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 import { createResponse } from '../utils/response/createResponse.js';
+import CustomErr from './../utils/error/customErr.js';
 
 class MatchingSystem {
   constructor() {
@@ -132,26 +135,49 @@ class MatchingSystem {
       await this.removeUser(user2Id, species2);
 
       logger.info(`match complete: ${species1} vs ${species2}`);
-      const user1 = userSessionManager.getUserByUserId(user1Id);
-      const user2 = userSessionManager.getUserByUserId(user2Id);
 
-      const response1 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user1.getNextSequence(), {
-        opponentName: user2Id,
-        opponentspecies: species2,
-      });
-      const response2 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user2.getNextSequence(), {
-        opponentName: user1Id,
-        opponentspecies: species1,
-      });
-
-      user1.getSocket().write(response1);
-      user2.getSocket().write(response2);
-
-      // TODO 게임 세션 생성
+      // 매칭 완료 이벤트
+      this.handleMatchComplete(user1Id, user2Id);
     } catch (err) {
       err.message = 'tryMatch Error: ' + err.message;
       handleErr(null, err);
     }
+  }
+
+  handleMatchComplete(user1Id, user2Id) {
+    console.log('user1Id, user2Id: ', user1Id, user2Id);
+    // 유저 id로 유저 인스턴스 불러오기
+    const user1 = userSessionManager.getUserByUserId(user1Id);
+    const user2 = userSessionManager.getUserByUserId(user2Id);
+
+    if (!user1 || !user2) {
+      throw new CustomErr(errCodes.SOCKET_ERR, '매칭된 유저를 찾을 수 없습니다.');
+    }
+
+    // 게임 세션 생성
+    const gameSession = gameSessionManager.addGameSession();
+    if (!gameSession) {
+      throw new CustomErr(errCodes.SOCKET_ERR, '게임 생성에 실패했습니다.');
+    }
+    gameSession.addUser(user1);
+    gameSession.addUser(user2);
+
+    // 유저에게 매칭 결과 전송
+    this.matchNotification(user1, user2);
+  }
+
+  matchNotification(user1, user2) {
+    const response1 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user1.getNextSequence(), {
+      opponentId: user2.getUserId(),
+      //opponentspecies: species2,
+    });
+    const response2 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user2.getNextSequence(), {
+      opponentId: user1.getUserId(),
+      //opponentspecies: species1,
+    });
+
+    user1.getSocket().write(response1);
+    user2.getSocket().write(response2);
   }
 
   // 종족에 맞는 매칭 큐에 유저 등록
