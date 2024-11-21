@@ -14,7 +14,7 @@ const matchRequest = async (socket, payload) => {
 
     const result = await matchingSystem.addQueue(user.getUserId(), species);
     if (result.success) {
-      logger.info(`user ${user.getUserId()} add queue result: `, result.message);
+      logger.info(`user ${user.getUserId()} add queue result: ${result.message}`);
     } else {
       throw new Error(`user ${user.getUserId()} add queue result: failed`);
     }
