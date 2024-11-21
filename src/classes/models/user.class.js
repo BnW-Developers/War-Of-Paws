@@ -4,6 +4,7 @@ class User {
     this.userId = userId;
     this.sequence = 0;
     this.currentGameId = null; // 유저가 참가한 게임 세션 id
+    this.isMatchmaking = false;
   }
 
   getSocket() {
@@ -24,6 +25,14 @@ class User {
 
   setCurrentGameId(gameId) {
     this.currentGameId = gameId;
+  }
+
+  getIsMatchmaking() {
+    return this.isMatchmaking;
+  }
+
+  setIsMatchmaking(isMatchmaking) {
+    this.isMatchmaking = isMatchmaking;
   }
 }
 
