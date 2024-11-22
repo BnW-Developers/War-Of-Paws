@@ -1,7 +1,6 @@
 import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 import userSessionManager from '../managers/userSessionManager.js';
-import { createResponse } from '../../utils/response/createResponse.js';
 import gameSessionManager from '../managers/gameSessionManager.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
@@ -9,6 +8,7 @@ import logger from '../../utils/logger.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import CheckPointManager from '../services/CheckPointManager.class.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 class Game {
   constructor(gameId) {
@@ -98,11 +98,7 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        const response = createResponse(
-          PACKET_TYPE.GAME_START_NOTIFICATION,
-          user.socket.sequence++,
-        );
-        user.getSocket().write(response);
+        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION);
       }
     }
 
@@ -119,10 +115,9 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        const response = createResponse(PACKET_TYPE.MATCH_CANCELLED, user.socket.sequence++, {
+        sendPacket(user.getSocket(), PACKET_TYPE.MATCH_CANCELLED, {
           message: 'Game start timeout',
         });
-        user.getSocket().write(response);
 
         user.setCurrentGameId(null);
       }

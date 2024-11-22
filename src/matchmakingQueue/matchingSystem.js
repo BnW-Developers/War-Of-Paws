@@ -5,9 +5,8 @@ import redisClient from '../redis/redisClient.js';
 import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
-import { createResponse } from '../utils/response/createResponse.js';
+import { sendPacket } from '../utils/packet/packetManager.js';
 import CustomErr from './../utils/error/customErr.js';
-import sendPacket from './../classes/models/sendPacket.class.js';
 
 class MatchingSystem {
   constructor() {
@@ -107,11 +106,10 @@ class MatchingSystem {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
         // TODO: 매치 실패 notification?
-        const response = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user.socket.sequence++, {
+        sendPacket(user.socket, PACKET_TYPE.MATCH_NOTIFICATION, {
           opponentName: '매칭 시간 초과',
           opponentspecies: '시간초과',
         });
-        sendPacket.enQueue(user.getSocket(), response);
       }
     } catch (err) {
       err.message = 'handleMatchTimeout Error: ' + err.message;
@@ -167,17 +165,14 @@ class MatchingSystem {
   }
 
   matchNotification(user1, user2) {
-    const response1 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user1.socket.sequence++, {
+    sendPacket(user1.getSocket(), PACKET_TYPE.MATCH_NOTIFICATION, {
       opponentId: user2.getUserId(),
       //opponentspecies: species2,
     });
-    const response2 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user2.socket.sequence++, {
+    sendPacket(user2.getSocket(), PACKET_TYPE.MATCH_NOTIFICATION, {
       opponentId: user1.getUserId(),
       //opponentspecies: species1,
     });
-
-    sendPacket.enQueue(user1.getSocket(), response1);
-    sendPacket.enQueue(user2.getSocket(), response2);
   }
 
   // 종족에 맞는 매칭 큐에 유저 등록

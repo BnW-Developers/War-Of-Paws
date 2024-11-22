@@ -5,9 +5,8 @@ import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { validateSignUp } from '../../utils/joi/validateSignUp.js';
 import logger from '../../utils/logger.js';
-import { createPacket } from '../../utils/response/createPacket.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 import bcrypt from 'bcryptjs';
-import sendPacket from '../../classes/models/sendPacket.class.js';
 
 const registerRequest = async (socket, payload) => {
   try {
@@ -32,9 +31,8 @@ const registerRequest = async (socket, payload) => {
 
     logger.info(`register success id: ${id}`);
 
-    // 응답 전송
-    const response = createPacket(PACKET_TYPE.REGISTER_RESPONSE, 1, {});
-    sendPacket.enQueue(socket, response);
+    // 패킷 전송
+    sendPacket(socket, PACKET_TYPE.REGISTER_RESPONSE);
   } catch (err) {
     handleErr(socket, err);
   }

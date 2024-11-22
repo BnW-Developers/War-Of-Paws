@@ -1,12 +1,11 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
-import sendPacket from '../../classes/models/sendPacket.class.js';
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import { createResponse } from '../../utils/response/createResponse.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 const purchaseBuildingRequest = (socket, payload) => {
   try {
@@ -35,28 +34,17 @@ const purchaseBuildingRequest = (socket, payload) => {
     // buildings에 추가
     playerGameData.addBuilding(assetId);
 
-    const purchaseBuildingPacket = createResponse(
-      PACKET_TYPE.PURCHASE_BUILDING_RESPONSE,
-      socket.sequence++,
-      {
-        assetId,
-      },
-    );
-    sendPacket.enQueue(socket, purchaseBuildingPacket);
+    sendPacket(socket, PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, {
+      assetId,
+    });
 
-    const opponnetSocket = opponentPlayerGameData.getSocket();
-    if (!opponnetSocket) {
+    const opponentSocket = opponentPlayerGameData.getSocket();
+    if (!opponentSocket) {
       throw new CustomErr(ERR_CODES.SOCKET_ERR, 'Opponent Socket not found');
     }
-
-    const enemyBuildingPacket = createResponse(
-      PACKET_TYPE.ADD_ENEMY_BUILDING_NOTIFICATION,
-      socket.sequence++,
-      {
-        assetId,
-      },
-    );
-    sendPacket.enQueue(opponnetSocket, enemyBuildingPacket);
+    sendPacket(opponentSocket, PACKET_TYPE.ADD_ENEMY_BUILDING_NOTIFICATION, {
+      assetId,
+    });
   } catch (err) {
     handleErr(socket, err);
   }
