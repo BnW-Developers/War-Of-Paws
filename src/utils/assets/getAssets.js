@@ -2,6 +2,7 @@ import { ASSET_TYPE } from '../../constants/assets.js';
 import { gameAssets } from '../../init/loadAssets.js';
 import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
+import { SPECIES, DIRECTION } from '../../constants/assets';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
@@ -62,4 +63,18 @@ export const getGameAssetById = (assetType, id) => {
         assetType,
       );
   }
+};
+
+/**
+ * 진영(멍? 냥?)과 방향에 부합하는 경로를 반환
+ * @param {SPECIES} species
+ * @param {DIRECTION} direction
+ * @returns {{x: float, y: float, z: float}[]}
+ */
+export const getPath = (species, direction) => {
+  const { paths } = getGameAsset(ASSET_TYPE.PATH);
+  const pathData = paths.data.find(
+    (path) => path.species === species && path.direction === direction,
+  );
+  return pathData.path;
 };
