@@ -37,7 +37,7 @@ export let gameAssets = {};
  * 전체 게임에셋을 불러오는 함수
  *
  * 게임 시작시 실행
- * @returns {{base: {}, monsters: {}, towers: {}}} JSON화된 모든 게임에셋
+ * @returns {{buildings: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const loadGameAssets = async () => {
   const [buildings, units] = await Promise.all([
