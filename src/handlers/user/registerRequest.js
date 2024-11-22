@@ -6,7 +6,7 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import { validateSignUp } from '../../utils/joi/validateSignUp.js';
 import logger from '../../utils/logger.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const registerRequest = async (socket, payload) => {
   try {
