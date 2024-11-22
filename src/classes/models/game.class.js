@@ -7,7 +7,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
 import { errCodes } from './../../utils/error/errCodes.js';
-
+import { handleErr } from './../../utils/error/handlerErr.js';
 
 class Game {
   constructor(gameId) {
@@ -32,17 +32,24 @@ class Game {
   }
 
   addUser(user) {
-    if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
-      throw new Error('Game is full');
-    }
+    try {
+      if (!user) {
+        throw new Error('User for addUser not found');
+      }
+      if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
+        throw new Error('Game is full');
+      }
 
-    const playerGameData = new PlayerGameData(user);
-    this.players.set(user.userId, playerGameData);
-    user.setCurrentGameId(this.gameId);
+      const playerGameData = new PlayerGameData(user);
+      this.players.set(user.userId, playerGameData);
+      user.setCurrentGameId(this.gameId);
 
-    // 유저들의 gameStartRequest를 기다림
-    if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
-      this.setupGameStartTimer();
+      // 유저들의 gameStartRequest를 기다림
+      if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
+        this.setupGameStartTimer();
+      }
+    } catch (err) {
+      handleErr(null, err);
     }
   }
 
@@ -58,18 +65,22 @@ class Game {
     // 타이머 만료 시 게임 취소
     if (this.startRequestUsers.size < GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
       // TODO: 게임 취소 패킷 추가
-      //this.cancleGame();
+      //this.cancelGame();
     }
   }
 
   async handleGameStartRequest(userId) {
-    if (!this.players.has(userId)) return;
+    try {
+      if (!this.players.has(userId)) return;
 
-    this.startRequestUsers.add(userId);
+      this.startRequestUsers.add(userId);
 
-    // 모든 플레이어가 게임 시작 요청을 보냈다면
-    if (this.startRequestUsers.size >= GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
-      this.startGame();
+      // 모든 플레이어가 게임 시작 요청을 보냈다면
+      if (this.startRequestUsers.size >= GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
+        this.startGame();
+      }
+    } catch (err) {
+      handleErr(null, err);
     }
   }
 
@@ -94,16 +105,16 @@ class Game {
       }
     }
 
-    this.startGameProgress();
+    this.initGame();
   }
 
-  startGameProgress() {
+  initGame() {
     // 체크포인트 매니저 생성
     const player = [...this.players.values()];
     this.checkPointManager = new CheckPointManager(player[0], player[1]);
   }
 
-  cancleGame() {
+  cancelGame() {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
