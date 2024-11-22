@@ -85,6 +85,12 @@ class PlayerGameData {
     return this.socket;
   }
 
+  attackBase(damage) {
+    const newBaseHp = this.baseHp - damage;
+    this.baseHp = newBaseHp > 0 ? newBaseHp : 0;
+    return this.baseHp;
+  }
+
   getUnit(unitId) {
     return this.units.get(unitId);
   }
