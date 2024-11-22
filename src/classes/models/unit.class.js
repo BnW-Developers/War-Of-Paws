@@ -3,8 +3,6 @@ class Unit {
 
   constructor(unitData, toTop) {
     this.assetId = unitData.id;
-    this.displayName = unitData.DisplayName;
-    this.description = unitData.Description;
     this.maxHp = unitData.maxHp;
     this.hp = unitData.maxHp;
     this.attackPower = unitData.atk;
