@@ -1,4 +1,5 @@
 export const ASSET_TYPE = Object.freeze({
   BUILDING: 0,
-  UNIT: 1,
+  PATH: 1,
+  UNIT: 2,
 });
