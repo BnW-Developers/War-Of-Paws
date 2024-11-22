@@ -1,5 +1,5 @@
 import { PACKET_TYPE } from '../../constants/header.js';
-import { createResponse } from '../response/createResponse.js';
+import { createPacket } from '../response/createPacket.js';
 import { findValueInObject } from '../util/findValueInObject.js';
 import logger from './../logger.js';
 import { ERR_CODES } from './errCodes.js';
@@ -17,7 +17,7 @@ export const handleErr = (socket, err) => {
     errorCode = err.code;
     logger.error(`Code: ${errorCode}, Message : ${errorMessage}`);
     socket.write(
-      createResponse(PACKET_TYPE.ERROR_NOTIFICATION, socket.sequence++, {
+      createPacket(PACKET_TYPE.ERROR_NOTIFICATION, socket.sequence++, {
         errorCode,
         errorMessage,
       }),

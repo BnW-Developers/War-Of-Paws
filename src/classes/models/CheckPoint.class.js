@@ -1,7 +1,6 @@
 import Timer from '../utils/Timer.class.js';
-import sendPacket from './sendPacket.class.js';
-import { createResponse } from './../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 class CheckPoint {
   #users;
@@ -140,12 +139,8 @@ class CheckPoint {
     for (let i = 0; i < 2; i++) {
       const payloadA = { isTop: this.name === 'top' };
       const payloadB = { isTop: this.name === 'top', isOpponent: i === target ? false : true };
-      const packet = createResponse(
-        packetType,
-        this[`player${i}`].socket.sequence++,
-        payload ? payloadA : payloadB,
-      );
-      sendPacket.enQueue(this[`player${i}`].socket, packet);
+
+      sendPacket(this[`player${i}`].socket, packetType, payload ? payloadA : payloadB);
     }
   }
 }

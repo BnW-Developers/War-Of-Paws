@@ -1,12 +1,11 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
-import sendPacket from '../../classes/models/sendPacket.class.js';
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import { createResponse } from '../../utils/response/createResponse.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 const spawnUnitRequest = (socket, payload) => {
   try {
@@ -31,30 +30,24 @@ const spawnUnitRequest = (socket, payload) => {
     // 유닛 생성
     const unitId = playerGameData.addUnit(assetId, toTop);
 
-    // 응답 생성
-    const spawnUnitPacket = createResponse(PACKET_TYPE.SPAWN_UNIT_RESPONSE, socket.sequence++, {
+    // 패킷 전송
+    sendPacket(socket, PACKET_TYPE.SPAWN_UNIT_RESPONSE, {
       assetId,
       unitId,
       toTop,
     });
-    sendPacket.enQueue(socket, spawnUnitPacket);
 
     const opponentSocket = opponentPlayerGameData.getSocket();
     if (!opponentSocket) {
       throw new CustomErr(ERR_CODES.SOCKET_ERR, 'Opponent socket not found');
     }
 
-    // 응답 생성
-    const spawnEnemyUnitPacket = createResponse(
-      PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION,
-      opponentSocket.sequence++,
-      {
-        assetId,
-        unitId,
-        toTop,
-      },
-    );
-    sendPacket.enQueue(opponentSocket, spawnEnemyUnitPacket);
+    // 패킷 전송
+    sendPacket(opponentSocket, PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION, {
+      assetId,
+      unitId,
+      toTop,
+    });
   } catch (err) {
     handleErr(socket, err);
   }
