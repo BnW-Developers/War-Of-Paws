@@ -47,6 +47,7 @@ message S2CLoginResponse {
 }
 
 message C2SMatchRequest {
+  string species = 1;
 }
 
 message S2CMatchNotification {
