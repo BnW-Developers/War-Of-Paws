@@ -7,7 +7,9 @@ import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
 import { errCodes } from './../../utils/error/errCodes.js';
+import CheckPointManager from '../services/CheckPointManager.class';
 import { handleErr } from './../../utils/error/handlerErr.js';
+
 
 class Game {
   constructor(gameId) {
@@ -134,6 +136,16 @@ class Game {
   // userId로 게임 세션에서 유저 검색
   getPlayerGameDataByUserId(userId) {
     return this.players.get(userId);
+  }
+
+  getOpponentUserId(userId) {
+    // Map에서 자신(userId)을 제외한 다른 유저를 반환
+    for (const key of this.players.keys()) {
+      if (key !== userId) {
+        return key;
+      }
+    }
+    return null; // 상대방이 없는 경우
   }
 
   // userId로 게임 세션의 다른 유저 검색
