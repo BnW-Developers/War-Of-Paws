@@ -3,7 +3,7 @@ import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
@@ -14,14 +14,14 @@ const spawnUnitRequest = (socket, payload) => {
     const { playerGameData, opponentPlayerGameData } =
       gameSessionManager.getAllPlayerGameDataBySocket(socket);
     if (!playerGameData || !opponentPlayerGameData)
-      throw new CustomErr(errCodes.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
+      throw new CustomErr(ERR_CODES.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
 
     // 유닛 데이터 검증
     const unitCost = getGameAssetById(ASSET_TYPE.UNIT, assetId)?.cost;
 
     // 골드 확인
     if (playerGameData.getMineral() < unitCost) {
-      throw new CustomErr(errCodes.UNIT_INSUFFICIENT_FUNDS, 'Not enough minerals');
+      throw new CustomErr(ERR_CODES.UNIT_INSUFFICIENT_FUNDS, 'Not enough minerals');
     }
 
     // 골드 차감
@@ -40,7 +40,7 @@ const spawnUnitRequest = (socket, payload) => {
 
     const opponentSocket = opponentPlayerGameData.getSocket();
     if (!opponentSocket) {
-      throw new CustomErr(errCodes.SOCKET_ERR, 'Opponent socket not found');
+      throw new CustomErr(ERR_CODES.SOCKET_ERR, 'Opponent socket not found');
     }
 
     // 응답 생성

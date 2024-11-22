@@ -2,7 +2,7 @@ import gameSessionManager from '../classes/managers/gameSessionManager.js';
 import userSessionManager from '../classes/managers/userSessionManager.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import redisClient from '../redis/redisClient.js';
-import { errCodes } from '../utils/error/errCodes.js';
+import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 import { createResponse } from '../utils/response/createResponse.js';
@@ -151,13 +151,13 @@ class MatchingSystem {
     const user2 = userSessionManager.getUserByUserId(user2Id);
 
     if (!user1 || !user2) {
-      throw new CustomErr(errCodes.SOCKET_ERR, '매칭된 유저를 찾을 수 없습니다.');
+      throw new CustomErr(ERR_CODES.SOCKET_ERR, '매칭된 유저를 찾을 수 없습니다.');
     }
 
     // 게임 세션 생성
     const gameSession = gameSessionManager.addGameSession();
     if (!gameSession) {
-      throw new CustomErr(errCodes.SOCKET_ERR, '게임 생성에 실패했습니다.');
+      throw new CustomErr(ERR_CODES.SOCKET_ERR, '게임 생성에 실패했습니다.');
     }
     gameSession.addUser(user1);
     gameSession.addUser(user2);

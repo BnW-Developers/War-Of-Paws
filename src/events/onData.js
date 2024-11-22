@@ -5,7 +5,7 @@ import CustomErr from '../utils/error/customErr.js';
 import { getHandlers } from '../init/loadHandlers.js';
 import { snakeToCamel } from './../utils/formatter/snakeToCamel.js';
 import { PACKET_TYPE_REVERSED } from '../constants/header.js';
-import { errCodes } from '../utils/error/errCodes.js';
+import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from './../utils/error/handlerErr.js';
 
 export const onData = (socket) => (data) => {
@@ -28,13 +28,13 @@ export const onData = (socket) => (data) => {
     const { version, packetType, payload } = packet;
 
     if (version !== config.client.version) {
-      throw new CustomErr(errCodes.CLIENT_VERSION_MISMATCH, 'Check to version');
+      throw new CustomErr(ERR_CODES.CLIENT_VERSION_MISMATCH, 'Check to version');
     }
     if (!PACKET_TYPE_REVERSED[packetType]) {
-      throw new CustomErr(errCodes.UNKNOWN_PACKET_TYPE, 'Unknown packet type');
+      throw new CustomErr(ERR_CODES.UNKNOWN_PACKET_TYPE, 'Unknown packet type');
     }
     if (!payload || !GamePacket.decode(payload)) {
-      throw new CustomErr(errCodes.PACKET_DECODE_ERR, 'Packet decode error');
+      throw new CustomErr(ERR_CODES.PACKET_DECODE_ERR, 'Packet decode error');
     }
 
     const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
@@ -42,7 +42,7 @@ export const onData = (socket) => (data) => {
     const handler = handlers[payloadName];
 
     if (!handler) {
-      throw new CustomErr(errCodes.HANDLER_NOT_FOUND, 'Handler not found');
+      throw new CustomErr(ERR_CODES.HANDLER_NOT_FOUND, 'Handler not found');
     }
 
     const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };

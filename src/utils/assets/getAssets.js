@@ -1,7 +1,7 @@
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { gameAssets } from '../../init/loadAssets.js';
 import CustomErr from '../error/customErr.js';
-import { errCodes } from '../error/errCodes';
+import { ERR_CODES } from '../error/errCodes';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
@@ -27,7 +27,11 @@ export const getGameAsset = (assetType) => {
     case ASSET_TYPE.UNIT:
       return units;
     default:
-      throw CustomErr(errCodes.INVALID_ASSET_TYPE, '올바르지 않은 게임에셋 타입입니다:', assetType);
+      throw CustomErr(
+        ERR_CODES.INVALID_ASSET_TYPE,
+        '올바르지 않은 게임에셋 타입입니다:',
+        assetType,
+      );
   }
 };
 
@@ -48,6 +52,10 @@ export const getGameAssetById = (assetType, id) => {
     case ASSET_TYPE.UNIT:
       return units.data.find((unit) => unit.id === id);
     default:
-      throw CustomErr(errCodes.INVALID_ASSET_TYPE, '올바르지 않은 게임에셋 타입입니다:', assetType);
+      throw CustomErr(
+        ERR_CODES.INVALID_ASSET_TYPE,
+        '올바르지 않은 게임에셋 타입입니다:',
+        assetType,
+      );
   }
 };

@@ -1,7 +1,7 @@
 import userSessionManager from '../classes/managers/userSessionManager.js';
 import matchingSystem from '../matchmakingQueue/matchingSystem.js';
 import CustomErr from '../utils/error/customErr.js';
-import { errCodes } from '../utils/error/errCodes.js';
+import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 
@@ -22,7 +22,7 @@ export const onError = (socket) => (err) => {
       }
     }
     userSessionManager.removeUser(user.getUserId());
-    handleErr(socket, new CustomErr(errCodes.SOCKET_ERR, `Socket Error: ${err.message}`));
+    handleErr(socket, new CustomErr(ERR_CODES.SOCKET_ERR, `Socket Error: ${err.message}`));
   } catch (err) {
     handleErr(null, err);
   }

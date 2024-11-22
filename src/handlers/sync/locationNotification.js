@@ -1,5 +1,5 @@
 import { handleErr } from '../../utils/error/handlerErr.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import CustomErr from '../../utils/error/customErr.js';
 import locationSyncManager from '../../classes/managers/locationSyncManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
@@ -42,7 +42,7 @@ const locationNotification = (socket, payload) => {
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
       const unit = userGameData.getUnit(unitId);
       if (!unit) {
-        throw new CustomErr(errCodes.UNOWNED_UNIT, '유저가 보유한 유닛이 아닙니다.');
+        throw new CustomErr(ERR_CODES.UNOWNED_UNIT, '유저가 보유한 유닛이 아닙니다.');
       }
 
       const actualPosition = [position.x, 0, position.z]; // 실제 위치 (보유 클라이언트 기준)

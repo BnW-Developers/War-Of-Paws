@@ -1,6 +1,6 @@
 import sendPacket from '../../classes/models/sendPacket.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import CustomErr from './../../utils/error/customErr.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
@@ -10,11 +10,11 @@ const attackBaseRequest = (socket, payload) => {
   try {
     const { player, opponent } = gameSessionManager.getAllPlayerGameDataBySocket(socket);
     if (!player || !opponent) {
-      throw new CustomErr(errCodes.USER_NOT_FOUND, '유닛 정보를 불러오는데 실패하였습니다.');
+      throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '유닛 정보를 불러오는데 실패하였습니다.');
     }
 
     const damage = player.getUnitById(unitId).getAttackPower();
-    if (!damage) throw new CustomErr(errCodes.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
+    if (!damage) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
 
     const newBaseHp = opponent.attackBase(damage);
 

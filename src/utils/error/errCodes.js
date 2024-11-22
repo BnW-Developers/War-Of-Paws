@@ -1,4 +1,4 @@
-export const errCodes = {
+export const ERR_CODES = {
   // 패킷 및 페이로드 관련 에러
   SOCKET_ERR: 10000, // 소켓 연결 오류
   CLIENT_VERSION_MISMATCH: 10001, // 클라이언트 버전 불일치
@@ -63,9 +63,8 @@ export const errCodes = {
 
   // 게임에셋 관련 에러
   INVALID_ASSET_TYPE: 11300, // 잘못된 에셋 타입
-  
+
   // Game과 User Session 관련 에러
   GAME_SESSION_NOT_FOUND: 11400, // 게임 세션을 찾을 수 없음
   USER_SESSION_NOT_FOUND: 11401, // 유저 세션을 찾을 수 없음
-
 };

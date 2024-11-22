@@ -1,7 +1,7 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
@@ -13,7 +13,7 @@ const attackUnitRequest = (socket, payload) => {
       gameSessionManager.getAllPlayerGameDataBySocket(socket);
 
     if (!playerGameData || !opponentPlayerGameData)
-      throw new CustomErr(errCodes.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
+      throw new CustomErr(ERR_CODES.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
 
     // 공격 유닛 가져오기
     const attackUnit = playerGameData.getUnitById(unitId);
@@ -51,7 +51,7 @@ const attackUnitRequest = (socket, payload) => {
     // 상대방 공격 Notification
     const opponentSocket = opponentPlayerGameData.getSocket();
     if (!opponentSocket) {
-      throw new CustomErr(errCodes.OPPONENT_SOCKET_NOT_FOUND, 'Opponent socket not found');
+      throw new CustomErr(ERR_CODES.OPPONENT_SOCKET_NOT_FOUND, 'Opponent socket not found');
     }
     const opponentNotificationPacket = createResponse(PACKET_TYPE.ENEMY_UNIT_ATTACK_NOTIFICATION, {
       unitInfos: opponentUnitInfos,

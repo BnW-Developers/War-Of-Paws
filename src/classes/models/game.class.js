@@ -6,10 +6,9 @@ import gameSessionManager from '../managers/gameSessionManager.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
-import { errCodes } from './../../utils/error/errCodes.js';
+import { ERR_CODES } from './../../utils/error/errCodes.js';
 import CheckPointManager from '../services/CheckPointManager.class';
 import { handleErr } from './../../utils/error/handlerErr.js';
-
 
 class Game {
   constructor(gameId) {
@@ -162,7 +161,7 @@ class Game {
   getAllPlayerGameDataBySocket(socket) {
     // 플레이어가 2명이 아니면 null 반환
     if (this.players.size !== 2)
-      throw new CustomErr(errCodes.USER_NOT_FOUND, '게임 세션 내 유저가 2명이 아닙니다.');
+      throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '게임 세션 내 유저가 2명이 아닙니다.');
 
     let player = undefined;
     let opponent = undefined;

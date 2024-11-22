@@ -40,7 +40,7 @@ export const handleErr = (socket, err) => {
 ```javascript
 try {
   // 커스텀 에러 (클라이언트에게 에러 패킷이 전달됨)
-  throw new CustomErr(errCodes.MISSING_FIELDS, '필드 하나 누락됐소');
+  throw new CustomErr(ERR_CODES.MISSING_FIELDS, '필드 하나 누락됐소');
 
   // 그냥 에러 (콘솔 에러 출력)
   throw new Error('로직 중 문제가 될 부분 체크');

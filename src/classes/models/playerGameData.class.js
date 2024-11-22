@@ -1,7 +1,7 @@
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/logger.js';
 import Unit from './unit.class.js';
 
@@ -31,7 +31,7 @@ class PlayerGameData {
   addUnit(assetId, toTop) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     if (!unitData) {
-      throw new CustomErr(errCodes.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
+      throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
     }
 
     const newUnit = new Unit(unitData, toTop);

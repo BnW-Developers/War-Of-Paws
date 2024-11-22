@@ -1,5 +1,5 @@
 import CustomErr from '../../utils/error/customErr.js';
-import { errCodes } from '../../utils/error/errCodes.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
 import userSessionManager from './userSessionManager.js';
@@ -44,7 +44,7 @@ class GameSessionManager {
     const user = userSessionManager.getUserBySocket(socket);
     if (!user)
       throw new CustomErr(
-        errCodes.USER_NOT_FOUND,
+        ERR_CODES.USER_NOT_FOUND,
         '유저 세션에서 유저 정보를 가져오는데 실패했습니다.',
       );
     const gameId = user.getCurrentGameId();
