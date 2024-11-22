@@ -7,6 +7,7 @@ import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 import { createResponse } from '../utils/response/createResponse.js';
 import CustomErr from './../utils/error/customErr.js';
+import sendPacket from './../classes/models/sendPacket.class.js';
 
 class MatchingSystem {
   constructor() {
@@ -19,7 +20,7 @@ class MatchingSystem {
     // 매칭 관련 상수
     this.CAT_QUEUE_KEY = 'matching:queue:cat';
     this.DOG_QUEUE_KEY = 'matching:queue:dog';
-    this.MAX_WAIT_TIME = 5 * 1000; // 5분
+    this.MAX_WAIT_TIME = 5 * 60 * 1000; // 5분
     this.MATCH_INTERVAL = 500; // 500ms마다 매치 시도
 
     this.matchingLoop();
@@ -110,7 +111,7 @@ class MatchingSystem {
           opponentName: '매칭 시간 초과',
           opponentspecies: '시간초과',
         });
-        user.getSocket().write(response);
+        sendPacket.enQueue(user.getSocket(), response);
       }
     } catch (err) {
       err.message = 'handleMatchTimeout Error: ' + err.message;
@@ -175,13 +176,19 @@ class MatchingSystem {
       //opponentspecies: species1,
     });
 
-    user1.getSocket().write(response1);
-    user2.getSocket().write(response2);
+    sendPacket.enQueue(user1.getSocket(), response1);
+    sendPacket.enQueue(user2.getSocket(), response2);
   }
 
   // 종족에 맞는 매칭 큐에 유저 등록
-  async addQueue(userId, species) {
+  async addQueue(user, species) {
     try {
+      // 유저 매치매이킹 상태 업데이트 (true)
+      user.setIsMatchmaking(true);
+      user.setCurrentSpecies(species.toUpperCase());
+
+      const userId = user.getUserId();
+      // 종족에 따른 queueKey 결정
       const queueKey = species.toUpperCase() === 'CAT' ? this.CAT_QUEUE_KEY : this.DOG_QUEUE_KEY;
       const timestamp = Date.now();
       // sorted set에 유저 저장. score: timestamp, value: userId
@@ -196,6 +203,10 @@ class MatchingSystem {
   // 매칭 큐에서 유저 삭제
   async removeUser(userId, species) {
     try {
+      // 유저 매치매이킹 상태 업데이트 (false)
+      const user = userSessionManager.getUserByUserId(userId);
+      user.setIsMatchmaking(false);
+
       const queueKey = species === 'CAT' ? this.CAT_QUEUE_KEY : this.DOG_QUEUE_KEY;
       await this.redis.zrem(queueKey, userId);
     } catch (err) {
