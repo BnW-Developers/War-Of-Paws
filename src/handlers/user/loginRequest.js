@@ -6,7 +6,7 @@ import { errCodes } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createJWT } from '../../utils/jwt/createToken.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import sendPacket from './../../classes/models/sendPacket.class.js';
 import logger from '../../utils/logger.js';
 

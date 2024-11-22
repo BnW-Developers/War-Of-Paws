@@ -1,3 +1,7 @@
+import { ASSET_TYPE } from '../../constants/assets.js';
+import { getGameAssetById } from '../../utils/assets/getAssets.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { errCodes } from '../../utils/error/errCodes.js';
 import logger from '../../utils/logger.js';
 import Unit from './unit.class.js';
 
@@ -24,12 +28,15 @@ class PlayerGameData {
     return this.unitIdCounter;
   }
 
-  // TODO: load JSON 업데이트 되면 인자로 unitData 객체 받아서 unit Class 생성
-  addUnit(assetId, attack, hp, toTop, position) {
-    // 여기에 unitData 생성자에 넣어주기
-    const unit = new Unit(assetId, toTop);
-    const unitId = unit.getUnitId();
-    this.units.set(unitId, unit);
+  addUnit(assetId, toTop) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    if (!unitData) {
+      throw new CustomErr(errCodes.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
+    }
+
+    const newUnit = new Unit(unitData, toTop);
+    const unitId = newUnit.getUnitId();
+    this.units.set(unitId, newUnit);
     return unitId;
   }
 
@@ -44,7 +51,7 @@ class PlayerGameData {
     return unit; // 유닛 객체 반환
   }
 
-  spentMineral(mineral) {
+  spendMineral(mineral) {
     this.minerals -= mineral;
     return this.minerals;
   }
@@ -63,6 +70,12 @@ class PlayerGameData {
 
   getSocket() {
     return this.socket;
+  }
+
+  attackBase(damage) {
+    const newBaseHp = this.baseHp - damage;
+    this.baseHp = newBaseHp > 0 ? newBaseHp : 0;
+    return this.baseHp;
   }
 
   getUnit(unitId) {
