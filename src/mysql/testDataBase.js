@@ -2,7 +2,7 @@ import { formatDate } from './../utils/formatter/dateFormatter.js';
 
 const testDbConnection = async (pool) => {
   try {
-    const [rows] = await pool.query('SELECT 1 + 1 AS solution');
+    await pool.query('SELECT 1 + 1 AS solution');
     const date = new Date();
     console.log(`[${formatDate(date)} - CONNECT] Database connected successfully `);
   } catch (err) {

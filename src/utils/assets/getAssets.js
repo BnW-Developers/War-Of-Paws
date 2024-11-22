@@ -1,7 +1,7 @@
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { gameAssets } from '../../init/loadAssets.js';
 import CustomErr from '../error/customErr.js';
-import { ERR_CODES } from '../error/errCodes';
+import { ERR_CODES } from '../error/errCodes.js';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수

@@ -1,6 +1,6 @@
 import Timer from '../utils/Timer.class.js';
 import sendPacket from './sendPacket.class.js';
-import { createResponse } from './../../utils/response/createResponse';
+import { createResponse } from './../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 
 class CheckPoint {

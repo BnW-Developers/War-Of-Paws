@@ -7,6 +7,7 @@ import { validateSignUp } from '../../utils/joi/validateSignUp.js';
 import logger from '../../utils/logger.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import bcrypt from 'bcryptjs';
+import sendPacket from '../../classes/models/sendPacket.class.js';
 
 const registerRequest = async (socket, payload) => {
   try {

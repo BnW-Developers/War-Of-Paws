@@ -1,4 +1,5 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
+import sendPacket from '../../classes/models/sendPacket.class.js';
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
@@ -54,7 +55,7 @@ const spawnUnitRequest = (socket, payload) => {
       },
     );
     sendPacket.enQueue(opponentSocket, spawnEnemyUnitPacket);
-  } catch (erR) {
+  } catch (err) {
     handleErr(socket, err);
   }
 };

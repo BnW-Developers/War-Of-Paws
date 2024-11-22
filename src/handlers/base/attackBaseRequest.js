@@ -1,6 +1,8 @@
+import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import sendPacket from '../../classes/models/sendPacket.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 import CustomErr from './../../utils/error/customErr.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
@@ -20,7 +22,7 @@ const attackBaseRequest = (socket, payload) => {
 
     if (newBaseHp <= 0) {
       // 게임 종료 메서드 호출
-      gameSession.endGame(player);
+      // gameSession.endGame(player);
     } else {
       [
         { socket: player.getSocket(), type: PACKET_TYPE.ATTACK_BASE_RESPONSE },

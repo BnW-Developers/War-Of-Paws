@@ -7,7 +7,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
-import CheckPointManager from '../services/CheckPointManager.class';
+import CheckPointManager from '../services/CheckPointManager.class.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
 class Game {

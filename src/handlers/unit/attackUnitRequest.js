@@ -1,4 +1,5 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
+import sendPacket from '../../classes/models/sendPacket.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';

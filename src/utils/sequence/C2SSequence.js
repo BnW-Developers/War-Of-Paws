@@ -44,7 +44,7 @@ export function handleIncomingPacket(socket, packet) {
   }
 }
 
-function requestMissingPacket(socket, Sequence) {
+function requestMissingPacket() {
   console.log('재전송 요청');
   // TODO: 실제로 클라이언트에 재전송 요청을 보내는 로직을 구현필요
 }

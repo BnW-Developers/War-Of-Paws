@@ -7,7 +7,7 @@ const schema = Joi.object({
 });
 
 export const validateSignUp = (info) => {
-  const { error, _ } = schema.validate(info);
+  const { error } = schema.validate(info);
 
   if (error) return false;
 
