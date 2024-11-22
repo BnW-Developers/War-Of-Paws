@@ -5,7 +5,7 @@ import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { validateSignUp } from '../../utils/joi/validateSignUp.js';
 import logger from '../../utils/logger.js';
-import { createResponse } from '../../utils/response/createResponse.js';
+import { createPacket } from '../../utils/response/createPacket.js';
 import bcrypt from 'bcryptjs';
 import sendPacket from '../../classes/models/sendPacket.class.js';
 
@@ -33,7 +33,7 @@ const registerRequest = async (socket, payload) => {
     logger.info(`register success id: ${id}`);
 
     // 응답 전송
-    const response = createResponse(PACKET_TYPE.REGISTER_RESPONSE, 1, {});
+    const response = createPacket(PACKET_TYPE.REGISTER_RESPONSE, 1, {});
     sendPacket.enQueue(socket, response);
   } catch (err) {
     handleErr(socket, err);
