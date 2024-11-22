@@ -66,6 +66,16 @@ class Unit {
     const currentTime = Date.now();
     return currentTime - this.lastSkillUsedTime >= this.skillCooldown;
   }
+
+  applyBuff(buffAmount, duration) {
+    // bufFAmount가 2라면 (2배) 쿨타임은 나누기
+    this.cooldown /= buffAmount;
+
+    // 일정 시간 후 원래 공격속도 복구
+    setTimeout(() => {
+      this.cooldown *= buffAmount;
+    }, duration);
+  }
 }
 
 export default Unit;
