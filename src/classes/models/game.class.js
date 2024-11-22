@@ -100,7 +100,7 @@ class Game {
       if (user) {
         const response = createResponse(
           PACKET_TYPE.GAME_START_NOTIFICATION,
-          user.getNextSequence(),
+          user.socket.sequence++,
         );
         user.getSocket().write(response);
       }
@@ -119,7 +119,7 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        const response = createResponse(PACKET_TYPE.MATCH_CANCELLED, user.getNextSequence(), {
+        const response = createResponse(PACKET_TYPE.MATCH_CANCELLED, user.socket.sequence++, {
           message: 'Game start timeout',
         });
         user.getSocket().write(response);

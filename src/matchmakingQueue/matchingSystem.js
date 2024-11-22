@@ -107,7 +107,7 @@ class MatchingSystem {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
         // TODO: 매치 실패 notification?
-        const response = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user.getNextSequence(), {
+        const response = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user.socket.sequence++, {
           opponentName: '매칭 시간 초과',
           opponentspecies: '시간초과',
         });
@@ -167,11 +167,11 @@ class MatchingSystem {
   }
 
   matchNotification(user1, user2) {
-    const response1 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user1.getNextSequence(), {
+    const response1 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user1.socket.sequence++, {
       opponentId: user2.getUserId(),
       //opponentspecies: species2,
     });
-    const response2 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user2.getNextSequence(), {
+    const response2 = createResponse(PACKET_TYPE.MATCH_NOTIFICATION, user2.socket.sequence++, {
       opponentId: user1.getUserId(),
       //opponentspecies: species1,
     });
