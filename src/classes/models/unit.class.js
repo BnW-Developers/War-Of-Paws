@@ -49,9 +49,9 @@ class Unit {
 
   halt(timestamp) {
     if (this.moving) {
+      this.moving = false;
       this.stoppedMovingAt = timestamp;
     }
-    this.moving = false;
   }
 
   // 체력 감소 메서드
