@@ -1,8 +1,8 @@
 import { ASSET_TYPE } from '../../constants/assets.js';
+import { GAME_CONSTANTS } from '../../constants/game.constants.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
-import logger from '../../utils/logger.js';
 import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
@@ -13,11 +13,11 @@ class PlayerGameData {
 
     // TODO: 데이터 테이블에서 가져오도록 수정
     // 기본 상태 하드코딩
-    this.minerals = 100;
-    this.mineralRate = 1;
+    this.minerals = GAME_CONSTANTS.INITIAL_MINERAL;
+    this.mineralRate = GAME_CONSTANTS.INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
-    this.baseHp = 1000;
+    this.baseHp = GAME_CONSTANTS.INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
 
     this.unitIdCounter = 0;
@@ -41,14 +41,7 @@ class PlayerGameData {
   }
 
   getUnitById(unitId) {
-    const unit = this.units.find((unit) => unit.unitId === unitId);
-
-    if (!unit) {
-      logger.warn(`Unit with ID ${unitId} not found`);
-      return null; // 유닛이 없으면 null 반환
-    }
-
-    return unit; // 유닛 객체 반환
+    return this.units.get(unitId);
   }
 
   spendMineral(mineral) {
