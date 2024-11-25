@@ -4,6 +4,7 @@
   "data": [
     {
       "id": 2001,
+      "species": "dog",
       "DisplayName": "전사",
       "Description": "체력이 높은 근접 공격 유닛",
       "maxHp": 80,
@@ -15,6 +16,7 @@
     },
     {
       "id": 2002,
+      "species": "dog",
       "DisplayName": "궁수",
       "Description": "체력이 약하지만 공격력이 높은 원거리 공격 유닛",
       "maxHp": 50,
@@ -26,6 +28,7 @@
     },
     {
       "id": 2003,
+      "species": "cat",
       "DisplayName": "마법사",
       "Description": "체력이 약하고 이동속도가 느리지만 강력한 원거리 범위 공격이 가능한 유닛",
       "maxHp": 50,

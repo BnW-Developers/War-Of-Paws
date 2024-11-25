@@ -1,3 +1,6 @@
+import { DIRECTION } from '../../constants/assets.js';
+import { getPath } from '../../utils/assets/getAssets.js';
+
 class Unit {
   static idCounter = 1;
 
@@ -5,6 +8,7 @@ class Unit {
     // ID 및 종족 관련
     this.assetId = unitData.id;
     this.unitId = Unit.idCounter++;
+    this.species = unitData.species;
 
     // 능력치 관련
     this.maxHp = unitData.maxHp;
@@ -18,7 +22,11 @@ class Unit {
     this.cost = unitData.cost;
 
     // 이동 관련
-    this.position = toTop ? { x: 0, y: 0, z: 10 } : { x: 0, y: 0, z: -10 };
+    this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
+    this.positionIndex = 0;
+    this.destinationIndex = 1;
+    this.moving = true;
+    this.lastTimestamp = null;
   }
 
   getUnitId() {
@@ -34,7 +42,11 @@ class Unit {
   }
 
   getPosition() {
-    return this.position;
+    return this.path[this.positionIndex];
+  }
+
+  getDestination() {
+    return this.path[this.destinationIndex];
   }
 
   // 체력 감소 메서드
