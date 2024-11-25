@@ -2,12 +2,9 @@ import { DIRECTION } from '../../constants/assets.js';
 import { getPath } from '../../utils/assets/getAssets.js';
 
 class Unit {
-  static idCounter = 1;
-
-  constructor(unitData, toTop, spawnTime) {
+  constructor(unitId, unitData, toTop, spawnTime) {
     // ID 및 종족 관련
-    this.assetId = unitData.id;
-    this.unitId = Unit.idCounter++;
+    this.unitId = unitId;
     this.species = unitData.species;
 
     // 능력치 관련

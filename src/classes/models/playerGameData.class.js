@@ -21,15 +21,16 @@ class PlayerGameData {
     this.capturedCheckPoints = [];
   }
 
-  addUnit(assetId, toTop, spawnTime) {
+  addUnit(gameSession, assetId, toTop, spawnTime) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     if (!unitData) {
       throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
     }
 
-    const newUnit = new Unit(unitData, toTop, spawnTime);
-    const unitId = newUnit.getUnitId();
-    this.units.set(unitId, newUnit);
+    const unitId = gameSession.generateUnitId();
+    const unit = new Unit(unitId, unitData, toTop, spawnTime);
+
+    this.units.set(unitId, unit);
     return unitId;
   }
 

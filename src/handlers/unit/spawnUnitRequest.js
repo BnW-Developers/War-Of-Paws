@@ -12,7 +12,7 @@ const spawnUnitRequest = (socket, payload) => {
   try {
     const { assetId, toTop, timestamp } = payload;
 
-    const { playerGameData, opponentPlayerGameData } =
+    const { gameSession, playerGameData, opponentPlayerGameData } =
       gameSessionManager.getAllPlayerGameDataBySocket(socket);
     if (!playerGameData || !opponentPlayerGameData)
       throw new CustomErr(ERR_CODES.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
@@ -29,7 +29,7 @@ const spawnUnitRequest = (socket, payload) => {
     playerGameData.spendMineral(unitCost);
 
     // 유닛 생성
-    const unitId = playerGameData.addUnit(assetId, toTop, timestamp);
+    const unitId = playerGameData.addUnit(gameSession, assetId, toTop, timestamp);
 
     // 응답 생성
     const spawnUnitPacket = createResponse(PACKET_TYPE.SPAWN_UNIT_RESPONSE, socket.sequence++, {

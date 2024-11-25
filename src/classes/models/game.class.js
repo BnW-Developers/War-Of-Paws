@@ -18,10 +18,15 @@ class Game {
     this.startRequestTimer = null;
     this.inProgress = false;
     this.checkPointManager = null;
+    this.unitIdCounter = 1;
   }
 
   getGameId() {
     return this.gameId;
+  }
+
+  generateUnitId() {
+    return this.unitIdCounter++;
   }
 
   getPlayerGameData(userId) {
