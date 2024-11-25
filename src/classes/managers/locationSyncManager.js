@@ -1,3 +1,4 @@
+import { MAX_PLAYERS } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
@@ -93,7 +94,7 @@ class LocationSyncManager {
    * @returns {boolean}
    */
   isSyncReady() {
-    return this.positionsToSync.size === 2;
+    return this.positionsToSync.size === MAX_PLAYERS;
   }
 
   /**

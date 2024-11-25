@@ -1,5 +1,9 @@
 import PlayerGameData from './playerGameData.class.js';
-import { GAME_CONSTANTS } from '../../constants/game.constants.js';
+import {
+  GAME_START_REQUEST_REQUIRE,
+  GAME_START_TIMEOUT,
+  MAX_PLAYERS,
+} from '../../constants/game.constants.js';
 import userSessionManager from '../managers/userSessionManager.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import gameSessionManager from '../managers/gameSessionManager.js';
@@ -44,7 +48,7 @@ class Game {
       if (!user) {
         throw new Error('User for addUser not found');
       }
-      if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
+      if (this.players.size >= MAX_PLAYERS) {
         throw new Error('Game is full');
       }
 
@@ -53,7 +57,7 @@ class Game {
       user.setCurrentGameId(this.gameId);
 
       // 유저들의 gameStartRequest를 기다림
-      if (this.players.size >= GAME_CONSTANTS.MAX_PLAYERS) {
+      if (this.players.size >= MAX_PLAYERS) {
         this.setupGameStartTimer();
       }
     } catch (err) {
@@ -66,12 +70,12 @@ class Game {
     // 게임 시작 타이머 (30초 대기)
     this.startRequestTimer = setTimeout(() => {
       this.checkGameStart();
-    }, GAME_CONSTANTS.GAME_START_TIMEOUT);
+    }, GAME_START_TIMEOUT);
   }
 
   checkGameStart() {
     // 타이머 만료 시 게임 취소
-    if (this.startRequestUsers.size < GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
+    if (this.startRequestUsers.size < GAME_START_REQUEST_REQUIRE) {
       // TODO: 게임 취소 패킷 추가
       //this.cancelGame();
     }
@@ -84,7 +88,7 @@ class Game {
       this.startRequestUsers.add(userId);
 
       // 모든 플레이어가 게임 시작 요청을 보냈다면
-      if (this.startRequestUsers.size >= GAME_CONSTANTS.GAME_START_REQUEST_REQUIRE) {
+      if (this.startRequestUsers.size >= GAME_START_REQUEST_REQUIRE) {
         this.startGame();
       }
     } catch (err) {
@@ -194,9 +198,10 @@ class Game {
   getCheckPointManager() {
     return this.checkPointManager;
   }
-  
+
   getLocationSyncManager() {
     return this.locationSyncManager;
   }
+}
 
 export default Game;
