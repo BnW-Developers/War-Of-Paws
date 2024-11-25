@@ -10,7 +10,7 @@ const matchCancelRequest = async (socket, payload) => {
       throw new Error('유저를 찾을 수 없습니다');
     }
     matchingSystem.removeUser(user.getUserId(), user.getCurrentSpecies());
-    logger.info(`match Cancle request id: ${user.getUserId()}`);
+    logger.info(`match Cancel request id: ${user.getUserId()}`);
   } catch (err) {
     handleErr(socket, err);
   }

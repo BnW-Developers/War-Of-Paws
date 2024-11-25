@@ -50,11 +50,11 @@ message C2SMatchRequest {
   string species = 1;
 }
 
-message C2SMatchCancleRequest {
-}
-
 message S2CMatchNotification {
   string opponentId = 1;
+}
+
+message C2SMatchCancelRequest {
 }
 
 message C2SGameStartRequest {
@@ -187,7 +187,7 @@ message GamePacket {
     // 매칭
     C2SMatchRequest matchRequest = 6;
     S2CMatchNotification matchNotification = 7;
-    C2SMatchCancleRequest matchCancelRequest = 8;
+    C2SMatchCancelRequest matchCancelRequest = 8;
 
     // 게임 시작
     C2SGameStartRequest gameStartRequest = 9;
