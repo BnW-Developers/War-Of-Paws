@@ -19,13 +19,6 @@ class PlayerGameData {
     this.units = new Map();
     this.baseHp = 1000;
     this.capturedCheckPoints = [];
-
-    this.unitIdCounter = 0;
-  }
-
-  generateUnitId() {
-    this.unitIdCounter += 1;
-    return this.unitIdCounter;
   }
 
   addUnit(assetId, toTop, spawnTime) {
