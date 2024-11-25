@@ -8,7 +8,7 @@ import { createResponse } from '../../utils/response/createResponse.js';
 
 const attackUnitRequest = (socket, payload) => {
   try {
-    const { unitId, opponentUnitIds, timestamp } = payload; // 여러 대상 유닛 처리
+    const { unitId, opponentUnitIds } = payload; // 여러 대상 유닛 처리
 
     const { playerGameData, opponentPlayerGameData } =
       gameSessionManager.getAllPlayerGameDataBySocket(socket);
@@ -20,7 +20,7 @@ const attackUnitRequest = (socket, payload) => {
     const attackUnit = playerGameData.getUnit(unitId);
 
     // 유닛 이동 중단
-    attackUnit.halt(timestamp);
+    attackUnit.halt();
 
     // 결과 저장용 배열
     const opponentUnitInfos = [];
@@ -31,7 +31,7 @@ const attackUnitRequest = (socket, payload) => {
       const targetUnit = opponentPlayerGameData.getUnit(opponentUnitId);
 
       // 데미지 적용
-      const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower(), timestamp);
+      const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower());
 
       if (targetUnit.isDead()) {
         opponentPlayerGameData.removeUnit(opponentUnitId); // 유닛 제거

@@ -10,7 +10,7 @@ import { createResponse } from '../../utils/response/createResponse.js';
 
 const spawnUnitRequest = (socket, payload) => {
   try {
-    const { assetId, toTop, timestamp } = payload;
+    const { assetId, toTop } = payload;
 
     const { gameSession, playerGameData, opponentPlayerGameData } =
       gameSessionManager.getAllPlayerGameDataBySocket(socket);
@@ -29,7 +29,7 @@ const spawnUnitRequest = (socket, payload) => {
     playerGameData.spendMineral(unitCost);
 
     // 유닛 생성
-    const unitId = playerGameData.addUnit(gameSession, assetId, toTop, timestamp);
+    const unitId = playerGameData.addUnit(gameSession, assetId, toTop);
 
     // 응답 생성
     const spawnUnitPacket = createResponse(PACKET_TYPE.SPAWN_UNIT_RESPONSE, socket.sequence++, {

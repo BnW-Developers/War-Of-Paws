@@ -24,7 +24,6 @@ class Unit {
     this.destinationIndex = 1;
     this.moving = true;
     this.startedMovingAt = spawnTime;
-    this.stoppedMovingAt = null;
   }
 
   getUnitId() {
@@ -47,10 +46,9 @@ class Unit {
     return this.path[this.destinationIndex];
   }
 
-  halt(timestamp) {
+  halt() {
     if (this.moving) {
       this.moving = false;
-      this.stoppedMovingAt = timestamp;
     }
   }
 
