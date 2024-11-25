@@ -84,7 +84,7 @@ class LocationSyncManager {
     }
 
     // 검증: 최대 플레이어 수를 초과하는가?
-    if (this.positionsToSync.size == MAX_PLAYERS) {
+    if (this.positionsToSync.size === MAX_PLAYERS) {
       throw new Error(`플레이어 정원을 초과하였습니다.`);
     }
 
