@@ -6,6 +6,7 @@ import { PACKET_TYPE_REVERSED } from '../../constants/header.js';
 import { getHandlers } from '../../init/loadHandlers.js';
 import { config } from '../../config/config.js';
 import { GamePacket } from '../../init/loadProto.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
 
 class PacketManager {
   constructor() {
@@ -45,41 +46,49 @@ class PacketManager {
 
   async processSendPacket() {
     if (!this.sendQueue.length) return;
-    while (this.sendQueue.length) {
-      const { socket, packet } = await this.deQueueSend();
-      if (!socket || !packet) throw new Error('패킷 보내기 오류');
-      socket.write(packet);
+    try {
+      while (this.sendQueue.length) {
+        const { socket, packet } = await this.deQueueSend();
+        if (!socket || !packet) throw new Error('패킷 보내기 오류');
+        socket.write(packet);
+      }
+    } catch (err) {
+      handleErr(null, err);
     }
   }
 
   async processRecvPacket() {
-    if (!this.recvQueue.length) return;
-    while (this.recvQueue.length) {
-      const { socket, packet } = await this.deQueueRecv();
-      if (!socket || !packet) throw new Error('패킷 보내기 오류');
+    try {
+      if (!this.recvQueue.length) return;
+      while (this.recvQueue.length) {
+        const { socket, packet } = await this.deQueueRecv();
+        if (!socket || !packet) throw new Error('패킷 보내기 오류');
 
-      const { version, packetType, payload } = packet;
+        const { version, packetType, payload } = packet;
 
-      if (version !== config.client.version) {
-        throw new CustomErr(ERR_CODES.CLIENT_VERSION_MISMATCH, 'Check to version');
+        if (version !== config.client.version) {
+          throw new CustomErr(ERR_CODES.CLIENT_VERSION_MISMATCH, 'Check to version', socket);
+        }
+        if (!PACKET_TYPE_REVERSED[packetType]) {
+          throw new CustomErr(ERR_CODES.UNKNOWN_PACKET_TYPE, 'Unknown packet type', socket);
+        }
+        if (!payload || !GamePacket.decode(payload)) {
+          throw new CustomErr(ERR_CODES.PACKET_DECODE_ERR, 'Packet decode error', socket);
+        }
+
+        const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
+        const handlers = getHandlers();
+        const handler = handlers[payloadName];
+
+        if (!handler) {
+          throw new CustomErr(ERR_CODES.HANDLER_NOT_FOUND, 'Handler not found', socket);
+        }
+
+        const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };
+        handler(socket, decodedPayload);
       }
-      if (!PACKET_TYPE_REVERSED[packetType]) {
-        throw new CustomErr(ERR_CODES.UNKNOWN_PACKET_TYPE, 'Unknown packet type');
-      }
-      if (!payload || !GamePacket.decode(payload)) {
-        throw new CustomErr(ERR_CODES.PACKET_DECODE_ERR, 'Packet decode error');
-      }
-
-      const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
-      const handlers = getHandlers();
-      const handler = handlers[payloadName];
-
-      if (!handler) {
-        throw new CustomErr(ERR_CODES.HANDLER_NOT_FOUND, 'Handler not found');
-      }
-
-      const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };
-      handler(socket, decodedPayload);
+    } catch (err) {
+      handleErr(err.socket, err);
     }
   }
 }
