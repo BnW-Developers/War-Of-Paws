@@ -22,14 +22,14 @@ import sendPacket from '../../classes/models/sendPacket.class.js';
         - 서버에 저장한 동기화 위치값을 삭제
      4. 각 플레이어는 수신한 위치값으로 해당 유닛들의 위치를 수정 (보간 적용)
  * @param {net.Socket} socket
- * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}[]}}} payload
+ * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}[]}, timestamp: int32}} payload
  */
 const locationNotification = (socket, payload) => {
   try {
     const { gameId, userId, userGameData, opponentId, opponentSocket } = checkSessionInfo(socket);
 
-    // 해당 클라이언트가 보유한 유닛들의 위치
-    const { unitPositions } = payload;
+    // 해당 클라이언트가 보유한 유닛들의 위치 + 동기화 시점
+    const { unitPositions, timestamp } = payload;
 
     // 동기화할 위치값
     const syncPositions = [];
