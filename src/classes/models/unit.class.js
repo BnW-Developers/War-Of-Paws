@@ -1,13 +1,20 @@
-class Unit {
-  static idCounter = 1;
+import { DIRECTION } from '../../constants/assets.js';
+import { getPath } from '../../utils/assets/getAssets.js';
 
-  constructor(unitData, toTop) {
-    this.assetId = unitData.id;
+class Unit {
+  constructor(unitId, unitData, toTop, spawnTime) {
+    // ID 및 종족 관련
+    this.unitId = unitId;
+    this.species = unitData.species;
+
+    // 능력치 관련
     this.maxHp = unitData.maxHp;
     this.hp = unitData.maxHp;
     this.attackPower = unitData.atk;
     this.def = unitData.def;
     this.speed = unitData.spd;
+    
+    // 쿨타임 관련
     this.cooldown = unitData.cd;
     this.currentCooldown = unitData.cd;
     this.cost = unitData.cost;
@@ -15,10 +22,14 @@ class Unit {
     this.lastAttackTime = 0;
     this.lastSkillTime = 0;
 
-    // toTop에 의한 초기 위치 설정
-    this.position = toTop ? { x: 0, y: 0, z: 10 } : { x: 0, y: 0, z: -10 };
+    // 코스트 관련
+    this.cost = unitData.cost;
 
-    this.unitId = Unit.idCounter++;
+    // 이동 관련
+    this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
+    this.position = this.path[0];
+    this.destinationIndex = 1;
+    this.startedMovingAt = spawnTime;
   }
 
   getUnitId() {
@@ -41,6 +52,10 @@ class Unit {
     return this.position;
   }
 
+  getDestination() {
+    return this.path[this.destinationIndex];
+  }
+  
   isAttackAvailable() {
     const currentTime = Date.now();
     return currentTime - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)

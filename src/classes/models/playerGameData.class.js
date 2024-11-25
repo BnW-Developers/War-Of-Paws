@@ -2,7 +2,6 @@ import { ASSET_TYPE } from '../../constants/assets.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
-import logger from '../../utils/logger.js';
 import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
@@ -19,36 +18,19 @@ class PlayerGameData {
     this.units = new Map();
     this.baseHp = 1000;
     this.capturedCheckPoints = [];
-
-    this.unitIdCounter = 0;
   }
 
-  generateUnitId() {
-    this.unitIdCounter += 1;
-    return this.unitIdCounter;
-  }
-
-  addUnit(assetId, toTop) {
+  addUnit(gameSession, assetId, toTop, spawnTime) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     if (!unitData) {
       throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
     }
 
-    const newUnit = new Unit(unitData, toTop);
-    const unitId = newUnit.getUnitId();
-    this.units.set(unitId, newUnit);
+    const unitId = gameSession.generateUnitId();
+    const unit = new Unit(unitId, unitData, toTop, spawnTime);
+
+    this.units.set(unitId, unit);
     return unitId;
-  }
-
-  getUnitById(unitId) {
-    const unit = this.units.find((unit) => unit.unitId === unitId);
-
-    if (!unit) {
-      logger.warn(`Unit with ID ${unitId} not found`);
-      return null; // 유닛이 없으면 null 반환
-    }
-
-    return unit; // 유닛 객체 반환
   }
 
   spendMineral(mineral) {

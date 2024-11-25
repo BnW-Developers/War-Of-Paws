@@ -4,6 +4,7 @@
   "data": [
     {
       "id": 2001,
+      "species": "dog",
       "DisplayName": "비글",
       "Description": "기본 유닛",
       "maxHp": 100,
@@ -16,6 +17,7 @@
     },
     {
       "id": 2002,
+      "species": "dog",
       "DisplayName": "보더 콜리",
       "Description": "빠른 정찰 유닛",
       "maxHp": 120,
@@ -28,6 +30,7 @@
     },
     {
       "id": 2003,
+      "species": "dog",
       "DisplayName": "불 테리어",
       "Description": "빠르고 쎄지만 유리몸",
       "maxHp": 80,
@@ -40,6 +43,7 @@
     },
     {
       "id": 2004,
+      "species": "dog",
       "DisplayName": "저먼 셰퍼드",
       "Description": "느린 공격속도, 매우 아픈 공격",
       "maxHp": 150,
@@ -52,6 +56,7 @@
     },
     {
       "id": 2005,
+      "species": "dog",
       "DisplayName": "도베르만",
       "Description": "강아지 중에 제일 좋은 유닛",
       "maxHp": 250,
@@ -63,6 +68,7 @@
     },
     {
       "id": 2006,
+      "species": "dog",
       "DisplayName": "세인트 버나드",
       "Description": "전투 중인 유닛 2마리 공격속도 2배 (지속시간 3초)",
       "maxHp": 100,
@@ -75,6 +81,7 @@
     },
     {
       "id": 2007,
+      "species": "cat",
       "DisplayName": "재패니즈 밥테일",
       "Description": "기본 유닛",
       "maxHp": 150,
@@ -87,6 +94,7 @@
     },
     {
       "id": 2008,
+      "species": "cat",
       "DisplayName": "태비",
       "Description": "빠른 정찰 유닛",
       "maxHp": 160,
@@ -99,6 +107,7 @@
     },
     {
       "id": 2009,
+      "species": "cat",
       "DisplayName": "페르시안",
       "Description": "유리몸이지만 빠른 공속",
       "maxHp": 120,
@@ -111,6 +120,7 @@
     },
     {
       "id": 2010,
+      "species": "cat",
       "DisplayName": "러시안 블루",
       "Description": "가장 체력이 낮은 유닛 회복 (최대 체력의 50%)",
       "maxHp": 100,
@@ -123,6 +133,7 @@
     },
     {
       "id": 2011,
+      "species": "cat",
       "DisplayName": "샴",
       "Description": "원거리 멀티샷(최대 3명)",
       "maxHp": 150,
@@ -135,6 +146,7 @@
     },
     {
       "id": 2012,
+      "species": "cat",
       "DisplayName": "스핑크스",
       "Description": "체력 높은 탱커",
       "maxHp": 300,
