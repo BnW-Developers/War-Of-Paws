@@ -3,6 +3,8 @@ import { onConnection } from './events/onConnection.js';
 import { initServer } from './init/initServer.js';
 import { config } from './config/config.js';
 
+export const blockList = new net.BlockList();
+
 const server = net.createServer(onConnection);
 
 initServer().then(() => {
