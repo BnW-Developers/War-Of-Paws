@@ -106,10 +106,11 @@ class MatchingSystem {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
         // TODO: 매치 실패 notification?
-        sendPacket(user.socket, PACKET_TYPE.MATCH_NOTIFICATION, {
-          opponentName: '매칭 시간 초과',
-          opponentspecies: '시간초과',
+        sendPacket(user.socket, PACKET_TYPE.ERROR_NOTIFICATION, {
+          errorCode: ERR_CODES.MATCH_TIMEOUT,
+          errorMessage: '매칭 시간 초과',
         });
+        user.setIsMatchmaking(false);
       }
     } catch (err) {
       err.message = 'handleMatchTimeout Error: ' + err.message;
