@@ -9,9 +9,11 @@ class Unit {
     this.def = unitData.def;
     this.speed = unitData.spd;
     this.cooldown = unitData.cd;
+    this.currentCooldown = unitData.cd;
     this.cost = unitData.cost;
     this.skillCooldown = unitData.skillCd;
-    this.lastSkillUsedTime = 0;
+    this.lastAttackTime = 0;
+    this.lastSkillTime = 0;
 
     // toTop에 의한 초기 위치 설정
     this.position = toTop ? { x: 0, y: 0, z: 10 } : { x: 0, y: 0, z: -10 };
@@ -39,6 +41,15 @@ class Unit {
     return this.position;
   }
 
+  isAttackAvailable() {
+    const currentTime = Date.now();
+    return currentTime - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+  }
+
+  resetLastAttackTime() {
+    this.lastAttackTime = Date.now();
+  }
+
   // 체력 감소 메서드
   applyDamage(damage) {
     this.hp = Math.max(0, this.hp - damage); // 체력은 0 이하로 감소하지 않음
@@ -58,7 +69,7 @@ class Unit {
     return this.hp;
   }
 
-  resetLastSkillUsedTime() {
+  resetLastSkillTime() {
     this.lastSkillUsedTime = Date.now();
   }
 
@@ -68,12 +79,11 @@ class Unit {
   }
 
   applyBuff(buffAmount, duration) {
-    // bufFAmount가 2라면 (2배) 쿨타임은 나누기
-    this.cooldown /= buffAmount;
+    this.currentCooldown /= buffAmount; // 쿨타임 감소
 
-    // 일정 시간 후 원래 공격속도 복구
+    // 일정 시간 후 버프 해제
     setTimeout(() => {
-      this.cooldown *= buffAmount;
+      this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
     }, duration);
   }
 }
