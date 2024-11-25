@@ -26,7 +26,10 @@ import sendPacket from '../../classes/models/sendPacket.class.js';
  */
 const locationNotification = (socket, payload) => {
   try {
-    const { gameId, userId, userGameData, opponentId, opponentSocket } = checkSessionInfo(socket);
+    const { gameSession, userId, userGameData, opponentId, opponentSocket } =
+      checkSessionInfo(socket);
+
+    const locationSyncManager = gameSession.getLocationSyncManager();
 
     // 해당 클라이언트가 보유한 유닛들의 위치 + 동기화 시점
     const { unitPositions, timestamp } = payload;
@@ -63,13 +66,12 @@ const locationNotification = (socket, payload) => {
     }
 
     // 동기화 위치값을 서버에 저장
-    locationSyncManager.addSyncPositions(gameId, userId, syncPositions);
+    locationSyncManager.addSyncPositions(userId, syncPositions);
 
     // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
-    if (locationSyncManager.isSyncReady(gameId)) {
+    if (locationSyncManager.isSyncReady()) {
       // 패킷 작성 및 전송
       const { userPacket, opponentPacket } = locationSyncManager.createLocationSyncPacket(
-        gameId,
         userId,
         opponentId,
         socket,
@@ -80,7 +82,7 @@ const locationNotification = (socket, payload) => {
       sendPacket.enQueue(opponentSocket, opponentPacket);
 
       // 서버에 저장한 동기화 위치값 초기화
-      this.resetSyncPositions(gameId);
+      locationSyncManager.resetSyncPositions();
     }
   } catch (err) {
     handleErr(socket, err);

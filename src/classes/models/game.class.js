@@ -9,6 +9,7 @@ import logger from '../../utils/logger.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import CheckPointManager from '../services/CheckPointManager.class.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
+import LocationSyncManager from '../managers/locationSyncManager.js';
 
 class Game {
   constructor(gameId) {
@@ -18,6 +19,7 @@ class Game {
     this.startRequestTimer = null;
     this.inProgress = false;
     this.checkPointManager = null;
+    this.locationSyncManager = null;
     this.unitIdCounter = 1;
   }
 
@@ -118,6 +120,7 @@ class Game {
     // 체크포인트 매니저 생성
     const player = [...this.players.values()];
     this.checkPointManager = new CheckPointManager(player[0], player[1]);
+    this.locationSyncManager = new LocationSyncManager();
   }
 
   cancelGame() {
@@ -191,6 +194,9 @@ class Game {
   getCheckPointManager() {
     return this.checkPointManager;
   }
-}
+  
+  getLocationSyncManager() {
+    return this.locationSyncManager;
+  }
 
 export default Game;
