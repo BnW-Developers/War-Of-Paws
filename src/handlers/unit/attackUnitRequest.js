@@ -19,9 +19,6 @@ const attackUnitRequest = (socket, payload) => {
     // 공격 유닛 가져오기
     const attackUnit = playerGameData.getUnit(unitId);
 
-    // 유닛 이동 중단
-    attackUnit.halt();
-
     // 결과 저장용 배열
     const opponentUnitInfos = [];
     const deathNotifications = [];

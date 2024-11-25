@@ -22,7 +22,6 @@ class Unit {
     this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
     this.position = this.path[0];
     this.destinationIndex = 1;
-    this.moving = true;
     this.startedMovingAt = spawnTime;
   }
 
@@ -44,12 +43,6 @@ class Unit {
 
   getDestination() {
     return this.path[this.destinationIndex];
-  }
-
-  halt() {
-    if (this.moving) {
-      this.moving = false;
-    }
   }
 
   // 체력 감소 메서드
