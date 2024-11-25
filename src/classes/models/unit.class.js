@@ -4,7 +4,7 @@ import { getPath } from '../../utils/assets/getAssets.js';
 class Unit {
   static idCounter = 1;
 
-  constructor(unitData, toTop, timestamp) {
+  constructor(unitData, toTop, spawnTime) {
     // ID 및 종족 관련
     this.assetId = unitData.id;
     this.unitId = Unit.idCounter++;
@@ -26,7 +26,8 @@ class Unit {
     this.position = this.path[0];
     this.destinationIndex = 1;
     this.moving = true;
-    this.lastTimestamp = timestamp;
+    this.startedMovingAt = spawnTime;
+    this.stoppedMovingAt = null;
   }
 
   getUnitId() {
@@ -47,6 +48,13 @@ class Unit {
 
   getDestination() {
     return this.path[this.destinationIndex];
+  }
+
+  halt(timestamp) {
+    if (this.moving) {
+      this.stoppedMovingAt = timestamp;
+    }
+    this.moving = false;
   }
 
   // 체력 감소 메서드
