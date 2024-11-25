@@ -36,6 +36,15 @@ class UserSessionManager {
     }
     return null;
   }
+
+  getUserIdBySocket(socket) {
+    for (let user of this.userSessions.values()) {
+      if (user.socket === socket) {
+        return user.getUserId();
+      }
+    }
+    return null;
+  }
 }
 
 const userSessionManager = new UserSessionManager();
