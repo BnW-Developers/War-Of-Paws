@@ -28,13 +28,13 @@ class PlayerGameData {
     return this.unitIdCounter;
   }
 
-  addUnit(assetId, toTop) {
+  addUnit(assetId, toTop, timestamp) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     if (!unitData) {
       throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
     }
 
-    const newUnit = new Unit(unitData, toTop);
+    const newUnit = new Unit(unitData, toTop, timestamp);
     const unitId = newUnit.getUnitId();
     this.units.set(unitId, newUnit);
     return unitId;

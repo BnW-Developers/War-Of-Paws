@@ -4,7 +4,7 @@ import { getPath } from '../../utils/assets/getAssets.js';
 class Unit {
   static idCounter = 1;
 
-  constructor(unitData, toTop) {
+  constructor(unitData, toTop, timestamp) {
     // ID 및 종족 관련
     this.assetId = unitData.id;
     this.unitId = Unit.idCounter++;
@@ -26,7 +26,7 @@ class Unit {
     this.positionIndex = 0;
     this.destinationIndex = 1;
     this.moving = true;
-    this.lastTimestamp = null;
+    this.lastTimestamp = timestamp;
   }
 
   getUnitId() {
