@@ -83,6 +83,11 @@ class LocationSyncManager {
       throw new Error('이미 해당 클라이언트의 위치값을 기록했습니다: userid', userId);
     }
 
+    // 검증: 최대 플레이어 수를 초과하는가?
+    if (this.positionsToSync.size == MAX_PLAYERS) {
+      throw new Error(`플레이어 정원을 초과하였습니다.`);
+    }
+
     // 해당 유저의 동기화 위치값 저장
     this.positionsToSync.set(userId, unitPositions);
   }
