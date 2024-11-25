@@ -1,14 +1,14 @@
-import PlayerGameData from './playerGameData.class.js';
 import { GAME_CONSTANTS } from '../../constants/game.constants.js';
-import userSessionManager from '../managers/userSessionManager.js';
-import gameSessionManager from '../managers/gameSessionManager.js';
-import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
-import { ERR_CODES } from './../../utils/error/errCodes.js';
-import CheckPointManager from '../managers/CheckPointManager.class.js';
-import { handleErr } from './../../utils/error/handlerErr.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
+import CheckPointManager from '../managers/CheckPointManager.class.js';
+import gameSessionManager from '../managers/gameSessionManager.js';
+import userSessionManager from '../managers/userSessionManager.js';
+import { ERR_CODES } from './../../utils/error/errCodes.js';
+import { handleErr } from './../../utils/error/handlerErr.js';
+import PlayerGameData from './playerGameData.class.js';
 
 class Game {
   constructor(gameId) {
