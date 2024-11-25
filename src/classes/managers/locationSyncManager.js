@@ -1,6 +1,4 @@
 import { MAX_PLAYERS } from '../../constants/game.constants.js';
-import { PACKET_TYPE } from '../../constants/header.js';
-import { createResponse } from '../../utils/response/createResponse.js';
 class LocationSyncManager {
   constructor() {
     // 동기화에 사용될 위치값 초기화
