@@ -23,7 +23,7 @@ class Unit {
 
     // 이동 관련
     this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
-    this.positionIndex = 0;
+    this.position = this.path[0];
     this.destinationIndex = 1;
     this.moving = true;
     this.lastTimestamp = timestamp;
@@ -42,7 +42,7 @@ class Unit {
   }
 
   getPosition() {
-    return this.path[this.positionIndex];
+    return this.position;
   }
 
   getDestination() {
