@@ -13,7 +13,14 @@ class Unit {
     this.attackPower = unitData.atk;
     this.def = unitData.def;
     this.speed = unitData.spd;
+    
+    // 쿨타임 관련
     this.cooldown = unitData.cd;
+    this.currentCooldown = unitData.cd;
+    this.cost = unitData.cost;
+    this.skillCooldown = unitData.skillCd;
+    this.lastAttackTime = 0;
+    this.lastSkillTime = 0;
 
     // 코스트 관련
     this.cost = unitData.cost;
@@ -33,6 +40,10 @@ class Unit {
     return this.hp;
   }
 
+  getAssetId() {
+    return this.assetId;
+  }
+
   getAttackPower() {
     return this.attackPower;
   }
@@ -44,6 +55,15 @@ class Unit {
   getDestination() {
     return this.path[this.destinationIndex];
   }
+  
+  isAttackAvailable() {
+    const currentTime = Date.now();
+    return currentTime - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+  }
+
+  resetLastAttackTime() {
+    this.lastAttackTime = Date.now();
+  }
 
   // 체력 감소 메서드
   applyDamage(damage) {
@@ -54,6 +74,32 @@ class Unit {
   // 사망 여부 확인 메서드
   isDead() {
     return this.hp <= 0;
+  }
+
+  applyHeal(healAmount) {
+    // 최대 체력을 초과하지 않도록 체력을 회복
+    this.hp = Math.min(this.hp + healAmount, this.maxHp);
+
+    // 현재 체력을 반환
+    return this.hp;
+  }
+
+  resetLastSkillTime() {
+    this.lastSkillUsedTime = Date.now();
+  }
+
+  isSkillAvailable() {
+    const currentTime = Date.now();
+    return currentTime - this.lastSkillUsedTime >= this.skillCooldown;
+  }
+
+  applyBuff(buffAmount, duration) {
+    this.currentCooldown /= buffAmount; // 쿨타임 감소
+
+    // 일정 시간 후 버프 해제
+    setTimeout(() => {
+      this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
+    }, duration);
   }
 }
 

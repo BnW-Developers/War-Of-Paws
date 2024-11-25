@@ -1,29 +1,23 @@
-import userSessionManager from '../../classes/managers/userSessionManager.js';
-import gameSessionManager from './../../classes/managers/gameSessionManager.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
+import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 const enterCheckpointNotification = (socket, payload) => {
   const { isTop, unitId } = payload;
 
-  // 유저 불러오기
-  const user = userSessionManager.getUserBySocket(socket);
-  if (!user) {
-    throw new Error('User not found');
-  }
-  const gameId = user.getCurrentGameId();
+  try {
+    const { gameSession } = checkSessionInfo(socket);
 
-  // 게임세션 불러오기
-  const game = gameSessionManager.getGameByGameId(gameId);
-  if (!game) {
-    throw new Error('Game not found');
+    const CheckPointManager = gameSession.getCheckPointManager();
+    if (!CheckPointManager) {
+      throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, 'CheckPointManager is not found');
+    }
+    //메서드 실행
+    CheckPointManager.addUnit(isTop, unitId);
+  } catch (err) {
+    handleErr(socket, err);
   }
-  // 체크포인트 매니저 불러오기
-  const CheckPointManager = game.getCheckPointManager();
-  if (!CheckPointManager) {
-    throw new Error('CheckPointManager not found');
-  }
-
-  //메서드 실행
-  CheckPointManager.addUnit(isTop, unitId);
 };
 
 export default enterCheckpointNotification;

@@ -1,7 +1,6 @@
 import { MAX_PLAYERS } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-
 class LocationSyncManager {
   constructor() {
     // 동기화에 사용될 위치값 초기화
@@ -110,7 +109,7 @@ class LocationSyncManager {
    * @param {net.Socket} opponentSocket
    * @return {{userPacket: Buffer, opponentPacket: Buffer}}
    */
-  createLocationSyncPacket(userId, opponentId, socket, opponentSocket) {
+  createLocationSyncPacket(gameId, userId, opponentId) {
     // 해당 게임의 모든 동기화 위치값
     const userSyncPositions = this.positionsToSync.get(userId);
     const opponentSyncPositions = this.positionsToSync.get(opponentId);
@@ -153,20 +152,7 @@ class LocationSyncManager {
       opponentPacketData.unitPositions.push({ unitId, position });
     }
 
-    // 3. 패킷 작성 및 반환
-    const userPacket = createResponse(
-      PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
-      socket.sequence++,
-      userPacketData,
-    );
-
-    const opponentPacket = createResponse(
-      PACKET_TYPE.LOCATION_SYNC_NOTIFICATION,
-      opponentSocket.sequence++,
-      opponentPacketData,
-    );
-
-    return { userPacket, opponentPacket };
+    return { userPacketData, opponentPacketData };
   }
 
   /**

@@ -5,10 +5,9 @@ import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { createJWT } from '../../utils/jwt/createToken.js';
-import { createResponse } from '../../utils/response/createResponse.js';
 import bcrypt from 'bcryptjs';
-import sendPacket from './../../classes/models/sendPacket.class.js';
 import logger from '../../utils/logger.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 const loginRequest = async (socket, payload) => {
   try {
@@ -48,9 +47,8 @@ const loginRequest = async (socket, payload) => {
 
     logger.info(`login success id: ${id}`);
 
-    // 응답 전송
-    const response = createResponse(PACKET_TYPE.LOGIN_RESPONSE, 1, { token });
-    sendPacket.enQueue(socket, response);
+    // 패킷 전송
+    sendPacket(socket, PACKET_TYPE.LOGIN_RESPONSE, { token });
   } catch (err) {
     handleErr(socket, err);
   }

@@ -1,12 +1,12 @@
 import { config } from '../../config/config.js';
 import { PACKET_TYPE_REVERSED } from '../../constants/header.js';
 import { GamePacket } from '../../init/loadProto.js';
-import { snakeToCamel } from './../formatter/snakeToCamel.js';
+import { snakeToCamel } from '../formatter/snakeToCamel.js';
 
 // TODO: 시퀀스 서버 to 클라이언트 관리할 지 결정 후 변경 필요
 // 예시: createResponse(PACKET_TYPE.REGISTER_RESPONSE, socket.sequence++, data);
 
-export const createResponse = (Type, seq, data = null) => {
+export const createPacket = (Type, seq, data = null) => {
   if (!PACKET_TYPE_REVERSED[Type]) throw new Error('Invalid Packet Type');
 
   const typeName = PACKET_TYPE_REVERSED[Type];

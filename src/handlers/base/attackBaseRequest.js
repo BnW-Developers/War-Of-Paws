@@ -1,8 +1,7 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
-import sendPacket from '../../classes/models/sendPacket.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
-import { createResponse } from '../../utils/response/createResponse.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 import CustomErr from './../../utils/error/customErr.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
@@ -27,9 +26,7 @@ const attackBaseRequest = (socket, payload) => {
       [
         { socket: player.getSocket(), type: PACKET_TYPE.ATTACK_BASE_RESPONSE },
         { socket: opponent.getSocket(), type: PACKET_TYPE.BASE_ATTACKED_NOTIFICATION },
-      ].forEach(({ socket, type }) =>
-        sendPacket.enQueue(socket, createResponse(type, socket.sequence++, { baseHp: newBaseHp })),
-      );
+      ].forEach(({ socket, type }) => sendPacket(socket, type, { baseHp: newBaseHp }));
     }
   } catch (err) {
     handleErr(socket, err);
