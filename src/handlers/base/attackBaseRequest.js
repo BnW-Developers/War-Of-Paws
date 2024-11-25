@@ -15,7 +15,7 @@ const attackBaseRequest = (socket, payload) => {
       throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '유닛 정보를 불러오는데 실패하였습니다.');
     }
 
-    const damage = player.getUnitById(unitId).getAttackPower();
+    const damage = player.getUnit(unitId).getAttackPower();
     if (!damage) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
 
     const newBaseHp = opponent.attackBase(damage);

@@ -17,7 +17,7 @@ const attackUnitRequest = (socket, payload) => {
       throw new CustomErr(ERR_CODES.PLAYER_GAME_DATA_NOT_FOUND, 'Player game data not found');
 
     // 공격 유닛 가져오기
-    const attackUnit = playerGameData.getUnitById(unitId);
+    const attackUnit = playerGameData.getUnit(unitId);
 
     // 유닛 이동 중단
     attackUnit.halt(timestamp);
@@ -28,7 +28,7 @@ const attackUnitRequest = (socket, payload) => {
 
     // 대상 유닛 처리
     for (const opponentUnitId of opponentUnitIds) {
-      const targetUnit = opponentPlayerGameData.getUnitById(opponentUnitId);
+      const targetUnit = opponentPlayerGameData.getUnit(opponentUnitId);
 
       // 데미지 적용
       const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower(), timestamp);
