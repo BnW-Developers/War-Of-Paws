@@ -12,7 +12,7 @@ const attackUnitRequest = (socket, payload) => {
     const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
 
     // 공격 유닛 가져오기
-    const attackUnit = playerGameData.getUnit(unitId);
+    const attackUnit = userGameData.getUnit(unitId);
 
     let damage = attackUnit.getAttackPower();
     // 결과 저장용 배열
