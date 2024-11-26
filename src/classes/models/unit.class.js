@@ -6,6 +6,7 @@ class Unit {
     // ID 및 종족 관련
     this.unitId = unitId;
     this.species = unitData.species;
+    this.assetId = unitData.id;
 
     // 능력치 관련
     this.maxHp = unitData.maxHp;
@@ -13,7 +14,7 @@ class Unit {
     this.attackPower = unitData.atk;
     this.def = unitData.def;
     this.speed = unitData.spd;
-    
+
     // 쿨타임 관련
     this.cooldown = unitData.cd;
     this.currentCooldown = unitData.cd;
@@ -55,14 +56,13 @@ class Unit {
   getDestination() {
     return this.path[this.destinationIndex];
   }
-  
-  isAttackAvailable() {
-    const currentTime = Date.now();
-    return currentTime - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+
+  isAttackAvailable(timestamp) {
+    return timestamp - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
   }
 
-  resetLastAttackTime() {
-    this.lastAttackTime = Date.now();
+  resetLastAttackTime(timestamp) {
+    this.lastAttackTime = timestamp;
   }
 
   // 체력 감소 메서드
@@ -84,13 +84,12 @@ class Unit {
     return this.hp;
   }
 
-  resetLastSkillTime() {
-    this.lastSkillUsedTime = Date.now();
+  resetLastSkillTime(timestamp) {
+    this.lastSkillTime = timestamp;
   }
 
-  isSkillAvailable() {
-    const currentTime = Date.now();
-    return currentTime - this.lastSkillUsedTime >= this.skillCooldown;
+  isSkillAvailable(timestamp) {
+    return timestamp - this.lastSkillTime >= this.skillCooldown;
   }
 
   applyBuff(buffAmount, duration) {
