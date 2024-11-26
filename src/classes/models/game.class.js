@@ -1,4 +1,3 @@
-
 import PlayerGameData from './playerGameData.class.js';
 import {
   GAME_START_REQUEST_REQUIRE,
@@ -118,9 +117,12 @@ class Game {
   }
 
   initGame() {
-    // 체크포인트 매니저 생성
-    const player = [...this.players.values()];
-    this.checkPointManager = new CheckPointManager(player[0], player[1]);
+    const playerData = [];
+    // 체크포인트 매니저 생성 및 플레이어 게임 데이터 인자 추가
+    for (let player of this.players.values()) {
+      playerData.push(player);
+    }
+    this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
     this.locationSyncManager = new LocationSyncManager();
   }
 
