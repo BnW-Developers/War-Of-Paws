@@ -6,7 +6,7 @@ class Unit {
     // ID 및 종족 관련
     this.unitId = unitId;
     this.species = unitData.species;
-    this.assetId = unitData.id;
+    this.type = unitData.type;
 
     // 능력치 관련
     this.maxHp = unitData.maxHp;
@@ -41,8 +41,8 @@ class Unit {
     return this.hp;
   }
 
-  getAssetId() {
-    return this.assetId;
+  getType() {
+    return this.type;
   }
 
   getAttackPower() {

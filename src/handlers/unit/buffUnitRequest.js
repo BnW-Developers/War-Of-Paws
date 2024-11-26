@@ -29,7 +29,7 @@ const buffUnitRequest = (socket, payload) => {
     }
 
     // 버프 유닛이 올바른 유닛 타입인지 검증
-    if (buffUnit.getAssetId() !== UNIT_TYPE.BUFFER) {
+    if (buffUnit.getType() !== UNIT_TYPE.BUFFER) {
       throw new Error('Unit Type Error');
     }
 

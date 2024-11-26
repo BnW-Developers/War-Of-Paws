@@ -23,7 +23,7 @@ const healUnitRequest = (socket, payload) => {
 
     // 힐러 유닛이 힐 스킬을 가지고 있는지 검증
     // HEAL_UNIT_CODE
-    if (healerUnit.getAssetId() !== UNIT_TYPE.HEALER) {
+    if (healerUnit.getType() !== UNIT_TYPE.HEALER) {
       throw new Error('Unit Type Error');
     }
 
