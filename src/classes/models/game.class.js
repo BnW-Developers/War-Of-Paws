@@ -1,4 +1,3 @@
-
 import PlayerGameData from './playerGameData.class.js';
 import {
   GAME_START_REQUEST_REQUIRE,
@@ -110,7 +109,8 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION);
+        const userSpecies = user.getCurrentSpecies();
+        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { userSpecies });
       }
     }
 
