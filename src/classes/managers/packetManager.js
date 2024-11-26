@@ -16,6 +16,8 @@ class PacketManager {
     this.recvQueue = [];
     this.sendLock = new Mutex();
     this.recvLock = new Mutex();
+    this.sendProcessing = false;
+    this.recvProcessing = false;
   }
 
   async enQueueSend(socket, packet) {
@@ -45,21 +47,25 @@ class PacketManager {
   }
 
   async processSendPacket() {
-    if (!this.sendQueue.length) return;
+    if (!this.sendQueue.length || this.sendProcessing) return;
+    this.sendProcessing = true;
     try {
       while (this.sendQueue.length) {
         const { socket, packet } = await this.deQueueSend();
         if (!socket || !packet) throw new Error('패킷 보내기 오류');
-        socket.write(packet);
+        await socket.write(packet);
       }
     } catch (err) {
       handleErr(null, err);
+    } finally {
+      this.sendProcessing = false;
     }
   }
 
   async processRecvPacket() {
     try {
-      if (!this.recvQueue.length) return;
+      if (!this.recvQueue.length || this.recvProcessing) return;
+      this.recvProcessing = true;
       while (this.recvQueue.length) {
         const { socket, packet } = await this.deQueueRecv();
         if (!socket || !packet) throw new Error('패킷 보내기 오류');
@@ -89,6 +95,8 @@ class PacketManager {
       }
     } catch (err) {
       handleErr(err.socket, err);
+    } finally {
+      this.recvProcessing = false;
     }
   }
 }
