@@ -1,24 +1,17 @@
+import { MAX_PLAYERS } from '../../constants/game.constants.js';
 class LocationSyncManager {
   constructor() {
-    // 싱글톤
-    if (LocationSyncManager.instance) {
-      return LocationSyncManager.instance; // 기존 인스턴스 반환
-    }
-
-    // 새로운 인스턴스 생성
-    LocationSyncManager.instance = this;
-
     // 동기화에 사용될 위치값 초기화
     this.positionsToSync = new Map();
   }
 
   /**
-   * 두 좌표가 같은 위치인지 비교하여 결과를 반환
+   * 두 좌표 사이의 직선거리를 스칼라값으로 반환
    * @param {{x: float, y: float, z: float}} pos1
    * @param {{x: float, y: float, z: float}} pos2
-   * @returns {boolean}
+   * @returns {float}
    */
-  comparePosition(pos1, pos2) {
+  calculateDistance(pos1, pos2) {
     // 검증: 좌표의 형식이 올바른가?
     if (!pos1 || !pos1.x || !pos1.y || !pos1.z) {
       throw new Error('잘못된 좌표입니다: pos1', pos1);
@@ -28,7 +21,8 @@ class LocationSyncManager {
       throw new Error('잘못된 좌표입니다: pos1', pos2);
     }
 
-    return pos1.x === pos2.x && pos1.y === pos2.y && pos1.z === pos2.z;
+    // √((x1-x2)^2 + (y1-y2)^2 + (z1-z2)^2)
+    return Math.sqrt((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2 + (pos1.z - pos2.z) ** 2);
   }
 
   /**
@@ -77,39 +71,36 @@ class LocationSyncManager {
 
   /**
    * 동기화에 사용될 위치값 업데이트
-   * @param {number} gameId
    * @param {string} userId
    * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
    */
-  addSyncPositions(gameId, userId, unitPositions) {
-    // 동기화 위치값 초기화
-    if (!this.positionsToSync.has(gameId)) {
-      this.positionsToSync.set(gameId, new Map());
-    }
-
+  addSyncPositions(userId, unitPositions) {
     // 검증: 이미 기록한 위치값인가?
-    if (this.positionsToSync.get(gameId).has(userId)) {
+    if (this.positionsToSync.has(userId)) {
       throw new Error('이미 해당 클라이언트의 위치값을 기록했습니다: userid', userId);
     }
 
+    // 검증: 최대 플레이어 수를 초과하는가?
+    if (this.positionsToSync.size === MAX_PLAYERS) {
+      throw new Error(`플레이어 정원을 초과하였습니다.`);
+    }
+
     // 해당 유저의 동기화 위치값 저장
-    this.positionsToSync.get(gameId).set(userId, unitPositions);
+    this.positionsToSync.set(userId, unitPositions);
   }
 
   /**
    * 해당 게임세션의 위치동기화 실행 준비여부를 반환
    *
    * 위치 동기화 실행 준비조건: 모든 유닛의 동기화 위치값 산출 완료
-   * @param {number} gameId
    * @returns {boolean}
    */
-  isSyncReady(gameId) {
-    return this.positionsToSync.get(gameId).size === 2;
+  isSyncReady() {
+    return this.positionsToSync.size === MAX_PLAYERS;
   }
 
   /**
    * 각 클라이언트로 전송할 위치 동기화 패킷을 작성
-   * @param {number} gameId
    * @param {string} userId
    * @param {string} opponentId
    * @param {net.Socket} socket
@@ -118,9 +109,8 @@ class LocationSyncManager {
    */
   createLocationSyncPacket(gameId, userId, opponentId) {
     // 해당 게임의 모든 동기화 위치값
-    const allSyncPositions = this.positionsToSync.get(gameId);
-    const userSyncPositions = allSyncPositions.get(userId);
-    const opponentSyncPositions = allSyncPositions.get(opponentId);
+    const userSyncPositions = this.positionsToSync.get(userId);
+    const opponentSyncPositions = this.positionsToSync.get(opponentId);
 
     // 1. User 패킷 작성
     const userPacketData = { unitPositions: [] };
@@ -165,14 +155,10 @@ class LocationSyncManager {
 
   /**
    * 위치 동기화 완료 후 서버에 저장한 동기화 위치값을 리셋
-   * @param {number} gameId
    */
-  resetSyncPositions(gameId) {
-    this.positionsToSync.set(gameId, new Map());
+  resetSyncPositions() {
+    this.positionsToSync = new Map();
   }
 }
 
-const locationSyncManager = new LocationSyncManager();
-Object.freeze(locationSyncManager); // 인스턴스 변경 방지
-
-export default locationSyncManager;
+export default LocationSyncManager;

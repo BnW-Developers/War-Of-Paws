@@ -54,6 +54,9 @@ message S2CMatchNotification {
   string opponentId = 1;
 }
 
+message C2SMatchCancelRequest {
+}
+
 message C2SGameStartRequest {
   int32 timestamp = 1;
 }
@@ -224,62 +227,63 @@ message GamePacket {
     // 매칭
     C2SMatchRequest matchRequest = 6;
     S2CMatchNotification matchNotification = 7;
+    C2SMatchCancelRequest matchCancelRequest = 8;
 
     // 게임 시작
-    C2SGameStartRequest gameStartRequest = 8;
-    S2CGameStartNotification gameStartNotification = 9;
+    C2SGameStartRequest gameStartRequest = 9;
+    S2CGameStartNotification gameStartNotification = 10;
 
     // 건물 구매
-    C2SPurchaseBuildingRequest purchaseBuildingRequest = 10;
-    S2CPurchaseBuildingResponse purchaseBuildingResponse = 11;
-    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 12;
+    C2SPurchaseBuildingRequest purchaseBuildingRequest = 11;
+    S2CPurchaseBuildingResponse purchaseBuildingResponse = 12;
+    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 13;
 
     // 유닛 생성
-    C2SSpawnUnitRequest spawnUnitRequest = 13;
-    S2CSpawnUnitResponse spawnUnitResponse = 14;
-    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 15;
+    C2SSpawnUnitRequest spawnUnitRequest = 14;
+    S2CSpawnUnitResponse spawnUnitResponse = 15;
+    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 16;
     
     // 유닛 공격
-    C2SAttackUnitRequest attackUnitRequest = 16;
-    S2CAttackUnitResponse attackUnitResponse = 17;
-    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 18;
+    C2SAttackUnitRequest attackUnitRequest = 17;
+    S2CAttackUnitResponse attackUnitResponse = 18;
+    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 19;
 
     // 유닛 사망
-    S2CUnitDeathNotification unitDeathNotification = 19;
-    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 20;
+    S2CUnitDeathNotification unitDeathNotification = 20;
+    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 21;
 
     // 체크포인트 점령
-    C2SEnterCheckpointNotification enterCheckpointNotification = 21;
-    S2CTryOccupationNotification tryOccupationNotification = 22;
-    S2CPauseOccupationNotification pauseOccupationNotification = 23;
-    S2COccupationTimerResetNotification occupationTimerResetNotification = 24;
-    S2COccupationSuccessNotification occupationSuccessNotification = 25;
+    C2SEnterCheckpointNotification enterCheckpointNotification = 22;
+    S2CTryOccupationNotification tryOccupationNotification = 23;
+    S2CPauseOccupationNotification pauseOccupationNotification = 24;
+    S2COccupationTimerResetNotification occupationTimerResetNotification = 25;
+    S2COccupationSuccessNotification occupationSuccessNotification = 26;
 
     // 성채공격
-    C2SAttackBaseRequest attackBaseRequest = 26;
-    S2CAttackBaseResponse attackBaseResponse = 27;
-    S2CBaseAttackedNotification baseAttackedNotification = 28;
+    C2SAttackBaseRequest attackBaseRequest = 27;
+    S2CAttackBaseResponse attackBaseResponse = 28;
+    S2CBaseAttackedNotification baseAttackedNotification = 29;
 
     // 게임 종료
-    S2CGameOverNotification gameOverNotification = 29;
-    C2SGameEndNotification gameEndNotification = 30;
+    S2CGameOverNotification gameOverNotification = 30;
+    C2SGameEndNotification gameEndNotification = 31;
 
     // 위치 동기화
-    C2SLocationNotification locationNotification = 31;
-    S2CLocationSyncNotification locationSyncNotification = 32;
+    C2SLocationNotification locationNotification = 32;
+    S2CLocationSyncNotification locationSyncNotification = 33;
 
     // 미네랄 동기화
-    S2CMineralSyncNotification mineralSyncNotification = 33;
+    S2CMineralSyncNotification mineralSyncNotification = 34;
 
     // Heal 관련
-    C2SHealUnitRequest healUnitRequest = 34;
-    S2CHealUnitResponse healUnitResponse = 35;
-    S2CEnemyHealUnitNotification enemyHealUnitNotification = 36;
+    C2SHealUnitRequest healUnitRequest = 35;
+    S2CHealUnitResponse healUnitResponse = 36;
+    S2CEnemyHealUnitNotification enemyHealUnitNotification = 37;
 
     // Buff 관련
-    C2SBuffUnitRequest buffUnitRequest = 37;
-    S2CBuffUnitResponse buffUnitResponse = 38;
-    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 39;
+    C2SBuffUnitRequest buffUnitRequest = 38;
+    S2CBuffUnitResponse buffUnitResponse = 39;
+    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 40;
   }
 }
 

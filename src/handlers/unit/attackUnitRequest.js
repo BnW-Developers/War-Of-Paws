@@ -11,7 +11,8 @@ const attackUnitRequest = (socket, payload) => {
     logger.info(`attack unit request id: ${unitId} to ${opponentUnitIds} time: ${timestamp}`);
     const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
 
-    const attackUnit = userGameData.getUnitById(unitId);
+    // 공격 유닛 가져오기
+    const attackUnit = playerGameData.getUnit(unitId);
 
     let damage = attackUnit.getAttackPower();
     // 결과 저장용 배열
@@ -24,7 +25,7 @@ const attackUnitRequest = (socket, payload) => {
     } else {
       // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
-        const targetUnit = opponentGameData.getUnitById(opponentUnitId);
+        const targetUnit = opponentGameData.getUnit(opponentUnitId);
 
         // 데미지 적용
         const resultHp = targetUnit.applyDamage(damage);
