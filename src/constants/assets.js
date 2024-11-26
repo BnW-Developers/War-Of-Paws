@@ -16,5 +16,5 @@ export const DIRECTION = Object.freeze({
 
 export const UNIT_TYPE = Object.freeze({
   HEALER: 2010, // JSON ASSET ID
-  BUFFER: 2003, // JSON ASSET ID
+  BUFFER: 2006, // JSON ASSET ID
 });
