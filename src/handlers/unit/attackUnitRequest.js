@@ -13,14 +13,13 @@ const attackUnitRequest = (socket, payload) => {
 
     // 공격 유닛 가져오기
     const attackUnit = userGameData.getUnit(unitId);
-
     let damage = attackUnit.getAttackPower();
     // 결과 저장용 배열
     const opponentUnitInfos = [];
     const deathNotifications = [];
 
     // 공격 쿨타임 검증
-    if (!attackUnit.isAttackAvailable()) {
+    if (!attackUnit.isAttackAvailable(timestamp)) {
       damage = 0;
     } else {
       // 대상 유닛 처리
@@ -29,6 +28,7 @@ const attackUnitRequest = (socket, payload) => {
 
         // 데미지 적용
         const resultHp = targetUnit.applyDamage(damage);
+        attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
 
         if (targetUnit.isDead()) {
           opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
