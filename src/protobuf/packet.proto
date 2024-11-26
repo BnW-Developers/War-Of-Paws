@@ -78,7 +78,8 @@ message S2CAddEnemyBuildingNotification {
 
 message C2SSpawnUnitRequest {
   int32 assetId = 1;
-  bool toTop = 2;
+  int32 timestamp = 2;
+  bool toTop = 3;
 }
 
 message S2CSpawnUnitResponse {
@@ -94,8 +95,9 @@ message S2CSpawnEnemyUnitNotification {
 }
 
 message C2SAttackUnitRequest {
-  int32 unitId =1;
-  repeated int32 opponentUnitIds = 2;
+  int32 unitId = 1;
+  int32 timestamp = 2;
+  repeated int32 opponentUnitIds = 3;
 }
 
 message S2CAttackUnitResponse {
@@ -168,6 +170,44 @@ message S2CMineralSyncNotification {
   int32 mineral = 1;
 }
 
+message C2SHealUnitRequest {
+  int32 unitId = 1;
+  int32 timestamp = 2;
+  int32 targetId = 3;
+  int32 healAmount = 4;
+}
+
+message S2CHealUnitResponse {
+  int32 unitId = 1;
+  int32 unitHp = 2;
+}
+
+message S2CEnemyHealUnitNotification {
+  int32 unitId = 1;
+  int32 unitHp = 2;
+}
+
+message C2SBuffUnitRequest {
+  int32 unitId = 1;
+  int32 timestamp = 2;
+  repeated int32 targetIds = 3;
+  int32 buffAmount = 4;
+  int32 buffDuration = 5;
+}
+
+message S2CBuffUnitResponse {
+  repeated int32 unitIds = 1;
+  int32 buffAmount = 2;
+  int32 buffDuration = 3;
+}
+
+message S2CEnemyBuffUnitNotification {
+  repeated int32 unitIds = 1;
+  int32 buffAmount = 2;
+  int32 buffDuration = 3;
+}
+
+
 /*
   최상위 GamePacket 메시지
 */
@@ -234,6 +274,16 @@ message GamePacket {
 
     // 미네랄 동기화
     S2CMineralSyncNotification mineralSyncNotification = 34;
+
+    // Heal 관련
+    C2SHealUnitRequest healUnitRequest = 35;
+    S2CHealUnitResponse healUnitResponse = 36;
+    S2CEnemyHealUnitNotification enemyHealUnitNotification = 37;
+
+    // Buff 관련
+    C2SBuffUnitRequest buffUnitRequest = 38;
+    S2CBuffUnitResponse buffUnitResponse = 39;
+    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 40;
   }
 }
 

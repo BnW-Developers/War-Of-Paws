@@ -14,7 +14,7 @@ const checkSessionInfo = (socket) => {
   if (!user) {
     throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '유저를 찾지 못했습니다.');
   }
-  const userId = userSessionManager.getUserIdBySocket(socket);
+  const userId = user.getUserId();
 
   // 검증: 유저가 게임에 참가했는가?
   const gameSession = gameSessionManager.getGameSessionBySocket(socket);

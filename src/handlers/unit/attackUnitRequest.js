@@ -1,12 +1,14 @@
 import { PACKET_TYPE } from '../../constants/header.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 const attackUnitRequest = (socket, payload) => {
   try {
-    const { unitId, opponentUnitIds } = payload; // 여러 대상 유닛 처리
+    const { unitId, timestamp, opponentUnitIds } = payload; // 여러 대상 유닛 처리
 
+    logger.info(`attack unit request id: ${unitId} to ${opponentUnitIds} time: ${timestamp}`);
     const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
 
     // 공격 유닛 가져오기
@@ -35,15 +37,15 @@ const attackUnitRequest = (socket, payload) => {
 
         // 공격당한 유닛 정보 추가
         opponentUnitInfos.push({
-          opponentUnitId,
-          opponentUnitHp: resultHp, // HP는 음수가 될 수 없도록 처리
+          unitId: opponentUnitId,
+          unitHp: resultHp, // HP는 음수가 될 수 없도록 처리
         });
       }
     }
 
     // 공격 알림
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
-      opponentUnitInfos,
+      unitInfos: opponentUnitInfos,
     });
 
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_ATTACK_NOTIFICATION, {
@@ -53,11 +55,11 @@ const attackUnitRequest = (socket, payload) => {
     // 사망한 유닛이 있다면, A, B 클라이언트에게 사망 알림
     if (deathNotifications.length > 0) {
       sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
-        deathUnitId: deathNotifications,
+        unitIds: deathNotifications,
       });
 
       sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-        opponentDeathUnitId: deathNotifications,
+        unitIds: deathNotifications,
       });
     }
   } catch (err) {
