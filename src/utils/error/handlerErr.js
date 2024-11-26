@@ -8,6 +8,9 @@ export const handleErr = (socket, err) => {
   let errorCode;
   let errorMessage = err.message;
 
+  // 개발 단계 stack trace 출력
+  console.error(err);
+
   if (err.code) {
     if (!findValueInObject(ERR_CODES, err.code)) {
       logger.error(`Error Code: ${err.code} is not defined in ERR_CODES`);

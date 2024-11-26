@@ -14,7 +14,7 @@ const enterCheckpointNotification = (socket, payload) => {
       throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, 'CheckPointManager is not found');
     }
     //메서드 실행
-    CheckPointManager.addUnit(isTop, unitId);
+    CheckPointManager.addUnit(socket, isTop, unitId);
   } catch (err) {
     handleErr(socket, err);
   }

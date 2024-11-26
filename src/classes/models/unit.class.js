@@ -22,6 +22,7 @@ class Unit {
     this.skillCooldown = unitData.skillCd;
     this.lastAttackTime = 0;
     this.lastSkillTime = 0;
+    this.toTop = toTop; // 체크포인트 유닛 위치 파악용
 
     // 코스트 관련
     this.cost = unitData.cost;
@@ -31,6 +32,11 @@ class Unit {
     this.position = this.path[0];
     this.destinationIndex = 1;
     this.startedMovingAt = spawnTime;
+  }
+
+  // 체크포인트 유닛 위치 파악용 메서드
+  getToTop() {
+    return this.toTop;
   }
 
   getUnitId() {

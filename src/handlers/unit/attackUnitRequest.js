@@ -9,7 +9,8 @@ const attackUnitRequest = (socket, payload) => {
     const { unitId, timestamp, opponentUnitIds } = payload; // 여러 대상 유닛 처리
 
     logger.info(`attack unit request id: ${unitId} to ${opponentUnitIds} time: ${timestamp}`);
-    const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
+    const { userGameData, opponentGameData, opponentSocket, gameSession } =
+      checkSessionInfo(socket);
 
     // 공격 유닛 가져오기
     const attackUnit = userGameData.getUnit(unitId);
@@ -30,8 +31,12 @@ const attackUnitRequest = (socket, payload) => {
         const resultHp = targetUnit.applyDamage(damage);
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
 
+        // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
         if (targetUnit.isDead()) {
+          const checkPointManager = gameSession.getCheckPointManager(); // 체크포인트 매니저 로드
+          checkPointManager.removeUnit(socket, opponentUnitId);
           opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
+
           deathNotifications.push(opponentUnitId); // 사망 알림 추가
         }
 
