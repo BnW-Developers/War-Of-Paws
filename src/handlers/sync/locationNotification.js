@@ -1,7 +1,6 @@
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import CustomErr from '../../utils/error/customErr.js';
-import locationSyncManager from '../../classes/managers/locationSyncManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
