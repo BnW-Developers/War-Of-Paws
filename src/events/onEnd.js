@@ -16,8 +16,8 @@ export const onEnd = (socket) => () => {
       if (user.getCurrentGameId()) {
         // TODO 게임 중 접속 종료 시 처리 추가
       }
+      userSessionManager.removeUser(user.getUserId());
     }
-    userSessionManager.removeUser(user.getUserId());
   } catch (err) {
     handleErr(null, err);
   }
