@@ -11,7 +11,7 @@ class CheckPointManager {
   }
   addUnit(isTop, unit) {
     const checkPoint = isTop ? this.#topPoint : this.#bottomPoint; // isTop에 따른 체크포인트 인스턴스 선택
-    const team = this.unitsA.includes(unit) ? 0 : 1; // 추가된 유닛이 누구 팀의 것인지 확인
+    const team = this.unitsA.has(unit) ? 0 : 1; // 추가된 유닛이 누구 팀의 것인지 확인
     checkPoint.modifyUnit(team, unit, 'add'); // 체크포인트에 유닛 추가
   }
 
