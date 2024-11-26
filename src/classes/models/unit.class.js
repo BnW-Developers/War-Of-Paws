@@ -13,7 +13,7 @@ class Unit {
     this.attackPower = unitData.atk;
     this.def = unitData.def;
     this.speed = unitData.spd;
-    
+
     // 쿨타임 관련
     this.cooldown = unitData.cd;
     this.currentCooldown = unitData.cd;
@@ -21,6 +21,7 @@ class Unit {
     this.skillCooldown = unitData.skillCd;
     this.lastAttackTime = 0;
     this.lastSkillTime = 0;
+    this.toTop = toTop; // 체크포인트 유닛 위치 파악용
 
     // 코스트 관련
     this.cost = unitData.cost;
@@ -30,6 +31,11 @@ class Unit {
     this.position = this.path[0];
     this.destinationIndex = 1;
     this.startedMovingAt = spawnTime;
+  }
+
+  // 체크포인트 유닛 위치 파악용 메서드
+  getToTop() {
+    return this.toTop;
   }
 
   getUnitId() {
@@ -55,7 +61,7 @@ class Unit {
   getDestination() {
     return this.path[this.destinationIndex];
   }
-  
+
   isAttackAvailable() {
     const currentTime = Date.now();
     return currentTime - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
