@@ -1,5 +1,9 @@
 import { ASSET_TYPE } from '../../constants/assets.js';
-import { GAME_CONSTANTS } from '../../constants/game.constants.js';
+import {
+  INITIAL_BASE_HP,
+  INITIAL_MINERAL,
+  INITIAL_MINERAL_RATE,
+} from '../../constants/game.constants.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -13,11 +17,11 @@ class PlayerGameData {
 
     // TODO: 데이터 테이블에서 가져오도록 수정
     // 기본 상태 하드코딩
-    this.minerals = GAME_CONSTANTS.INITIAL_MINERAL;
-    this.mineralRate = GAME_CONSTANTS.INITIAL_MINERAL_RATE;
+    this.minerals = INITIAL_MINERAL;
+    this.mineralRate = INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
-    this.baseHp = GAME_CONSTANTS.INITIAL_BASE_HP;
+    this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
   }
 
@@ -29,6 +33,10 @@ class PlayerGameData {
 
     const unitId = gameSession.generateUnitId();
     const unit = new Unit(unitId, unitData, toTop, spawnTime);
+
+    this.units.set(unitId, unit);
+    return unitId;
+  }
 
   spendMineral(mineral) {
     this.minerals -= mineral;
