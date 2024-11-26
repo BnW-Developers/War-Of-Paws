@@ -1,6 +1,7 @@
 import Timer from '../utils/Timer.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
 
 class CheckPoint {
   #users;
@@ -92,7 +93,7 @@ class CheckPoint {
     this.timer.start();
 
     // 점령 시도 패킷 전송
-    this.sendOccupationPacket(PACKET_TYPE.TRY_OCCUPATION_NOTIFICATION, false, team);
+    this.sendOccupationPacket(PACKET_TYPE.TRY_OCCUPATION_NOTIFICATION, false, team.toString());
   }
 
   clearOccupation() {
@@ -117,12 +118,12 @@ class CheckPoint {
     this.timer.resume();
 
     // 점령 재개 패킷 전송
-    const attemptingTeam = Number(this.#status.replace('attempting', '')); // attempting0 -> 0
+    const attemptingTeam = this.#status.replace('attempting', ''); // attempting0 -> 0
     this.sendOccupationPacket(PACKET_TYPE.TRY_OCCUPATION_NOTIFICATION, false, attemptingTeam);
   }
 
   completeOccupation() {
-    const completeTeam = Number(this.#status.replace('attempting', ''));
+    const completeTeam = this.#status.replace('attempting', '');
     this.#status = `occupied${this.#status.replace('attempting', '')}`;
     console.log(`${this.name}점령완료 현재 상태: ${this.#status}`);
     this.currentStatus = this.#status;
@@ -135,12 +136,23 @@ class CheckPoint {
   // 중복 코드로 인한 메서드화
   sendOccupationPacket(packetType, payload, target = false) {
     // payload false 인 상황이면 payloadB를 사용한다는 뜻으로 target 지정이 필요
-    if (!payload && !target) throw new Error('payload or target is required');
-    for (let i = 0; i < 2; i++) {
-      const payloadA = { isTop: this.name === 'top' };
-      const payloadB = { isTop: this.name === 'top', isOpponent: i === target ? false : true };
+    try {
+      if (!payload && !target) throw new Error('payload or target is required');
+      for (let i = 0; i < 2; i++) {
+        const payloadA = { isTop: this.name === 'top' };
+        const payloadB = {
+          isTop: this.name === 'top',
+          isOpponent: i === Number(target) ? false : true,
+        };
 
-      sendPacket(this[`player${i}`].socket, packetType, payload ? payloadA : payloadB);
+        sendPacket(
+          this[`player${i === 0 ? 'A' : 'B'}`].socket,
+          packetType,
+          payload ? payloadA : payloadB,
+        );
+      }
+    } catch (err) {
+      handleErr(null, err);
     }
   }
 }
