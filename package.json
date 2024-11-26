@@ -5,7 +5,9 @@
   "main": "./src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./src/server.js"
+    "dev": "nodemon ./src/server.js",
+    "dummy1": "nodemon ./src/test/dummy.js",
+    "dummy2": "nodemon ./src/test/dummy2.js"
   },
   "keywords": [],
   "author": "BnW-Developers",
