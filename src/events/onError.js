@@ -20,9 +20,8 @@ export const onError = (socket) => (err) => {
       if (user.getCurrentGameId()) {
         // TODO 게임 중 접속 종료 시 처리 추가
       }
+      userSessionManager.removeUser(user.getUserId());
     }
-    userSessionManager.removeUser(user.getUserId());
-    handleErr(socket, new CustomErr(ERR_CODES.SOCKET_ERR, `Socket Error: ${err.message}`));
   } catch (err) {
     handleErr(null, err);
   }
