@@ -29,7 +29,7 @@ const spawnUnitRequest = (socket, payload) => {
     userGameData.spendMineral(unitCost);
 
     // 유닛 생성
-    const unitId = userGameData.addUnit(gameSession, assetId, toTop);
+    const unitId = userGameData.addUnit(gameSession, assetId, toTop, timestamp);
 
     // 패킷 전송
     sendPacket(socket, PACKET_TYPE.SPAWN_UNIT_RESPONSE, {

@@ -8,8 +8,16 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 const buffUnitRequest = (socket, payload) => {
   try {
-    const { unitId, targetIds } = payload;
-    let { buffAmount, buffDuration } = payload;
+    const {
+      unitId,
+      timestamp,
+      targetIds,
+      buffAmount: initialBuffAmount,
+      buffDuration: initialBuffDuration,
+    } = payload;
+
+    let buffAmount = initialBuffAmount;
+    let buffDuration = initialBuffDuration;
 
     // 세션 정보 검증 및 유저 데이터 가져오기
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
@@ -21,12 +29,12 @@ const buffUnitRequest = (socket, payload) => {
     }
 
     // 버프 유닛이 올바른 유닛 타입인지 검증
-    if (buffUnit.getAssetId() !== UNIT_TYPE.BUFFER) {
+    if (buffUnit.getType() !== UNIT_TYPE.BUFFER) {
       throw new Error('Unit Type Error');
     }
 
     // 스킬 쿨타임 검증
-    if (!buffUnit.isSkillAvailable()) {
+    if (!buffUnit.isSkillAvailable(timestamp)) {
       buffAmount = 0;
       buffDuration = 0;
     }
@@ -44,6 +52,7 @@ const buffUnitRequest = (socket, payload) => {
       }
 
       targetUnit.applyBuff(buffAmount, buffDuration);
+      buffUnit.resetLastSkillTime(timestamp);
 
       affectedUnits.push(targetId);
     }
