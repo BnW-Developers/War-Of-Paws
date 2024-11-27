@@ -126,3 +126,19 @@ export const getMapCorners = (species, direction) => {
     return [mapData.SECorner, mapData.SWCorner];
   }
 };
+
+/**
+ * 맵의 경계를 구성하는 좌표를 반환
+ *
+ * 각 경계를 이루는 4개의 좌표는 항상 NW -> NE -> SE -> SW 의 순서로 정렬되어 있음
+ *
+ * 호출 예시: `const { outerBound, innerBound } = getMapBounds();`
+ *
+ * @returns { {outerBound: {x: float, y: float, z: float}[4], innerBound: {x: float, y: float, z: float}[4]}}
+ */
+export const getMapBounds = () => {
+  // TODO: 다수의 맵을 지원할 시 mapId 인자 추가, 패킷명세, 게임세션 등 코드수정이 필요
+  // 현재는 하나의 맵만 지원하므로 해당 ID (5001)를 하드코딩
+  const mapData = getGameAssetById(ASSET_TYPE.MAP, 5001);
+  return { outerBound: mapData.outerBound, innerBound: mapData.innerBound };
+};
