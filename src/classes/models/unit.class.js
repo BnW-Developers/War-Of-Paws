@@ -1,8 +1,7 @@
-import { DIRECTION } from '../../constants/assets.js';
 import { getPath } from '../../utils/assets/getAssets.js';
 
 class Unit {
-  constructor(unitId, unitData, toTop, spawnTime) {
+  constructor(unitId, unitData, direction, spawnTime) {
     // ID 및 종족 관련
     this.unitId = unitId;
     this.species = unitData.species;
@@ -27,16 +26,16 @@ class Unit {
     this.cost = unitData.cost;
 
     // 이동 관련
-    this.toTop = toTop; // 체크포인트 유닛 위치 파악용
-    this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
+    this.direction = direction; // 체크포인트 유닛 위치 파악용
+    this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
     this.destinationIndex = 1;
     this.startedMovingAt = spawnTime;
   }
 
   // 체크포인트 유닛 위치 파악용 메서드
-  getToTop() {
-    return this.toTop;
+  getDirection() {
+    return this.direction;
   }
 
   getUnitId() {

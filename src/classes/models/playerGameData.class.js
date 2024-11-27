@@ -1,4 +1,4 @@
-import { ASSET_TYPE } from '../../constants/assets.js';
+import { ASSET_TYPE, DIRECTION } from '../../constants/assets.js';
 import {
   INITIAL_BASE_HP,
   INITIAL_MINERAL,
@@ -30,9 +30,10 @@ class PlayerGameData {
     if (!unitData) {
       throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
     }
+    const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
 
     const unitId = gameSession.generateUnitId();
-    const unit = new Unit(unitId, unitData, toTop, spawnTime);
+    const unit = new Unit(unitId, unitData, direction, spawnTime);
 
     this.units.set(unitId, unit);
     return unitId;
@@ -70,9 +71,9 @@ class PlayerGameData {
   }
 
   // 체크포인트 removeUser 시 유닛의 위치 정보를 얻기 위한 메서드
-  getUnitToTop(unitId) {
+  getUnitDirection(unitId) {
     const unit = this.getUnit(unitId);
-    return unit.getToTop();
+    return unit.getDirection();
   }
 
   removeUnit(unitId) {

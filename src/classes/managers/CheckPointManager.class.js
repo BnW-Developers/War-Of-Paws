@@ -21,7 +21,9 @@ class CheckPointManager {
     if (team === 1 && !units[1].has(unitId))
       throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '점령 진입한 유닛에 대한 정보가 없습니다.');
 
-    const isTop = team ? this.playerB.getUnitToTop(unitId) : this.playerA.getUnitToTop(unitId); // 유닛 정보에서 위치 받아옴
+    const isTop = team
+      ? this.playerB.getUnitDirection(unitId)
+      : this.playerA.getUnitDirection(unitId); // 유닛 정보에서 위치 받아옴
 
     const checkPoint = isTop ? this.#topPoint : this.#bottomPoint; // isTop에 따른 체크포인트 인스턴스 선택
 
