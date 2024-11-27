@@ -30,7 +30,7 @@ class CheckPointManager {
   }
 
   removeUnit(unitId) {
-    const { isTop, team } = this.getCheckpointUnits(unitId);
+    const { isTop, team } = this.getCheckPointUnits(unitId);
     const checkPoint = isTop ? this.#topPoint : this.#bottomPoint;
     checkPoint.modifyUnit(team, unitId, 'remove');
     this.#checkpointUnits.delete(unitId);
@@ -40,7 +40,7 @@ class CheckPointManager {
     return this.#checkpointUnits.has(unitId);
   }
 
-  getCheckpointUnits(unitId) {
+  getCheckPointUnits(unitId) {
     return this.#checkpointUnits.get(unitId);
   }
 
