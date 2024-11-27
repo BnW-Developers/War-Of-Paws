@@ -34,7 +34,10 @@ const attackUnitRequest = (socket, payload) => {
         // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
         if (targetUnit.isDead()) {
           const checkPointManager = gameSession.getCheckPointManager(); // 체크포인트 매니저 로드
-          checkPointManager.removeUnit(socket, opponentUnitId);
+          // 체크포인트에 있는 유닛이라면 체크포인트에서도 삭제 진행
+          if (checkPointManager.isExistUnit(opponentUnitId))
+            checkPointManager.removeUnit(opponentUnitId);
+
           opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
 
           deathNotifications.push(opponentUnitId); // 사망 알림 추가
