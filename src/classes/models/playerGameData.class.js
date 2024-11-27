@@ -1,12 +1,10 @@
-import { ASSET_TYPE } from '../../constants/assets.js';
+import { ASSET_TYPE, DIRECTION } from '../../constants/assets.js';
 import {
   INITIAL_BASE_HP,
   INITIAL_MINERAL,
   INITIAL_MINERAL_RATE,
 } from '../../constants/game.constants.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
@@ -26,13 +24,11 @@ class PlayerGameData {
   }
 
   addUnit(gameSession, assetId, toTop, spawnTime) {
-    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
-    if (!unitData) {
-      throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
-    }
-
     const unitId = gameSession.generateUnitId();
-    const unit = new Unit(unitId, unitData, toTop, spawnTime);
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
+
+    const unit = new Unit(unitId, unitData, direction, spawnTime);
 
     this.units.set(unitId, unit);
     return unitId;
@@ -70,9 +66,9 @@ class PlayerGameData {
   }
 
   // 체크포인트 removeUser 시 유닛의 위치 정보를 얻기 위한 메서드
-  getUnitToTop(unitId) {
+  getUnitDirection(unitId) {
     const unit = this.getUnit(unitId);
-    return unit.getToTop();
+    return unit.getDirection();
   }
 
   removeUnit(unitId) {
