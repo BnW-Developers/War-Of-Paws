@@ -101,7 +101,7 @@ export const getPath = (species, direction) => {
  * @param {DIRECTION} direction 소환위치 (위 또는 아래)
  * @returns {[{x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}][]} 모퉁이 영역의 배열
  */
-export const getCorners = (species, direction) => {
+export const getMapCorners = (species, direction) => {
   // 검증: 파라미터 유효성
   if (!Object.values(SPECIES).includes(species)) {
     throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 종족입니다:', species);
