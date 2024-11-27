@@ -62,6 +62,7 @@ message C2SGameStartRequest {
 }
 
 message S2CGameStartNotification {
+  string species = 1;
 }
 
 message C2SPurchaseBuildingRequest {
