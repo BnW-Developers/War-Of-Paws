@@ -1,7 +1,5 @@
 import userSessionManager from '../classes/managers/userSessionManager.js';
 import matchingSystem from '../matchmakingQueue/matchingSystem.js';
-import CustomErr from '../utils/error/customErr.js';
-import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 

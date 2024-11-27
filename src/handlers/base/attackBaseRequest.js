@@ -1,4 +1,3 @@
-import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';

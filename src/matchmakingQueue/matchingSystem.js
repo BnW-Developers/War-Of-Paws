@@ -6,7 +6,6 @@ import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import logger from '../utils/logger.js';
 import { sendPacket } from '../utils/packet/packetManager.js';
-import CustomErr from './../utils/error/customErr.js';
 
 class MatchingSystem {
   constructor() {

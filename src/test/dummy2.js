@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { PACKET_TYPE, PACKET_TYPE_REVERSED } from '../constants/header.js';
 import { snakeToCamel } from '../utils/formatter/snakeToCamel.js';
-import { MARK_1, MARK_2 } from './contents.js';
+import { MARK_2 } from './contents.js';
 import { delay } from '../utils/util/delay.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
