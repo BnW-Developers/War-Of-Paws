@@ -4,21 +4,75 @@
   "data": [
     {
       "id": 1001,
-      "DisplayName": "전사 건물",
-      "Description": "전사를 생산하기 위해 필요한 건물",
-      "cost": 100
+      "DisplayName": "비글 건물",
+      "Description": "비글을 생산하기 위해 필요한 건물",
+      "cost": 50
     },
     {
       "id": 1002,
-      "DisplayName": "궁수 건물",
-      "Description": "궁수를 생산하기 위해 필요한 건물",
-      "cost": 150
+      "DisplayName": "보더 콜리 건물",
+      "Description": "보더 콜리를 생산하기 위해 필요한 건물",
+      "cost": 60
     },
     {
       "id": 1003,
-      "DisplayName": "마법사 건물",
-      "Description": "마법사를 생산하기 위해 필요한 건물",
-      "cost": 250
+      "DisplayName": "불 테리어 건물",
+      "Description": "불 테리어를 생산하기 위해 필요한 건물",
+      "cost": 70
+    },
+    {
+      "id": 1004,
+      "DisplayName": "저먼 셰퍼드 건물",
+      "Description": "저먼 셰퍼드를 생산하기 위해 필요한 건물",
+      "cost": 80
+    },
+    {
+      "id": 1005,
+      "DisplayName": "도베르만 건물",
+      "Description": "도베르만을 생산하기 위해 필요한 건물",
+      "cost": 90
+    },
+    {
+      "id": 1006,
+      "DisplayName": "세인트 버나드 건물",
+      "Description": "세인트 버나드를 생산하기 위해 필요한 건물",
+      "cost": 100
+    },
+    {
+      "id": 1007,
+      "DisplayName": "재패니즈 밥테일 건물",
+      "Description": "재패니즈 밥테일을 생산하기 위해 필요한 건물",
+      "cost": 60
+    },
+    {
+      "id": 1008,
+      "DisplayName": "태비 건물",
+      "Description": "태비를 생산하기 위해 필요한 건물",
+      "cost": 70
+    },
+    {
+      "id": 1009,
+      "DisplayName": "페르시안 건물",
+      "Description": "페르시안을 생산하기 위해 필요한 건물",
+      "cost": 90
+    },
+    {
+      "id": 1010,
+      "DisplayName": "러시안 블루 건물",
+      "Description": "러시안 블루를 생산하기 위해 필요한 건물",
+      "cost": 100
+    },
+    {
+      "id": 1011,
+      "DisplayName": "샴 건물",
+      "Description": "샴을 생산하기 위해 필요한 건물",
+      "cost": 110
+    },
+    {
+      "id": 1012,
+      "DisplayName": "스핑크스 건물",
+      "Description": "스핑크스를 생산하기 위해 필요한 건물",
+      "cost": 120
     }
   ]
 }
