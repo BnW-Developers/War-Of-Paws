@@ -22,12 +22,12 @@ class Unit {
     this.skillCooldown = unitData.skillCd;
     this.lastAttackTime = 0;
     this.lastSkillTime = 0;
-    this.toTop = toTop; // 체크포인트 유닛 위치 파악용
 
     // 코스트 관련
     this.cost = unitData.cost;
 
     // 이동 관련
+    this.toTop = toTop; // 체크포인트 유닛 위치 파악용
     this.path = getPath(this.species, toTop ? DIRECTION.UP : DIRECTION.DOWN);
     this.position = this.path[0];
     this.destinationIndex = 1;

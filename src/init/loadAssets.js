@@ -28,7 +28,7 @@ const readFileAsync = (filename) => {
 
 /**
  * 로드한 게임에셋
- * @type {{buildings: {}, paths: {}, units: {}}}
+ * @type {{buildings: {}, maps: {}, paths: {}, units: {}}}
  */
 // TODO: 불변성을 추가할 방법 고려
 export let gameAssets = {};
@@ -37,16 +37,17 @@ export let gameAssets = {};
  * 전체 게임에셋을 불러오는 함수
  *
  * 게임 시작시 실행
- * @returns {{buildings: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
+ * @returns {{buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const loadGameAssets = async () => {
-  const [buildings, paths, units] = await Promise.all([
+  const [buildings, maps, paths, units] = await Promise.all([
     readFileAsync('building.json'),
+    readFileAsync('maps.json'),
     readFileAsync('path.json'),
     readFileAsync('unit.json'),
   ]);
 
-  gameAssets = { buildings, paths, units };
+  gameAssets = { buildings, maps, paths, units };
   logger.info(`GameAsset Initialized : ${Object.keys(gameAssets).length}`);
   return gameAssets;
 };
