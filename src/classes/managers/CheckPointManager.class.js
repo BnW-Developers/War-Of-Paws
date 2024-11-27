@@ -1,3 +1,4 @@
+import { DIRECTION } from '../../constants/assets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import CheckPoint from '../models/CheckPoint.class.js';
@@ -21,19 +22,19 @@ class CheckPointManager {
     if (team === 1 && !units[1].has(unitId))
       throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '점령 진입한 유닛에 대한 정보가 없습니다.');
 
-    const isTop = team
+    const direction = team
       ? this.playerB.getUnitDirection(unitId)
       : this.playerA.getUnitDirection(unitId); // 유닛 정보에서 위치 받아옴
 
-    const checkPoint = isTop ? this.#topPoint : this.#bottomPoint; // isTop에 따른 체크포인트 인스턴스 선택
+    const checkPoint = direction === DIRECTION.UP ? this.#topPoint : this.#bottomPoint; // direction에 따른 체크포인트 인스턴스 선택
 
     checkPoint.modifyUnit(team, unitId, 'add'); // 체크포인트에 유닛
-    this.#checkpointUnits.set(unitId, { isTop, team }); // 체크포인트 유닛 여부 관리용
+    this.#checkpointUnits.set(unitId, { direction, team }); // 체크포인트 유닛 여부 관리용
   }
 
   removeUnit(unitId) {
-    const { isTop, team } = this.getCheckPointUnits(unitId);
-    const checkPoint = isTop ? this.#topPoint : this.#bottomPoint;
+    const { direction, team } = this.getCheckPointUnits(unitId);
+    const checkPoint = direction === DIRECTION.UP ? this.#topPoint : this.#bottomPoint;
     checkPoint.modifyUnit(team, unitId, 'remove');
     this.#checkpointUnits.delete(unitId);
   }
@@ -47,8 +48,8 @@ class CheckPointManager {
   }
 
   getCheckPointState(unitId) {
-    const { isTop, team } = this.getCheckPointUnits(unitId);
-    const checkPoint = isTop ? this.#topPoint : this.#bottomPoint;
+    const { direction, team } = this.getCheckPointUnits(unitId);
+    const checkPoint = direction === DIRECTION.UP ? this.#topPoint : this.#bottomPoint;
     const status = checkPoint.getStatus();
 
     return `occupied${team}` === status;
