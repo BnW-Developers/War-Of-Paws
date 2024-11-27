@@ -12,14 +12,13 @@ class MineralSyncManager {
       const intervalSeconds = Math.floor(MINERAL_SYNC_INTERVAL / 1000); // 인터벌 seconds 변환
 
       // 미네랄 현황 가져옴
-      const currentMineral = playerGameData.getMineral();
       const mineralRate = playerGameData.getMineralRate();
 
       // 증가할 미네랄 계산
       const mineralToAdd = mineralRate * intervalSeconds; // 미네랄 증가율 * 인터벌(3초)
 
       // 미네랄 적용
-      playerGameData.setMineral(currentMineral + mineralToAdd);
+      playerGameData.addMineral(mineralToAdd);
     });
   }
 

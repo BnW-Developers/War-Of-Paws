@@ -47,6 +47,10 @@ class PlayerGameData {
     this.mineral = Math.max(0, newMineral);
   }
 
+  addMineral(newMineral) {
+    this.mineral += newMineral;
+  }
+
   getMineral() {
     return this.mineral;
   }
