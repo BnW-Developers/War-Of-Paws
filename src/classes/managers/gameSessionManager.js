@@ -63,7 +63,7 @@ class GameSessionManager {
 
   async handleGameEnd(data) {
     logger.info(`Game ended gameId: ${data.gameId}`);
-    await recordGame(data.winUserId, data.loseUserId);
+    await recordGame(data.catUserId, data.dogUserId, data.winTeam);
     this.removeGameSession(data.gameId);
   }
 

@@ -149,18 +149,44 @@ class Game {
     );
   }
 
-  async endGame(loseUserId) {
+  async endGame() {
+    if (!this.inProgress) return;
     this.inProgress = false;
 
-    let winUserId = null;
-    // eslint-disable-next-line no-unused-vars
-    for (const [userId, _] of this.players) {
+    let catUserId = null;
+    let dogUserId = null;
+    let winTeam = 'DRAW'; // 기본값 설정
+
+    const players = Array.from(this.players.entries()); // Map을 배열로 변환
+
+    if (players.length >= 2) {
+      // 첫 번째 유저
+      const [firstUserId, firstUserData] = players[0];
+      catUserId = firstUserId;
+      const catBaseHp = firstUserData.baseHp;
       // 유저들에게 게임 종료 알림 전송
-      if (userId !== loseUserId) winUserId = userId;
-      const user = userSessionManager.getUserByUserId(userId);
-      if (user) {
-        user.setCurrentGameId(null);
-        sendPacket(user.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+      const catUser = userSessionManager.getUserByUserId(catUserId);
+      if (catUser) {
+        catUser.setCurrentGameId(null);
+        sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+      }
+
+      // 두 번째 유저
+      const [secondUserId, secondUserData] = players[1];
+      dogUserId = secondUserId;
+      const dogBaseHp = secondUserData.baseHp;
+      // 유저들에게 게임 종료 알림 전송
+      const dogUser = userSessionManager.getUserByUserId(dogUserId);
+      if (dogUser) {
+        dogUser.setCurrentGameId(null);
+        sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+      }
+
+      // baseHp 비교
+      if (catBaseHp > dogBaseHp) {
+        winTeam = 'CAT';
+      } else if (catBaseHp < dogBaseHp) {
+        winTeam = 'DOG';
       }
     }
 
@@ -169,8 +195,9 @@ class Game {
       'game:end',
       JSON.stringify({
         gameId: this.gameId,
-        winUserId,
-        loseUserId,
+        catUserId,
+        dogUserId,
+        winTeam,
         type: 'end',
       }),
     );
