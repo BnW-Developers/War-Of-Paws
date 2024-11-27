@@ -1,19 +1,20 @@
-import PlayerGameData from './playerGameData.class.js';
 import {
   GAME_START_REQUEST_REQUIRE,
   GAME_START_TIMEOUT,
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
-import userSessionManager from '../managers/userSessionManager.js';
-import gameSessionManager from '../managers/gameSessionManager.js';
-import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import CheckPointManager from '../managers/CheckPointManager.class.js';
+import gameSessionManager from '../managers/gameSessionManager.js';
+import LocationSyncManager from '../managers/locationSyncManager.js';
+import MineralSyncManager from '../managers/mineralSyncManager.js';
+import userSessionManager from '../managers/userSessionManager.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
-import LocationSyncManager from '../managers/locationSyncManager.js';
+import PlayerGameData from './playerGameData.class.js';
 
 class Game {
   constructor(gameId) {
@@ -24,6 +25,7 @@ class Game {
     this.inProgress = false;
     this.checkPointManager = null;
     this.locationSyncManager = null;
+    this.mineralSyncManager = new MineralSyncManager();
     this.unitIdCounter = 1;
   }
 
@@ -126,6 +128,9 @@ class Game {
     }
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
     this.locationSyncManager = new LocationSyncManager();
+
+    // TODO: endgame이 생기면 반드시 루프를 중지시켜줘야 함 (mineralSyncManager.stopSyncLoop() 호출)
+    this.mineralSyncManager.startSyncLoop(this.players);
   }
 
   cancelGame() {

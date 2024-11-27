@@ -17,7 +17,7 @@ class PlayerGameData {
 
     // TODO: 데이터 테이블에서 가져오도록 수정
     // 기본 상태 하드코딩
-    this.minerals = INITIAL_MINERAL;
+    this.mineral = INITIAL_MINERAL;
     this.mineralRate = INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
@@ -38,13 +38,21 @@ class PlayerGameData {
     return unitId;
   }
 
-  spendMineral(mineral) {
-    this.minerals -= mineral;
-    return this.minerals;
+  spendMineral(newMineral) {
+    this.mineral -= newMineral;
+    return this.mineral;
+  }
+
+  setMineral(newMineral) {
+    this.mineral = Math.max(0, newMineral);
   }
 
   getMineral() {
-    return this.minerals;
+    return this.mineral;
+  }
+
+  getMineralRate() {
+    return this.mineralRate;
   }
 
   addBuilding(assetId) {
