@@ -84,3 +84,35 @@ export const getPath = (species, direction) => {
   );
   return pathData.path;
 };
+
+/**
+ * 경로에 맞는 모퉁이 영역 좌표를 반환
+ *
+ * 호출 예시: const corners = getCorners(SPECIES.DOG, DIRECTION.UP);
+ * @param {SPECIES} species 진영 (개 또는 고양이)
+ * @param {DIRECTION} direction 소환위치 (위 또는 아래)
+ * @returns {[{x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}][]} 모퉁이 영역의 배열
+ */
+export const getCorners = (species, direction) => {
+  // 검증: 파라미터 유효성
+  if (!Object.values(SPECIES).includes(species)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 종족입니다:', species);
+  }
+  if (!Object.values(DIRECTION).includes(direction)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 방향입니다:', direction);
+  }
+
+  // TODO: 다수의 맵을 지원할 시 패킷명세, 게임세션 등 코드수정이 필요
+  // 현재는 하나의 맵만 지원하므로 해당 ID (5001)를 하드코딩
+  const mapData = getGameAssetById(ASSET_TYPE.MAP, 5001);
+
+  if (species === SPECIES.DOG && direction === DIRECTION.UP) {
+    return [mapData.NWCorner, mapData.NECorner];
+  } else if (species === SPECIES.DOG && direction === DIRECTION.DOWN) {
+    return [mapData.SWCorner, mapData.SECorner];
+  } else if (species === SPECIES.CAT && direction === DIRECTION.UP) {
+    return [mapData.NECorner, mapData.NWCorner];
+  } else if (species === SPECIES.CAT && direction === DIRECTION.DOWN) {
+    return [mapData.SECorner, mapData.SWCorner];
+  }
+};
