@@ -151,7 +151,6 @@ class Game {
   }
 
   async endGame(loseUserId) {
-    logger.info(`Game end gameId: ${this.gameId}`);
     this.inProgress = false;
 
     let winUserId = null;
