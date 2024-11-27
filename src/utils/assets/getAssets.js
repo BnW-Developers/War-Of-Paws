@@ -72,7 +72,7 @@ export const getGameAssetById = (assetType, id) => {
 /**
  * 진영과 방향에 부합하는 경로를 반환
  *
- * 호출 예시: const pathData = getPath(SPECIES.DOG, DIRECTION.UP);
+ * 호출 예시: const path = getPath(SPECIES.DOG, DIRECTION.UP);
  * @param {SPECIES} species 진영 (개 또는 고양이)
  * @param {DIRECTION} direction 소환위치 (위 또는 아래)
  * @returns {{x: float, y: float, z: float}[]} 경로
