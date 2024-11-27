@@ -43,6 +43,14 @@ class CheckPointManager {
   getCheckpointUnits(unitId) {
     return this.#checkpointUnits.get(unitId);
   }
+
+  getCheckPointState(unitId) {
+    const { isTop, team } = this.getCheckPointUnits(unitId);
+    const checkPoint = isTop ? this.#topPoint : this.#bottomPoint;
+    const status = checkPoint.getStatus();
+
+    return `occupied${team}` === status;
+  }
 }
 
 export default CheckPointManager;

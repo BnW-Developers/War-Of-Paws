@@ -155,6 +155,10 @@ class CheckPoint {
       handleErr(null, err);
     }
   }
+
+  getStatus() {
+    return this.#status;
+  }
 }
 
 export default CheckPoint;
