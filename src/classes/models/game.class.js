@@ -132,9 +132,8 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        sendPacket(user.getSocket(), PACKET_TYPE.MATCH_CANCELLED, {
-          message: 'Game start timeout',
-        });
+        const err = new CustomErr(ERR_CODES.GAME_CANCELED, '게임이 취소되었습니다.');
+        handleErr(user.socket, err);
 
         user.setCurrentGameId(null);
       }

@@ -24,6 +24,7 @@ export const ERR_CODES = {
   // Game Start 관련 에러
   GAME_ALREADY_STARTED: 10400, // 게임이 이미 시작됨
   GAME_NOT_READY: 10401, // 게임 시작 준비가 안 됨
+  GAME_CANCELED: 10402,
 
   // Building Purchase 관련 에러
   BUILDING_INSUFFICIENT_FUNDS: 10500, // 자금 부족
