@@ -27,12 +27,12 @@ class Unit {
 
     // 이동 관련
     this.direction = direction; // 체크포인트 유닛 위치 파악용
-    this.lastTimestamp = spawnTime;
     this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
     this.destinationIndex = 1;
     this.destinationPoint = this.path[this.destinationIndex];
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
+    this.lastTimestamp = spawnTime;
   }
 
   getUnitId() {
@@ -54,6 +54,10 @@ class Unit {
   // 사망 여부 확인 메서드
   isDead() {
     return this.hp <= 0;
+  }
+
+  getSpeed() {
+    return this.speed;
   }
 
   getAttackPower() {
@@ -131,6 +135,10 @@ class Unit {
       this.destinationArea = null;
     }
     return { point: this.destinationPoint, area: this.destinationArea };
+  }
+
+  getLastTimestamp() {
+    return this.lastTimestamp;
   }
 }
 
