@@ -101,7 +101,7 @@ export const getPath = (species, direction) => {
  * 호출 예시: `const corners = getMapCorners(SPECIES.DOG, DIRECTION.UP);`
  * @param {SPECIES} species 진영 (개 또는 고양이)
  * @param {DIRECTION} direction 소환위치 (위 또는 아래)
- * @returns {{x: float, y: float, z: float}[4][]} 모퉁이 영역의 배열
+ * @returns {{x: float, z: float}[4][]} 모퉁이 영역의 배열
  */
 export const getMapCorners = (species, direction) => {
   // 검증: 파라미터 유효성
