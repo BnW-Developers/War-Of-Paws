@@ -42,6 +42,10 @@ class Unit {
     return this.unitId;
   }
 
+  getSpecies() {
+    return this.species;
+  }
+
   getHp() {
     return this.hp;
   }
