@@ -30,7 +30,7 @@ const attackBaseRequest = (socket, payload) => {
 
     if (newBaseHp <= 0) {
       // 게임 종료 메서드 호출
-      // gameSession.endGame(player);
+      gameSession.endGame();
     } else {
       [
         { socket: userGameData.getSocket(), type: PACKET_TYPE.ATTACK_BASE_RESPONSE },
