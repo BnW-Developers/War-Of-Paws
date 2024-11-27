@@ -32,6 +32,7 @@ class Unit {
     this.destinationIndex = 1;
     this.destinationPoint = this.path[this.destinationIndex];
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
+    this.isMoving = true;
     this.lastTimestamp = spawnTime;
   }
 
@@ -135,6 +136,18 @@ class Unit {
       this.destinationArea = null;
     }
     return { point: this.destinationPoint, area: this.destinationArea };
+  }
+
+  isMoving() {
+    return this.isMoving;
+  }
+
+  startMoving() {
+    this.isMoving = true;
+  }
+
+  stopMoving() {
+    this.isMoving = false;
   }
 
   getLastTimestamp() {
