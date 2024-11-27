@@ -4,17 +4,23 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 const enterCheckpointNotification = (socket, payload) => {
-  const { isTop, unitId } = payload;
+  const { unitId } = payload;
 
   try {
-    const { gameSession } = checkSessionInfo(socket);
+    const { gameSession, userGameData } = checkSessionInfo(socket);
 
     const CheckPointManager = gameSession.getCheckPointManager();
     if (!CheckPointManager) {
-      throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, 'CheckPointManager is not found');
+      throw new CustomErr(ERR_CODES.CHECKPOINT_NOT_FOUND, 'CheckPointManager is not found');
     }
-    //메서드 실행
-    CheckPointManager.addUnit(socket, isTop, unitId);
+    // 중복된 유닛아이디로 점령진입 패킷을 시도할 경우 에러처리
+    if (CheckPointManager.isExistUnit(unitId))
+      throw new CustomErr(ERR_CODES.DUPLICATE_UNIT_IN_CHECKPOINT, '이미 점령지에 있는 유닛입니다.');
+
+    if (!userGameData.getUnit(unitId))
+      throw new CustomErr(ERR_CODES.UNOWNED_UNIT, '보유하지 않은 유닛입니다.');
+    // 메서드 실행
+    CheckPointManager.addUnit(unitId);
   } catch (err) {
     handleErr(socket, err);
   }
