@@ -106,6 +106,7 @@ class Game {
     this.inProgress = true;
 
     // 각 플레이어에게 게임 시작 알림
+    // eslint-disable-next-line no-unused-vars
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
@@ -128,6 +129,7 @@ class Game {
   }
 
   cancelGame() {
+    // eslint-disable-next-line no-unused-vars
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
@@ -177,6 +179,7 @@ class Game {
     let player = undefined;
     let opponent = undefined;
 
+    // eslint-disable-next-line no-unused-vars
     for (const [_, value] of this.players.entries()) {
       if (value.socket === socket) {
         player = value;

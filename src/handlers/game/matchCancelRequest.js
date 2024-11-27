@@ -3,6 +3,7 @@ import logger from '../../utils/logger.js';
 import userSessionManager from '../../classes/managers/userSessionManager.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 
+// eslint-disable-next-line no-unused-vars
 const matchCancelRequest = async (socket, payload) => {
   try {
     const user = userSessionManager.getUserBySocket(socket);
