@@ -109,8 +109,8 @@ class Game {
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
-        const userSpecies = user.getCurrentSpecies();
-        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { userSpecies });
+        const species = user.getCurrentSpecies();
+        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { species });
       }
     }
 
