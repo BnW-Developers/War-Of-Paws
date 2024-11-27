@@ -41,6 +41,8 @@ export const ERR_CODES = {
   CHECKPOINT_NOT_FOUND: 10800, // 체크포인트를 찾을 수 없음
   OCCUPATION_IN_PROGRESS: 10801, // 이미 점령 중
 
+  UNOCCUPIED_STATE_CHECKPOINT: 10803, // 체크포인트 미점령 상태
+
   // Game End 관련 에러
   GAME_NOT_ACTIVE: 10900, // 게임이 활성화되어 있지 않음
   INVALID_GAME_STATE: 10901, // 잘못된 게임 상태

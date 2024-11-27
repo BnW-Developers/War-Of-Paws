@@ -28,6 +28,14 @@ class CheckPointManager {
 
     checkPoint.modifyUnit(team, unitId, 'remove');
   }
+
+  getCheckPointState(unitId) {
+    const { isTop, team } = this.getCheckPointUnits(unitId);
+    const checkPoint = isTop ? this.#topPoint : this.#bottomPoint;
+    const status = checkPoint.getStatus();
+
+    return `occupied${team}` === status;
+  }
 }
 
 export default CheckPointManager;

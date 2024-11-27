@@ -10,7 +10,7 @@ const attackBaseRequest = (socket, payload) => {
   const { unitId } = payload;
 
   try {
-    const { userGameData, opponentGameData } = checkSessionInfo(socket);
+    const { userGameData, opponentGameData, gameSession } = checkSessionInfo(socket);
 
     if (!userGameData || !opponentGameData) {
       throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '유닛 정보를 불러오는데 실패하였습니다.');
@@ -18,6 +18,14 @@ const attackBaseRequest = (socket, payload) => {
 
     const damage = userGameData.getUnit(unitId).getAttackPower();
     if (!damage) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
+
+    // 미점령 상태 성채 공격은 가능할 수 없음.
+    const checkPointManager = gameSession.getCheckPointManager();
+    if (!checkPointManager.getCheckPointState(unitId))
+      throw new CustomErr(
+        ERR_CODES.UNOCCUPIED_STATE_CHECKPOINT,
+        '체크포인트가 점령되지 않은 상태에서는 공격할 수 없습니다.',
+      );
 
     const newBaseHp = opponentGameData.attackBase(damage);
 
