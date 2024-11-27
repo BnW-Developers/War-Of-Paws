@@ -8,7 +8,7 @@ import { ERR_CODES } from '../error/errCodes.js';
  * @param {number} timeTaken 걸린 시간 (초)
  * @returns {float}
  */
-const calculateSpeed = (pos1, pos2, timeTaken) => {
+const calcSpd = (pos1, pos2, timeTaken) => {
   // 검증: 좌표의 형식이 올바른가?
   if (!pos1 || !pos1.x || !pos1.y || !pos1.z) {
     throw new Error('잘못된 좌표입니다: pos1', pos1);
@@ -31,4 +31,4 @@ const calculateSpeed = (pos1, pos2, timeTaken) => {
   return speed;
 };
 
-export default calculateSpeed;
+export default calcSpd;
