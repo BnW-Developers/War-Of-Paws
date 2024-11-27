@@ -1,5 +1,6 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
+import formatTime from './formatter/timeFormatter.js';
 
 /**
  * 로그 메시지 형식을 정의합니다.
@@ -11,7 +12,7 @@ import 'winston-daily-rotate-file';
  * @returns {string} - 포맷된 로그 메시지
  */
 const logFormat = winston.format.printf(({ timestamp, level, message }) => {
-  return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+  return `${formatTime(timestamp)} [${level.toUpperCase()}]: ${message}`;
 });
 
 /**
