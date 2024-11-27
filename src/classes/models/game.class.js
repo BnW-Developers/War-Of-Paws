@@ -5,7 +5,6 @@ import {
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
 import userSessionManager from '../managers/userSessionManager.js';
-import gameSessionManager from '../managers/gameSessionManager.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import logger from '../../utils/logger.js';
@@ -14,7 +13,7 @@ import CheckPointManager from '../managers/CheckPointManager.class.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 import LocationSyncManager from '../managers/locationSyncManager.js';
-import { recordGame } from '../../mysql/game/game.db.js';
+import redisClient from '../../redis/redisClient.js';
 
 class Game {
   constructor(gameId) {
@@ -78,7 +77,7 @@ class Game {
     // 타이머 만료 시 게임 취소
     if (this.startRequestUsers.size < GAME_START_REQUEST_REQUIRE) {
       // TODO: 게임 취소 패킷 추가
-      //this.cancelGame();
+      this.cancelGame();
     }
   }
 
@@ -141,8 +140,14 @@ class Game {
       }
     }
 
-    // 게임 세션 제거
-    gameSessionManager.removeGameSession(this.gameId);
+    // 게임 세션 제거 요청 (redis의 pub)
+    redisClient.publish(
+      'game:cancel',
+      JSON.stringify({
+        gameId: this.gameId,
+        type: 'cancel',
+      }),
+    );
   }
 
   async endGame(loseUserId) {
@@ -161,10 +166,16 @@ class Game {
       }
     }
 
-    // 게임 기록 저장
-    await recordGame(winUserId, loseUserId);
-
-    gameSessionManager.removeGameSession(this.gameId);
+    // 게임 세션 제거 요청 (redis의 pub)
+    redisClient.publish(
+      'game:end',
+      JSON.stringify({
+        gameId: this.gameId,
+        winUserId,
+        loseUserId,
+        type: 'end',
+      }),
+    );
   }
 
   // userId로 게임 세션에서 유저 검색

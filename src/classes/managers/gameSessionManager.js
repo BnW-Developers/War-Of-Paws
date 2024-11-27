@@ -1,3 +1,5 @@
+import { recordGame } from '../../mysql/game/game.db.js';
+import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { uuid } from '../../utils/util/uuid.js';
@@ -16,6 +18,27 @@ class GameSessionManager {
 
     // 게임 세션 목록 초기화
     this.gameSessions = new Map();
+
+    this.initSubscriber();
+  }
+
+  initSubscriber() {
+    const subscriber = redisClient.duplicate();
+
+    subscriber.subscribe('game:cancel', 'game:end');
+
+    subscriber.on('message', async (channel, message) => {
+      const data = JSON.parse(message);
+
+      switch (channel) {
+        case 'game:cancel':
+          this.handleGameCancel(data);
+          break;
+        case 'game:end':
+          await this.handleGameEnd(data);
+          break;
+      }
+    });
   }
 
   addGameSession() {
@@ -28,6 +51,15 @@ class GameSessionManager {
   // gameId에 해당하는 세션이 있으면 삭제하고 성공 여부 반환
   removeGameSession(gameId) {
     return this.gameSessions.delete(gameId);
+  }
+
+  handleGameCancel(data) {
+    this.removeGameSession(data.gameId);
+  }
+
+  async handleGameEnd(data) {
+    await recordGame(data.winUserId, data.loseUserId);
+    this.removeGameSession(data.gameId);
   }
 
   // gameId에 해당하는 게임 세션 반환 (없으면 null)
