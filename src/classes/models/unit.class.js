@@ -1,4 +1,4 @@
-import { getPath } from '../../utils/assets/getAssets.js';
+import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -27,10 +27,12 @@ class Unit {
 
     // 이동 관련
     this.direction = direction; // 체크포인트 유닛 위치 파악용
+    this.startedMovingAt = spawnTime;
     this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
     this.destinationIndex = 1;
-    this.startedMovingAt = spawnTime;
+    this.destinationPoint = this.path[this.destinationIndex];
+    this.destinationArea = getMapCorners(this.species, this.direction)[0];
   }
 
   // 체크포인트 유닛 위치 파악용 메서드
@@ -62,8 +64,29 @@ class Unit {
     return this.position;
   }
 
+  /**
+   * 유닛의 목적지를 반환
+   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   */
   getDestination() {
-    return this.path[this.destinationIndex];
+    return { point: this.destinationPoint, area: this.destinationArea };
+  }
+
+  /**
+   * 유닛이 목적지에 도달했을 때 호출하여 다음 목적지를 설정
+   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   */
+  updateDestination() {
+    this.destinationPoint = this.path[++this.destinationIndex];
+
+    // 목적지가 모퉁이일 경우에만 영역 지정
+    if (this.destinationIndex < this.path.length - 1) {
+      const corners = getMapCorners(this.species, this.direction);
+      this.destinationArea = corners[this.destinationIndex - 1];
+    } else {
+      this.destinationArea = null;
+    }
+    return { point: this.destinationPoint, area: this.destinationArea };
   }
 
   isAttackAvailable(timestamp) {
