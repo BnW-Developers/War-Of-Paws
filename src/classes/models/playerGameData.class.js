@@ -5,8 +5,6 @@ import {
   INITIAL_MINERAL_RATE,
 } from '../../constants/game.constants.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
@@ -26,13 +24,10 @@ class PlayerGameData {
   }
 
   addUnit(gameSession, assetId, toTop, spawnTime) {
+    const unitId = gameSession.generateUnitId();
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
-    if (!unitData) {
-      throw new CustomErr(ERR_CODES.ASSET_NOT_FOUND, `Invalid assetId: ${assetId}`);
-    }
     const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
 
-    const unitId = gameSession.generateUnitId();
     const unit = new Unit(unitId, unitData, direction, spawnTime);
 
     this.units.set(unitId, unit);
