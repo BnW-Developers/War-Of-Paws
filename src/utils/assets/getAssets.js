@@ -78,6 +78,14 @@ export const getGameAssetById = (assetType, id) => {
  * @returns {{x: float, y: float, z: float}[]} 경로
  */
 export const getPath = (species, direction) => {
+  // 검증: 파라미터 유효성
+  if (!Object.values(SPECIES).includes(species)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 종족입니다:', species);
+  }
+  if (!Object.values(DIRECTION).includes(direction)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 방향입니다:', direction);
+  }
+
   const { paths } = getGameAsset(ASSET_TYPE.PATH);
   const pathData = paths.data.find(
     (path) => path.species === species && path.direction === direction,
