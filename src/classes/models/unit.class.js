@@ -35,11 +35,6 @@ class Unit {
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
   }
 
-  // 체크포인트 유닛 위치 파악용 메서드
-  getDirection() {
-    return this.direction;
-  }
-
   getUnitId() {
     return this.unitId;
   }
@@ -48,16 +43,65 @@ class Unit {
     return this.species;
   }
 
-  getHp() {
-    return this.hp;
-  }
-
   getType() {
     return this.type;
   }
 
+  getHp() {
+    return this.hp;
+  }
+
+  // 사망 여부 확인 메서드
+  isDead() {
+    return this.hp <= 0;
+  }
+
   getAttackPower() {
     return this.attackPower;
+  }
+
+  isAttackAvailable(timestamp) {
+    return timestamp - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+  }
+
+  resetLastAttackTime(timestamp) {
+    this.lastAttackTime = timestamp;
+  }
+
+  resetLastSkillTime(timestamp) {
+    this.lastSkillTime = timestamp;
+  }
+
+  isSkillAvailable(timestamp) {
+    return timestamp - this.lastSkillTime >= this.skillCooldown;
+  }
+
+  // 체력 감소 메서드
+  applyDamage(damage) {
+    this.hp = Math.max(0, this.hp - damage); // 체력은 0 이하로 감소하지 않음
+    return this.hp;
+  }
+
+  applyHeal(healAmount) {
+    // 최대 체력을 초과하지 않도록 체력을 회복
+    this.hp = Math.min(this.hp + healAmount, this.maxHp);
+
+    // 현재 체력을 반환
+    return this.hp;
+  }
+
+  applyBuff(buffAmount, duration) {
+    this.currentCooldown /= buffAmount; // 쿨타임 감소
+
+    // 일정 시간 후 버프 해제
+    setTimeout(() => {
+      this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
+    }, duration);
+  }
+
+  // 체크포인트 유닛 위치 파악용 메서드
+  getDirection() {
+    return this.direction;
   }
 
   getPosition() {
@@ -87,50 +131,6 @@ class Unit {
       this.destinationArea = null;
     }
     return { point: this.destinationPoint, area: this.destinationArea };
-  }
-
-  isAttackAvailable(timestamp) {
-    return timestamp - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
-  }
-
-  resetLastAttackTime(timestamp) {
-    this.lastAttackTime = timestamp;
-  }
-
-  // 체력 감소 메서드
-  applyDamage(damage) {
-    this.hp = Math.max(0, this.hp - damage); // 체력은 0 이하로 감소하지 않음
-    return this.hp;
-  }
-
-  // 사망 여부 확인 메서드
-  isDead() {
-    return this.hp <= 0;
-  }
-
-  applyHeal(healAmount) {
-    // 최대 체력을 초과하지 않도록 체력을 회복
-    this.hp = Math.min(this.hp + healAmount, this.maxHp);
-
-    // 현재 체력을 반환
-    return this.hp;
-  }
-
-  resetLastSkillTime(timestamp) {
-    this.lastSkillTime = timestamp;
-  }
-
-  isSkillAvailable(timestamp) {
-    return timestamp - this.lastSkillTime >= this.skillCooldown;
-  }
-
-  applyBuff(buffAmount, duration) {
-    this.currentCooldown /= buffAmount; // 쿨타임 감소
-
-    // 일정 시간 후 버프 해제
-    setTimeout(() => {
-      this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
-    }, duration);
   }
 }
 
