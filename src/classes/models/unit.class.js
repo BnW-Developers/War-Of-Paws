@@ -27,7 +27,7 @@ class Unit {
 
     // 이동 관련
     this.direction = direction; // 체크포인트 유닛 위치 파악용
-    this.startedMovingAt = spawnTime;
+    this.lastTimestamp = spawnTime;
     this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
     this.destinationIndex = 1;
