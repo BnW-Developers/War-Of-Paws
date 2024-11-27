@@ -86,7 +86,7 @@ export const getPath = (species, direction) => {
     throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 방향입니다:', direction);
   }
 
-  const { paths } = getGameAsset(ASSET_TYPE.PATH);
+  const paths = getGameAsset(ASSET_TYPE.PATH);
   const pathData = paths.data.find(
     (path) => path.species === species && path.direction === direction,
   );
