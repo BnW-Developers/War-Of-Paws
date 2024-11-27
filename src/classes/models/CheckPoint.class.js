@@ -139,9 +139,9 @@ class CheckPoint {
     try {
       if (!payload && !target) throw new Error('payload or target is required');
       for (let i = 0; i < 2; i++) {
-        const payloadA = { isTop: this.name === 'top' };
+        const payloadA = { isTop: this.isTop };
         const payloadB = {
-          isTop: this.name === 'top',
+          isTop: this.isTop,
           isOpponent: i === Number(target) ? false : true,
         };
 
