@@ -14,6 +14,7 @@ import CheckPointManager from '../managers/CheckPointManager.class.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 import LocationSyncManager from '../managers/locationSyncManager.js';
+import { recordGame } from '../../mysql/game/game.db.js';
 
 class Game {
   constructor(gameId) {
@@ -128,6 +129,7 @@ class Game {
   }
 
   cancelGame() {
+    // eslint-disable-next-line no-unused-vars
     for (const [userId, _] of this.players) {
       const user = userSessionManager.getUserByUserId(userId);
       if (user) {
@@ -140,6 +142,28 @@ class Game {
     }
 
     // 게임 세션 제거
+    gameSessionManager.removeGameSession(this.gameId);
+  }
+
+  async endGame(loseUserId) {
+    logger.info(`Game end gameId: ${this.gameId}`);
+    this.inProgress = false;
+
+    let winUserId = null;
+    // eslint-disable-next-line no-unused-vars
+    for (const [userId, _] of this.players) {
+      // 유저들에게 게임 종료 알림 전송
+      if (userId !== loseUserId) winUserId = userId;
+      const user = userSessionManager.getUserByUserId(userId);
+      if (user) {
+        user.setCurrentGameId(null);
+        sendPacket(user.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+      }
+    }
+
+    // 게임 기록 저장
+    await recordGame(winUserId, loseUserId);
+
     gameSessionManager.removeGameSession(this.gameId);
   }
 
