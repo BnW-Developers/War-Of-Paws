@@ -143,7 +143,7 @@ class DummyClient {
         switch (packetType) {
           case PACKET_TYPE.SPAWN_UNIT_RESPONSE:
             this.myUnit.push({
-              assetId: response.assetID,
+              assetId: response.assetId,
               unitId: response.unitId,
               isTop: response.toTop,
             });
@@ -151,7 +151,7 @@ class DummyClient {
             break;
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION:
             this.oppoUnit.push({
-              assetId: response.assetID,
+              assetId: response.assetId,
               unitId: response.unitId,
               isTop: response.toTop,
             });
