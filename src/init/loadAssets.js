@@ -42,7 +42,7 @@ export let gameAssets = {};
 export const loadGameAssets = async () => {
   const [buildings, maps, paths, units] = await Promise.all([
     readFileAsync('building.json'),
-    readFileAsync('maps.json'),
+    readFileAsync('map.json'),
     readFileAsync('path.json'),
     readFileAsync('unit.json'),
   ]);
