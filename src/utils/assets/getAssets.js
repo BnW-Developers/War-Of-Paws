@@ -96,10 +96,12 @@ export const getPath = (species, direction) => {
 /**
  * 경로에 맞는 모퉁이 영역 좌표를 반환
  *
- * 호출 예시: const corners = getCorners(SPECIES.DOG, DIRECTION.UP);
+ * 영역을 이루는 4개의 좌표는 항상 NW -> NE -> SE -> SW 의 순서로 정렬되어 있음
+ *
+ * 호출 예시: const corners = getMapCorners(SPECIES.DOG, DIRECTION.UP);
  * @param {SPECIES} species 진영 (개 또는 고양이)
  * @param {DIRECTION} direction 소환위치 (위 또는 아래)
- * @returns {[{x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}, {x: float, y: float, z: float}][]} 모퉁이 영역의 배열
+ * @returns {{x: float, y: float, z: float}[4][]} 모퉁이 영역의 배열
  */
 export const getMapCorners = (species, direction) => {
   // 검증: 파라미터 유효성
@@ -110,7 +112,7 @@ export const getMapCorners = (species, direction) => {
     throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 방향입니다:', direction);
   }
 
-  // TODO: 다수의 맵을 지원할 시 패킷명세, 게임세션 등 코드수정이 필요
+  // TODO: 다수의 맵을 지원할 시 mapId 인자 추가, 패킷명세, 게임세션 등 코드수정이 필요
   // 현재는 하나의 맵만 지원하므로 해당 ID (5001)를 하드코딩
   const mapData = getGameAssetById(ASSET_TYPE.MAP, 5001);
 
