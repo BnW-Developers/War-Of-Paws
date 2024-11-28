@@ -1,4 +1,4 @@
-import calcDist from './calcDist';
+import calcDist from './calcDist.js';
 
 /**
  * 서버가 예측하는 유닛의 현재 위치값을 반환
