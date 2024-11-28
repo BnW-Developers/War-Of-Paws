@@ -48,11 +48,22 @@ class CheckPointManager {
   }
 
   getCheckPointState(unitId) {
+    if (!this.isExistUnit(unitId))
+      throw new CustomErr(
+        ERR_CODES.NOT_FOUND_UNIT_IN_CHECKPOINT,
+        '체크포인트를 거친 유닛이 아닙니다.',
+      );
     const { direction, team } = this.getCheckPointUnits(unitId);
     const checkPoint = direction === DIRECTION.UP ? this.#topPoint : this.#bottomPoint;
     const status = checkPoint.getStatus();
 
     return `occupied${team}` === status;
+  }
+
+  delete() {
+    console.log('체크매니저 딜리트 진행');
+    this.#topPoint.delete();
+    this.#bottomPoint.delete();
   }
 }
 

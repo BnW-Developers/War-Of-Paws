@@ -169,6 +169,11 @@ class Game {
     let winTeam = 'DRAW'; // 기본값 설정
 
     try {
+      // 체크포인트 인터벌 중지
+      const checkPointManager = this.getCheckPointManager();
+      checkPointManager.delete();
+      this.checkPointManager = null;
+
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
       if (players.length >= 2) {
