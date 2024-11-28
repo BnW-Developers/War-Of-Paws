@@ -32,7 +32,7 @@ export const getGameAsset = (assetType) => {
     case ASSET_TYPE.UNIT:
       return units;
     default:
-      throw CustomErr(
+      throw new CustomErr(
         ERR_CODES.INVALID_ASSET_TYPE,
         '올바르지 않은 게임에셋 타입입니다:',
         assetType,
@@ -66,7 +66,7 @@ export const getGameAssetById = (assetType, id) => {
       data = units.data.find((unit) => unit.id === id);
       break;
     default:
-      throw CustomErr(
+      throw new CustomErr(
         ERR_CODES.INVALID_ASSET_TYPE,
         '올바르지 않은 게임에셋 타입입니다:',
         assetType,
