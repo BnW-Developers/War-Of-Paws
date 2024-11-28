@@ -4,8 +4,7 @@ services:
     container_name: mysql-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: asdf4321
-      MYSQL_DATABASE: temp_db
+      MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
     ports:
       - '3307:3306'
     volumes:
