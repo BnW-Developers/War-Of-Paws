@@ -6,8 +6,8 @@ syntax = "proto3";
   게임 데이터 명세
 */
 message Position {
-  int32 x = 1;
-  int32 y = 2;
+  float x = 1;
+  float z = 2;
 }
 
 message UnitPosition {
