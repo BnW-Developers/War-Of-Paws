@@ -1,4 +1,6 @@
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -14,6 +16,10 @@ const attackUnitRequest = (socket, payload) => {
 
     // 공격 유닛 가져오기
     const attackUnit = userGameData.getUnit(unitId);
+    if (!attackUnit) {
+      throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+    }
+
     let damage = attackUnit.getAttackPower();
     // 결과 저장용 배열
     const opponentUnitInfos = [];
@@ -26,10 +32,18 @@ const attackUnitRequest = (socket, payload) => {
       // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
+        if (!targetUnit) {
+          throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+        }
 
         // 데미지 적용
         const resultHp = targetUnit.applyDamage(damage);
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
+
+        // 같은 라인이여야 공격 가능
+        if (targetUnit.direction !== attackUnit.direction) {
+          damage = 0;
+        }
 
         // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
         if (targetUnit.isDead()) {
