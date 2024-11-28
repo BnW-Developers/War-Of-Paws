@@ -64,7 +64,7 @@ const locationNotification = (socket, payload) => {
     }
 
     // 동기화 위치값을 서버에 저장
-    locationSyncManager.addSyncPositions(userId, syncPositions);
+    locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
 
     // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
     if (locationSyncManager.isSyncReady()) {
@@ -75,6 +75,9 @@ const locationNotification = (socket, payload) => {
       );
       sendPacket(socket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, userPacketData);
       sendPacket(opponentSocket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, opponentPacketData);
+
+      // 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
+      locationSyncManager.moveUnits(socket);
 
       // 서버에 저장한 동기화 위치값 초기화
       locationSyncManager.resetSyncPositions();

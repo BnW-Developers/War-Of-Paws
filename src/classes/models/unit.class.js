@@ -1,4 +1,5 @@
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
+import arrivedAtDest from '../../utils/location/arrivedAtDest.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -139,6 +140,15 @@ class Unit {
 
   getLastTimestamp() {
     return this.lastTimestamp;
+  }
+
+  move(pos, timestamp) {
+    this.position = pos;
+    this.lastTimestamp = timestamp;
+
+    if (arrivedAtDest(this, pos)) {
+      this.updateDestination();
+    }
   }
 }
 

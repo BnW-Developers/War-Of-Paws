@@ -1,4 +1,5 @@
 import { MAX_PLAYERS } from '../../constants/game.constants.js';
+import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 class LocationSyncManager {
   constructor() {
     // 동기화에 사용될 위치값 초기화
@@ -8,9 +9,10 @@ class LocationSyncManager {
   /**
    * 동기화에 사용될 위치값 업데이트
    * @param {string} userId
+   * @param {int32} timestamp
    * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
    */
-  addSyncPositions(userId, unitPositions) {
+  addSyncPositions(userId, timestamp, unitPositions) {
     // 검증: 이미 기록한 위치값인가?
     if (this.positionsToSync.has(userId)) {
       throw new Error('이미 해당 클라이언트의 위치값을 기록했습니다: userid', userId);
@@ -22,7 +24,7 @@ class LocationSyncManager {
     }
 
     // 해당 유저의 동기화 위치값 저장
-    this.positionsToSync.set(userId, unitPositions);
+    this.positionsToSync.set(userId, { timestamp, unitPositions });
   }
 
   /**
@@ -45,8 +47,8 @@ class LocationSyncManager {
    */
   createLocationSyncPacket(gameId, userId, opponentId) {
     // 해당 게임의 모든 동기화 위치값
-    const userSyncPositions = this.positionsToSync.get(userId);
-    const opponentSyncPositions = this.positionsToSync.get(opponentId);
+    const { unitPositions: userSyncPositions } = this.positionsToSync.get(userId);
+    const { unitPositions: opponentSyncPositions } = this.positionsToSync.get(opponentId);
 
     // 1. User 패킷 작성
     const userPacketData = { unitPositions: [] };
@@ -87,6 +89,33 @@ class LocationSyncManager {
     }
 
     return { userPacketData, opponentPacketData };
+  }
+
+  /**
+   * 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
+   * @param {net.Socket} socket
+   */
+  moveUnits(socket) {
+    const { userId, opponentId, userGameData, opponentGameData } = checkSessionInfo(socket);
+
+    // 동기화 후 유닛들의 새로운 위치값
+    const { unitPositions: userSyncPositions, timestamp: userTimestamp } =
+      this.positionsToSync.get(userId);
+    const { unitPositions: opponentSyncPositions, timestamp: opponentTimestamp } =
+      this.positionsToSync.get(opponentId);
+
+    // 유저 소유 유닛 업데이트
+    for (const userSyncPosition of userSyncPositions) {
+      const { unitId, position } = userSyncPosition;
+      const unit = userGameData.getUnit(unitId);
+      unit.move(position, userTimestamp);
+    }
+    // 상대방 소유 유닛 업데이트
+    for (const opponentSyncPosition of opponentSyncPositions) {
+      const { unitId, position } = opponentSyncPosition;
+      const unit = opponentGameData.getUnit(unitId);
+      unit.move(position, opponentTimestamp);
+    }
   }
 
   /**
