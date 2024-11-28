@@ -1,1 +1,22 @@
+# dotenv environment variable files
 .env
+
+# docs
+docs
+*.md
+
+# test files
+./src/test
+
+# dev
+.prettierrc
+eslint.config.js
+
+.gitignore
+Dockerfile
+
+# Dependency directories
+node_modules
+
+# logs
+logs
