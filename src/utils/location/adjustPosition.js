@@ -3,9 +3,9 @@
  * @param {[x: float, y: float, z: float]} actualPos
  * @param {[x: float, y: float, z: float]} expectedPos
  * @param {[x: float, y: float, z: float]} marginOfErr
- * @return {{adjustedPosition: {x: float, y: float, z: float}, modified: boolean}}
+ * @return {{adjustedPos: {x: float, y: float, z: float}, modified: boolean}}
  */
-const adjustPosition = (actualPos, expectedPos, marginOfErr) => {
+const adjustPos = (actualPos, expectedPos, marginOfErr) => {
   // 검증: 좌표의 형식이 올바른가?
   if (!actualPos || actualPos.length != 3) {
     throw new Error('잘못된 좌표입니다: actualPos', actualPos);
@@ -37,9 +37,9 @@ const adjustPosition = (actualPos, expectedPos, marginOfErr) => {
 
   // 배열 -> 객체로 형식을 변경한 뒤 반환
   return {
-    adjustedPosition: { x: adjustedPos[0], y: adjustedPos[1], z: adjustedPos[2] },
+    adjustedPos: { x: adjustedPos[0], y: adjustedPos[1], z: adjustedPos[2] },
     modified,
   };
 };
 
-export default adjustPosition;
+export default adjustPos;
