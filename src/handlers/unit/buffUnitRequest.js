@@ -51,6 +51,12 @@ const buffUnitRequest = (socket, payload) => {
         continue;
       }
 
+      // 같은 라인이여야 버프 가능
+      if (targetUnit.direction !== buffUnit.direction) {
+        buffAmount = 0;
+        buffDuration = 0;
+      }
+
       targetUnit.applyBuff(buffAmount, buffDuration);
       buffUnit.resetLastSkillTime(timestamp);
 

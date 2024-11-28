@@ -4,6 +4,7 @@ import {
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -14,7 +15,6 @@ import userSessionManager from '../managers/userSessionManager.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 import PlayerGameData from './playerGameData.class.js';
-import redisClient from '../../redis/redisClient.js';
 
 class Game {
   constructor(gameId) {
@@ -176,6 +176,7 @@ class Game {
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
+      this.mineralSyncManager.stopSyncLoop();
       if (players.length >= 2) {
         // 첫 번째 유저
         const [firstUserId, firstUserData] = players[0];
