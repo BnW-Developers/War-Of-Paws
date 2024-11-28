@@ -5,7 +5,7 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import adjustPos from '../../utils/location/adjustPos.js';
-import isValidPos from '../../utils/location/isValidPosition.js';
+import isValidPos from '../../utils/location/isValidPos.js';
 
 /**
  * **위치 동기화 핸들러**
