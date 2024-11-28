@@ -4,6 +4,8 @@ import CustomErr from '../../utils/error/customErr.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import adjustPos from '../../utils/location/adjustPos.js';
+import isValidPos from '../../utils/location/isValidPosition.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -48,20 +50,16 @@ const locationNotification = (socket, payload) => {
         throw new CustomErr(ERR_CODES.UNOWNED_UNIT, '유저가 보유한 유닛이 아닙니다.');
       }
 
-      const actualPosition = [position.x, 0, position.z]; // 실제 위치 (보유 클라이언트 기준)
-      // TODO: 서버에서 예측한 유닛의 위치값
-      const expectedPosition = [0, 0, 0]; // 예상 위치 (서버의 계산 기준)
-      const marginOfError = [0, 0, 0]; // 오차 범위
-
-      // 서버의 계산값과 비교하여 위치값을 보정
-      const { adjustedPosition, modified } = locationSyncManager.adjustPosition(
-        actualPosition,
-        expectedPosition,
-        marginOfError,
-      );
+      // 유닛의 위치가 비정상적이라면 보정
+      let adjustedPos = position;
+      let modified = false;
+      if (!isValidPos(unit, position, timestamp)) {
+        adjustedPos = adjustPos(unit, position, timestamp);
+        modified = true;
+      }
 
       // 보정한 위치를 동기화 위치 배열에 추가
-      const syncPosition = { unitId, position: adjustedPosition, modified };
+      const syncPosition = { unitId, position: adjustedPos, modified };
       syncPositions.push(syncPosition);
     }
 

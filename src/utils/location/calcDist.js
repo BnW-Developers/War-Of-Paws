@@ -1,7 +1,7 @@
 /**
  * 두 좌표 사이의 직선거리를 스칼라값으로 반환
- * @param {{x: float, y: float, z: float}} pos1
- * @param {{x: float, y: float, z: float}} pos2
+ * @param {{x: float, y: float, z: float}} pos1 위치 (전)
+ * @param {{x: float, y: float, z: float}} pos2 위치 (후)
  * @returns {float}
  */
 const calcDist = (pos1, pos2) => {
