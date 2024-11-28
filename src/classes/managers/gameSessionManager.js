@@ -2,6 +2,7 @@ import { recordGame } from '../../mysql/game/game.db.js';
 import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/logger.js';
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
@@ -29,15 +30,20 @@ class GameSessionManager {
     subscriber.subscribe('game:cancel', 'game:end');
 
     subscriber.on('message', async (channel, message) => {
-      const data = JSON.parse(message);
+      try {
+        const data = JSON.parse(message);
 
-      switch (channel) {
-        case 'game:cancel':
-          this.handleGameCancel(data);
-          break;
-        case 'game:end':
-          await this.handleGameEnd(data);
-          break;
+        switch (channel) {
+          case 'game:cancel':
+            this.handleGameCancel(data);
+            break;
+          case 'game:end':
+            await this.handleGameEnd(data);
+            break;
+        }
+      } catch (err) {
+        err.message = 'subscriber on message error: ' + err.message;
+        handleErr(null, err);
       }
     });
   }
@@ -57,14 +63,24 @@ class GameSessionManager {
   }
 
   handleGameCancel(data) {
-    logger.info(`Game cenceled gameId: ${data.gameId}`);
-    this.removeGameSession(data.gameId);
+    try {
+      logger.info(`Game canceled gameId: ${data.gameId}`);
+      this.removeGameSession(data.gameId);
+    } catch (err) {
+      err.message = 'handleGameCancel error: ' + err.message;
+      handleErr(null, err);
+    }
   }
 
   async handleGameEnd(data) {
-    logger.info(`Game ended gameId: ${data.gameId}`);
-    await recordGame(data.catUserId, data.dogUserId, data.winTeam);
-    this.removeGameSession(data.gameId);
+    try {
+      logger.info(`Game ended gameId: ${data.gameId}`);
+      await recordGame(data.catUserId, data.dogUserId, data.winTeam);
+      this.removeGameSession(data.gameId);
+    } catch (err) {
+      err.message = 'handleGameEnd error: ' + err.message;
+      handleErr(null, err);
+    }
   }
 
   // gameId에 해당하는 게임 세션 반환 (없으면 null)

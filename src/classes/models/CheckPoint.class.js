@@ -159,6 +159,12 @@ class CheckPoint {
   getStatus() {
     return this.#status;
   }
+
+  delete() {
+    this.timer.allClear();
+    this.timer = null;
+    console.log('체크포인트 딜리트 진행:', this.timer);
+  }
 }
 
 export default CheckPoint;

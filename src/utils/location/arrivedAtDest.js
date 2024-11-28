@@ -1,7 +1,7 @@
 /**
  * 유닛이 목적지에 도착했는지 확인 후 결과를 반환
- * @param {Unit} unit
- * @param {{x: float, z: float}} pos
+ * @param {Unit} unit 유닛
+ * @param {{x: float, z: float}} pos 위치
  * @returns boolean
  */
 const arrivedAtDest = (unit, pos) => {

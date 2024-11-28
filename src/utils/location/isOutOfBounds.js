@@ -6,7 +6,7 @@ import { getMapBounds } from '../assets/getAssets.js';
  * 맵 경계를 벗어났으면 (비정상적인 위치) true, 아니면 (정상적인 위치) false
  *
  * 직사각형 모양의 도넛형 맵을 상정한 로직으로, 맵 구조가 복잡해진다면 변경이 필요함
- * @param {{x: float, z: float}} pos
+ * @param {{x: float, z: float}} pos 위치
  * @returns {boolean}
  */
 const isOutOfBounds = (pos) => {
