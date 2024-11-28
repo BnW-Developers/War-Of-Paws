@@ -21,8 +21,10 @@ const isValidPos = (unit, pos, timestamp) => {
 
   // 해당 유닛의 이동속도보다 빠르게 움직였는지 확인
   const timeTaken = timestamp - unit.getLastTimestamp();
-  const speed = calcSpd(unit.getPosition(), pos, timeTaken);
-  if (speed > unit.getSpeed()) {
+  const actualSpeed = calcSpd(unit.getPosition(), pos, timeTaken);
+  const maxSpeed = unit.getSpeed();
+
+  if (actualSpeed > maxSpeed) {
     return false;
   }
 
