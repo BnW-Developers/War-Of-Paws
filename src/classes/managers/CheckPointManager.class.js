@@ -54,6 +54,12 @@ class CheckPointManager {
 
     return `occupied${team}` === status;
   }
+
+  delete() {
+    console.log('체크매니저 딜리트 진행');
+    this.#topPoint.delete();
+    this.#bottomPoint.delete();
+  }
 }
 
 export default CheckPointManager;
