@@ -129,29 +129,35 @@ class Game {
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
     this.locationSyncManager = new LocationSyncManager();
 
+    // TODO: endgame이 생기면 반드시 루프를 중지시켜줘야 함 (mineralSyncManager.stopSyncLoop() 호출)
     this.mineralSyncManager.startSyncLoop(this.players);
   }
 
   cancelGame() {
-    // eslint-disable-next-line no-unused-vars
-    for (const [userId, _] of this.players) {
-      const user = userSessionManager.getUserByUserId(userId);
-      if (user) {
-        const err = new CustomErr(ERR_CODES.GAME_CANCELED, '게임이 취소되었습니다.');
-        handleErr(user.socket, err);
+    try {
+      // eslint-disable-next-line no-unused-vars
+      for (const [userId, _] of this.players) {
+        const user = userSessionManager.getUserByUserId(userId);
+        if (user) {
+          const err = new CustomErr(ERR_CODES.GAME_CANCELED, '게임이 취소되었습니다.');
+          handleErr(user.socket, err);
 
-        user.setCurrentGameId(null);
+          user.setCurrentGameId(null);
+        }
       }
-    }
 
-    // 게임 세션 제거 요청 (redis의 pub)
-    redisClient.publish(
-      'game:cancel',
-      JSON.stringify({
-        gameId: this.gameId,
-        type: 'cancel',
-      }),
-    );
+      // 게임 세션 제거 요청 (redis의 pub)
+      redisClient.publish(
+        'game:cancel',
+        JSON.stringify({
+          gameId: this.gameId,
+          type: 'cancel',
+        }),
+      );
+    } catch (err) {
+      err.message = 'cancelGame error: ' + err.message;
+      handleErr(null, err);
+    }
   }
 
   async endGame() {
@@ -162,51 +168,61 @@ class Game {
     let dogUserId = null;
     let winTeam = 'DRAW'; // 기본값 설정
 
-    const players = Array.from(this.players.entries()); // Map을 배열로 변환
+    try {
+      // 체크포인트 인터벌 중지
+      const checkPointManager = this.getCheckPointManager();
+      checkPointManager.delete();
+      this.checkPointManager = null;
 
-    this.mineralSyncManager.stopSyncLoop();
-    if (players.length >= 2) {
-      // 첫 번째 유저
-      const [firstUserId, firstUserData] = players[0];
-      catUserId = firstUserId;
-      const catBaseHp = firstUserData.baseHp;
-      // 유저들에게 게임 종료 알림 전송
-      const catUser = userSessionManager.getUserByUserId(catUserId);
-      if (catUser) {
-        catUser.setCurrentGameId(null);
-        sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+      const players = Array.from(this.players.entries()); // Map을 배열로 변환
+
+      this.mineralSyncManager.stopSyncLoop();
+      if (players.length >= 2) {
+        // 첫 번째 유저
+        const [firstUserId, firstUserData] = players[0];
+        catUserId = firstUserId;
+        const catBaseHp = firstUserData.baseHp;
+        // 유저들에게 게임 종료 알림 전송
+        const catUser = userSessionManager.getUserByUserId(catUserId);
+        if (catUser) {
+          catUser.setCurrentGameId(null);
+          sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+        }
+
+        // 두 번째 유저
+        const [secondUserId, secondUserData] = players[1];
+        dogUserId = secondUserId;
+        const dogBaseHp = secondUserData.baseHp;
+        // 유저들에게 게임 종료 알림 전송
+        const dogUser = userSessionManager.getUserByUserId(dogUserId);
+        if (dogUser) {
+          dogUser.setCurrentGameId(null);
+          sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+        }
+
+        // baseHp 비교
+        if (catBaseHp > dogBaseHp) {
+          winTeam = 'CAT';
+        } else if (catBaseHp < dogBaseHp) {
+          winTeam = 'DOG';
+        }
       }
 
-      // 두 번째 유저
-      const [secondUserId, secondUserData] = players[1];
-      dogUserId = secondUserId;
-      const dogBaseHp = secondUserData.baseHp;
-      // 유저들에게 게임 종료 알림 전송
-      const dogUser = userSessionManager.getUserByUserId(dogUserId);
-      if (dogUser) {
-        dogUser.setCurrentGameId(null);
-        sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
-      }
-
-      // baseHp 비교
-      if (catBaseHp > dogBaseHp) {
-        winTeam = 'CAT';
-      } else if (catBaseHp < dogBaseHp) {
-        winTeam = 'DOG';
-      }
+      // 게임 세션 제거 요청 (redis의 pub)
+      redisClient.publish(
+        'game:end',
+        JSON.stringify({
+          gameId: this.gameId,
+          catUserId,
+          dogUserId,
+          winTeam,
+          type: 'end',
+        }),
+      );
+    } catch (err) {
+      err.message = 'endGame error: ' + err.message;
+      handleErr(null, err);
     }
-
-    // 게임 세션 제거 요청 (redis의 pub)
-    redisClient.publish(
-      'game:end',
-      JSON.stringify({
-        gameId: this.gameId,
-        catUserId,
-        dogUserId,
-        winTeam,
-        type: 'end',
-      }),
-    );
   }
 
   // userId로 게임 세션에서 유저 검색
