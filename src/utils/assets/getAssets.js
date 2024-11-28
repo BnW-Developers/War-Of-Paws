@@ -32,7 +32,7 @@ export const getGameAsset = (assetType) => {
     case ASSET_TYPE.UNIT:
       return units;
     default:
-      throw CustomErr(
+      throw new CustomErr(
         ERR_CODES.INVALID_ASSET_TYPE,
         '올바르지 않은 게임에셋 타입입니다:',
         assetType,
@@ -51,22 +51,31 @@ export const getGameAsset = (assetType) => {
 export const getGameAssetById = (assetType, id) => {
   const { buildings, maps, paths, units } = getAllGameAssets();
 
+  let data = null;
   switch (assetType) {
     case ASSET_TYPE.BUILDING:
-      return buildings.data.find((building) => building.id === id);
+      data = buildings.data.find((building) => building.id === id);
+      break;
     case ASSET_TYPE.MAP:
-      return maps.data.find((map) => map.id === id);
+      data = maps.data.find((map) => map.id === id);
+      break;
     case ASSET_TYPE.PATH:
-      return paths.data.find((path) => path.id === id);
+      data = paths.data.find((path) => path.id === id);
+      break;
     case ASSET_TYPE.UNIT:
-      return units.data.find((unit) => unit.id === id);
+      data = units.data.find((unit) => unit.id === id);
+      break;
     default:
-      throw CustomErr(
+      throw new CustomErr(
         ERR_CODES.INVALID_ASSET_TYPE,
         '올바르지 않은 게임에셋 타입입니다:',
         assetType,
       );
   }
+  if (!data) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, '올바르지 않은 게임에셋 ID입니다:', id);
+  }
+  return data;
 };
 
 /**
