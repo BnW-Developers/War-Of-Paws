@@ -4,6 +4,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import adjustPosition from '../../utils/location/adjustPosition.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -54,7 +55,7 @@ const locationNotification = (socket, payload) => {
       const marginOfError = [0, 0, 0]; // 오차 범위
 
       // 서버의 계산값과 비교하여 위치값을 보정
-      const { adjustedPosition, modified } = locationSyncManager.adjustPosition(
+      const { adjustedPosition, modified } = adjustPosition(
         actualPosition,
         expectedPosition,
         marginOfError,
