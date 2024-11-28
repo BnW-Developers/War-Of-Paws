@@ -32,6 +32,11 @@ const healUnitRequest = (socket, payload) => {
       healAmount = 0;
     }
 
+    // 같은 라인이여야 버프 가능
+    if (targetUnit.direction !== healerUnit.direction) {
+      healAmount = 0;
+    }
+
     // 힐 로직
     const afterHealHp = targetUnit.applyHeal(healAmount);
 
