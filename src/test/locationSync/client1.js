@@ -15,6 +15,11 @@ import logger from '../../utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const SERVER_ADDRESS = Object.freeze({
+  REMOTE: { HOST: '13.124.152.37', PORT: 3000 },
+  LOCAL: { HOST: '127.0.0.1', PORT: 5555 },
+});
+
 const UNIT_TEST = Object.freeze({
   BASIC: 0,
   OUT_OF_BOUNDS_W: 1,
@@ -25,6 +30,11 @@ const UNIT_TEST = Object.freeze({
   // 추가
 });
 
+// 서버 주소 설정
+const isLocal = false; // true: LOCAL   false: REMOTE
+const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
+
+// 유닛 테스트 선택
 const currentTest = UNIT_TEST.BASIC; //eslint-disable-line
 
 const moveInterval = 50;
@@ -354,10 +364,7 @@ async function simulateClients(clientCount, host, port) {
 
 async function main() {
   const clientCount = 1;
-  const host = '127.0.0.1';
-  const port = 5555;
-
-  const clients = await simulateClients(clientCount, host, port);
+  const clients = await simulateClients(clientCount, HOST, PORT);
 
   setTimeout(async () => {
     clients.forEach((client) => client.close());
