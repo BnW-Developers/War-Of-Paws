@@ -86,7 +86,7 @@ const locationNotification = (socket, payload) => {
       locationSyncManager.moveUnits(socket);
 
       // 서버에 저장한 동기화 위치값 초기화
-      locationSyncManager.resetSyncPositions();
+      locationSyncManager.deleteSyncPositions();
     }
   } catch (err) {
     handleErr(socket, err);

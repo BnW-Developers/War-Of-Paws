@@ -121,13 +121,16 @@ class Game {
   }
 
   initGame() {
+    const playerIds = [];
     const playerData = [];
     // 체크포인트 매니저 생성 및 플레이어 게임 데이터 인자 추가
-    for (let player of this.players.values()) {
-      playerData.push(player);
+    for (let [key, value] of this.players.entries()) {
+      playerIds.push(key);
+      playerData.push(value);
     }
+
+    this.locationSyncManager = new LocationSyncManager(playerIds[0], playerIds[1]);
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
-    this.locationSyncManager = new LocationSyncManager();
 
     // TODO: endgame이 생기면 반드시 루프를 중지시켜줘야 함 (mineralSyncManager.stopSyncLoop() 호출)
     this.mineralSyncManager.startSyncLoop(this.players);
