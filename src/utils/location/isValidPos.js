@@ -1,5 +1,5 @@
-import calcSpd from './calcSpd.js';
 import isOutOfBounds from './isOutOfBounds.js';
+import isTooFast from './isTooFast.js';
 
 /**
  * 클라이언트가 보낸 유닛의 위치값이 정상인지 여부를 판단
@@ -20,11 +20,7 @@ const isValidPos = (unit, pos, timestamp) => {
   }
 
   // 해당 유닛의 이동속도보다 빠르게 움직였는지 확인
-  const timeTaken = timestamp - unit.getLastTimestamp();
-  const actualSpeed = calcSpd(unit.getPosition(), pos, timeTaken);
-  const maxSpeed = unit.getSpeed();
-
-  if (actualSpeed > maxSpeed) {
+  if (isTooFast(unit, pos, timestamp)) {
     return false;
   }
 
