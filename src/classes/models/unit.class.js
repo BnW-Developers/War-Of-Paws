@@ -1,5 +1,4 @@
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
-import arrivedAtDest from '../../utils/location/arrivedAtDest.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -122,6 +121,23 @@ class Unit {
   }
 
   /**
+   * 유닛이 목적지에 도착했는지 확인 후 결과를 반환
+   * @returns boolean
+   */
+  arrivedAtDestination() {
+    const pos = this.getPosition();
+    const { area } = this.getDestination();
+
+    const arrived =
+      pos.x >= area[0].x && // 서쪽 변 체크
+      pos.z <= area[0].z && // 북쪽 변 체크
+      pos.x <= area[2].x && // 동쪽 변 체크
+      pos.z >= area[2].z; // 남쪽 변 체크
+
+    return arrived;
+  }
+
+  /**
    * 유닛이 목적지에 도달했을 때 호출하여 다음 목적지를 설정
    * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
    */
@@ -146,7 +162,7 @@ class Unit {
     this.position = pos;
     this.lastTimestamp = timestamp;
 
-    if (arrivedAtDest(this)) {
+    if (this.arrivedAtDestination()) {
       this.updateDestination();
     }
   }
