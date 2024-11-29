@@ -15,6 +15,18 @@ import logger from '../../utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const UNIT_TEST = Object.freeze({
+  BASIC: 0,
+  OUT_OF_BOUNDS_W: 1,
+  OUT_OF_BOUNDS_N: 2,
+  OUT_OF_BOUNDS_E: 3,
+  OUT_OF_BOUNDS_S: 4,
+  TOO_FAST: 5,
+  // 추가
+});
+
+const currentTest = UNIT_TEST.BASIC; //eslint-disable-line
+
 const moveInterval = 50;
 const locationPacketSendInterval = 200; // ms
 
