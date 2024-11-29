@@ -49,12 +49,10 @@ class LocationSyncManager {
 
     // 본인 (User) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const userSyncPosition of userSyncPositions) {
-      if (!userSyncPosition.modified) {
-        continue;
+      if (userSyncPosition.modified) {
+        const { unitId, position } = userSyncPosition;
+        userPacketData.unitPositions.push({ unitId, position });
       }
-
-      const { unitId, position } = userSyncPosition;
-      userPacketData.unitPositions.push({ unitId, position });
     }
 
     // 상대방 (Opponent) 소유의 유닛은 전부 전송
@@ -68,12 +66,10 @@ class LocationSyncManager {
 
     // 본인 (Opponent) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const opponentSyncPosition of opponentSyncPositions) {
-      if (!opponentSyncPosition.modified) {
-        continue;
+      if (opponentSyncPosition.modified) {
+        const { unitId, position } = opponentSyncPosition;
+        opponentPacketData.unitPositions.push({ unitId, position });
       }
-
-      const { unitId, position } = opponentSyncPosition;
-      opponentPacketData.unitPositions.push({ unitId, position });
     }
 
     // 상대방 (User) 소유의 유닛은 전부 전송
