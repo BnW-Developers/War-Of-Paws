@@ -10,7 +10,7 @@ class LocationSyncManager {
    * 동기화에 사용될 위치값 업데이트
    * @param {string} userId
    * @param {int32} timestamp
-   * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
+   * @param {{unitId: int32, position: {x: float, z: float}, modified: boolean}[]} unitPositions
    */
   addSyncPositions(userId, timestamp, unitPositions) {
     // 검증: 이미 기록한 위치값인가?
@@ -41,11 +41,9 @@ class LocationSyncManager {
    * 각 클라이언트로 전송할 위치 동기화 패킷을 작성
    * @param {string} userId
    * @param {string} opponentId
-   * @param {net.Socket} socket
-   * @param {net.Socket} opponentSocket
    * @return {{userPacket: Buffer, opponentPacket: Buffer}}
    */
-  createLocationSyncPacket(gameId, userId, opponentId) {
+  createLocationSyncPacket(userId, opponentId) {
     // 해당 게임의 모든 동기화 위치값
     const { unitPositions: userSyncPositions } = this.positionsToSync.get(userId);
     const { unitPositions: opponentSyncPositions } = this.positionsToSync.get(opponentId);

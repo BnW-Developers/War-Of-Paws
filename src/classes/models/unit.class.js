@@ -1,5 +1,4 @@
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
-import arrivedAtDest from '../../utils/location/arrivedAtDest.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -115,15 +114,32 @@ class Unit {
 
   /**
    * 유닛의 목적지를 반환
-   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   * @returns {{point: {x: float, z: float}, area: {x: float, z: float}[4][]}}
    */
   getDestination() {
     return { point: this.destinationPoint, area: this.destinationArea };
   }
 
   /**
+   * 유닛이 목적지에 도착했는지 확인 후 결과를 반환
+   * @returns boolean
+   */
+  arrivedAtDestination() {
+    const pos = this.getPosition();
+    const { area } = this.getDestination();
+
+    const arrived =
+      pos.x >= area[0].x && // 서쪽 변 체크
+      pos.z <= area[0].z && // 북쪽 변 체크
+      pos.x <= area[2].x && // 동쪽 변 체크
+      pos.z >= area[2].z; // 남쪽 변 체크
+
+    return arrived;
+  }
+
+  /**
    * 유닛이 목적지에 도달했을 때 호출하여 다음 목적지를 설정
-   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   * @returns {{point: {x: float, z: float}, area: {x: float, z: float}[4][]}}
    */
   updateDestination() {
     this.destinationPoint = this.path[++this.destinationIndex];
@@ -142,11 +158,16 @@ class Unit {
     return this.lastTimestamp;
   }
 
+  /**
+   * 유닛의 위치와 목적지를 업데이트
+   * @param {{x: float, z: float}} pos
+   * @param {int32} timestamp
+   */
   move(pos, timestamp) {
     this.position = pos;
     this.lastTimestamp = timestamp;
 
-    if (arrivedAtDest(this, pos)) {
+    if (this.arrivedAtDestination()) {
       this.updateDestination();
     }
   }

@@ -36,5 +36,16 @@
     "eslint": "^9.15.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
+  },
+  "cspell": {
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [],
+    "ignoreWords": [
+      "coolDown"
+    ],
+    "import": []
   }
 }
