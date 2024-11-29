@@ -158,6 +158,11 @@ class Unit {
     return this.lastTimestamp;
   }
 
+  /**
+   * 유닛의 위치와 목적지를 업데이트
+   * @param {*} pos
+   * @param {*} timestamp
+   */
   move(pos, timestamp) {
     this.position = pos;
     this.lastTimestamp = timestamp;
