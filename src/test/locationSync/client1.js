@@ -6,8 +6,17 @@ import { LOCATION_SYNC_TEST_1 } from './contents.js';
 import { PACKET_TYPE, PACKET_TYPE_REVERSED } from '../../constants/header.js';
 import { delay } from '../../utils/util/delay.js';
 import { snakeToCamel } from '../../utils/formatter/snakeToCamel.js';
+import { getGameAssetById } from '../../utils/assets/getAssets.js';
+import { ASSET_TYPE, DIRECTION } from '../../constants/assets.js';
+import Unit from '../../classes/models/unit.class.js';
+import calcDist from '../../utils/location/calcDist.js';
+import { loadGameAssets } from '../../init/loadAssets.js';
+import logger from '../../utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const moveInterval = 50;
+const locationPacketSendInterval = 200; // ms
 
 class DummyClient {
   constructor(id) {
@@ -17,8 +26,73 @@ class DummyClient {
     this.buffer = Buffer.alloc(0);
     this.root = null;
     this.GamePacket = null;
-    this.myUnit = [];
-    this.oppoUnit = [];
+    this.myUnits = [];
+    this.opponentUnits = [];
+    this.myUnitMap = new Map();
+    this.opponentUnitMap = new Map();
+  }
+
+  addMyUnit(assetId, unitId, toTop) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
+    const unit = new Unit(unitId, unitData, direction, null);
+    this.myUnits.push(unit);
+    this.myUnitMap.set(unitId, unit);
+  }
+
+  addOpponentUnit(assetId, unitId, toTop) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
+    const unit = new Unit(unitId, unitData, direction, null);
+    this.opponentUnits.push(unit);
+    this.opponentUnitMap.set(unitId, unit);
+  }
+
+  moveUnit(unit, time) {
+    const startPos = unit.getPosition();
+    const endPos = unit.getDestination().point;
+
+    const scalarDist = (unit.getSpeed() * time) / 1000; // 주어진 시간동안 유닛이 이동할 수 있는 직선거리
+    const totalScalarDist = calcDist(startPos, endPos); // 유닛의 현재 위치에서 목적지까지의 거리
+    const progressRate = scalarDist / totalScalarDist; // 유닛이 목적지까지 나아간 거리의 비율
+
+    const x = startPos.x + (endPos.x - startPos.x) * progressRate;
+    const z = startPos.z + (endPos.z - startPos.z) * progressRate;
+
+    unit.position = { x, z };
+
+    if (unit.arrivedAtDestination()) {
+      unit.updateDestination();
+    }
+  }
+
+  moveUnits(time) {
+    this.myUnits.forEach((unit) => {
+      this.moveUnit(unit, time);
+    });
+    this.opponentUnits.forEach((unit) => {
+      this.moveUnit(unit, time);
+    });
+  }
+
+  startMovingUnits() {
+    // 기존 타이머가 있다면 제거
+    this.stopMovingUnits();
+
+    this.moveTimer = setInterval(() => {
+      this.moveUnits(moveInterval);
+    }, moveInterval); // n초마다 실행
+  }
+
+  stopMovingUnits() {
+    if (this.moveTimer) {
+      clearInterval(this.moveTimer);
+      this.moveTimer = null;
+    }
+  }
+
+  setUnitPosition(unit, pos) {
+    unit.position = pos;
   }
 
   async initialize() {
@@ -138,30 +212,61 @@ class DummyClient {
       const packetType = packet.packetType;
       if (packetType) {
         const packetName = PACKET_TYPE_REVERSED[packetType];
-        console.log(packetName + ' 받았음!');
+        logger.info(packetName + ' 받았음!');
         const response = { ...decodedPayload[snakeToCamel(packetName)] };
         switch (packetType) {
-          case PACKET_TYPE.SPAWN_UNIT_RESPONSE:
-            this.myUnit.push({
-              assetId: response.assetId,
-              unitId: response.unitId,
-              isTop: response.toTop,
-            });
-            console.log(this.myUnit);
+          case PACKET_TYPE.MATCH_NOTIFICATION: {
+            loadGameAssets();
             break;
-          case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION:
-            this.oppoUnit.push({
-              assetId: response.assetId,
-              unitId: response.unitId,
-              isTop: response.toTop,
+          }
+          case PACKET_TYPE.GAME_START_NOTIFICATION: {
+            this.startMovingUnits();
+            break;
+          }
+          case PACKET_TYPE.SPAWN_UNIT_RESPONSE: {
+            const { assetId, unitId, toTop } = response;
+            console.log(`내 유닛 소환 - unitId: ${unitId}, assetId:, ${assetId}`);
+            this.addMyUnit(assetId, unitId, toTop);
+            break;
+          }
+          case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
+            const { assetId, unitId, toTop } = response;
+            this.addOpponentUnit(assetId, unitId, toTop);
+            console.log(`상대방 유닛 소환:, ${unitId}`);
+            break;
+          }
+          case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
+            const { unitPositions } = response;
+            unitPositions.forEach((unitPosition) => {
+              const { unitId, position } = unitPosition;
+              let team = '내';
+              let unit = this.myUnitMap.get(unitId);
+              if (!unit) {
+                unit = this.opponentUnitMap.get(unitId);
+                team = '상대방';
+              }
+              console.log(`--- ${team} 유닛 ${unitId} 의 위치 보정`);
+              console.log(
+                `기존 위치: ${Math.trunc(unit.getPosition().x)}, z: ${Math.trunc(unit.getPosition().z)}`,
+              );
+              this.setUnitPosition(unit, position);
+              console.log(
+                `보정된 위치: ${Math.trunc(unit.getPosition().x)}, z: ${Math.trunc(unit.getPosition().z)}`,
+              );
             });
             break;
+          }
+          case PACKET_TYPE.GAME_OVER_NOTIFICATION: {
+            // 게임오버 처리 생략
+            this.stopMovingUnits();
+            break;
+          }
           default:
             break;
         }
       }
     } catch (error) {
-      console.error(`[클라이언트 ${this.id}] 패킷 처리 중 오류 발생:`, error);
+      logger.error(`[클라이언트 ${this.id}] 패킷 처리 중 오류 발생:`, error);
     }
   }
 
@@ -171,27 +276,48 @@ class DummyClient {
       const packetType = content.packetType;
       let payload = content.payload;
 
-      switch (packetType) {
-        case PACKET_TYPE.LOCATION_NOTIFICATION:
-          console.log(this.myUnit[0]);
-          payload = { isTop: this.myUnit[0].isTop, unitId: this.myUnit[0].unitId };
-          break;
+      let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
+      let packet = this.createPacket(packetType, encodedPayload);
 
-        default:
-          break;
+      if (packetType === PACKET_TYPE.LOCATION_NOTIFICATION) {
+        // 기존 타이머가 있다면 제거
+        if (this.packetSendTimer) {
+          clearInterval(this.packetSendTimer);
+          this.moveTimer = null;
+        }
+
+        this.packetSendTimer = setInterval(() => {
+          // 유닛 업데이트 부분
+          const unitPositions = [];
+          this.myUnits.forEach((unit) => {
+            const unitId = unit.getUnitId();
+            const position = unit.getPosition();
+            unitPositions.push({ unitId, position });
+            console.log(`--- 서버로 유닛 위치 전송`);
+            console.log(`유닛 ${unitId}: ${Math.trunc(position.x)}, z: ${Math.trunc(position.z)}`);
+          });
+
+          const timestamp = Date.now();
+          payload = { unitPositions, timestamp };
+
+          // 패킷 생성 및 전송 부분
+          let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
+          let packet = this.createPacket(packetType, encodedPayload);
+
+          this.socket.write(packet);
+        }, locationPacketSendInterval); // n초마다 실행
+      } else {
+        this.socket.write(packet);
       }
-      const encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
-      const packet = this.createPacket(packetType, encodedPayload);
-      console.log(encodedPayload);
-      this.socket.write(packet);
-      console.log(`${PACKET_TYPE_REVERSED[packetType]} 패킷을 전송하였습니다.`);
+
+      logger.info(`${PACKET_TYPE_REVERSED[packetType]} 패킷을 전송하였습니다.`);
       await delay(content.duration);
     }
   }
 
   close() {
     this.socket.end();
-    console.log(`[클라이언트 ${this.id}] 연결이 종료되었습니다`);
+    logger.info(`[클라이언트 ${this.id}] 연결이 종료되었습니다`);
   }
 }
 
@@ -216,8 +342,8 @@ async function simulateClients(clientCount, host, port) {
 
 async function main() {
   const clientCount = 1;
-  const host = '13.124.152.37';
-  const port = 3000;
+  const host = '127.0.0.1';
+  const port = 5555;
 
   const clients = await simulateClients(clientCount, host, port);
 

@@ -23,7 +23,7 @@ export const LOCATION_SYNC_TEST_1 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2001, toTop: false },
+    payload: { assetId: 2001, toTop: false, timestamp: Date.now() },
     duration: 1000,
   },
   {
@@ -46,7 +46,7 @@ export const LOCATION_SYNC_TEST_2 = [
   },
   {
     packetType: PACKET_TYPE.MATCH_REQUEST,
-    payload: { species: 'DOG' },
+    payload: { species: 'CAT' },
     duration: 3000,
   },
   {
@@ -56,7 +56,7 @@ export const LOCATION_SYNC_TEST_2 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2001, toTop: false },
+    payload: { assetId: 2007, toTop: false, timestamp: Date.now() },
     duration: 1000,
   },
   {
