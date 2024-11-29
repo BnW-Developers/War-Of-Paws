@@ -60,7 +60,7 @@ const locationNotification = (socket, payload) => {
       let adjustedPos = position;
       let modified = false;
       if (!isValidPos(unit, position, timestamp)) {
-        adjustedPos = adjustPos(unit, position, timestamp);
+        adjustedPos = adjustPos(unit, timestamp);
         modified = true;
       }
 
