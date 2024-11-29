@@ -1,3 +1,4 @@
+import { SPEED_MARGIN_OF_ERROR } from '../../constants/game.constants.js';
 import calcSpd from './calcSpd.js';
 
 /**
@@ -15,7 +16,7 @@ const isTooFast = (unit, endPos, endTime) => {
   const actualSpeed = calcSpd(startPos, endPos, timeTaken);
   const maxSpeed = unit.getSpeed();
 
-  return actualSpeed > maxSpeed;
+  return actualSpeed > maxSpeed * SPEED_MARGIN_OF_ERROR;
 };
 
 export default isTooFast;
