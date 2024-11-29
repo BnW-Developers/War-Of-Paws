@@ -128,6 +128,11 @@ class Unit {
     const pos = this.getPosition();
     const { area } = this.getDestination();
 
+    // 목적지 영역이 없을 시 목적지는 성채
+    if (!area) {
+      return false;
+    }
+
     const arrived =
       pos.x >= area[0].x && // 서쪽 변 체크
       pos.z <= area[0].z && // 북쪽 변 체크
