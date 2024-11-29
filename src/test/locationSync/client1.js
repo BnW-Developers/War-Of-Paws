@@ -15,6 +15,8 @@ import logger from '../../utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const contents = LOCATION_SYNC_TEST_1;
+
 const SERVER_ADDRESS = Object.freeze({
   REMOTE: { HOST: '13.124.152.37', PORT: 3000 },
   LOCAL: { HOST: '127.0.0.1', PORT: 5555 },
@@ -293,7 +295,6 @@ class DummyClient {
   }
 
   async playContents() {
-    const contents = LOCATION_SYNC_TEST_1;
     for (const content of contents) {
       const packetType = content.packetType;
       let payload = content.payload;
