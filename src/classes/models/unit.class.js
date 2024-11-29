@@ -146,7 +146,7 @@ class Unit {
     this.position = pos;
     this.lastTimestamp = timestamp;
 
-    if (arrivedAtDest(this, pos)) {
+    if (arrivedAtDest(this)) {
       this.updateDestination();
     }
   }
