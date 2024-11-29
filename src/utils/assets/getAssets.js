@@ -84,7 +84,7 @@ export const getGameAssetById = (assetType, id) => {
  * 호출 예시: `const path = getPath(SPECIES.DOG, DIRECTION.UP);`
  * @param {SPECIES} species 진영 (개 또는 고양이)
  * @param {DIRECTION} direction 소환위치 (위 또는 아래)
- * @returns {{x: float, y: float, z: float}[]} 경로
+ * @returns {{x: float, z: float}[]} 경로
  */
 export const getPath = (species, direction) => {
   // 검증: 파라미터 유효성
@@ -143,7 +143,7 @@ export const getMapCorners = (species, direction) => {
  *
  * 호출 예시: `const { outerBound, innerBound } = getMapBounds();`
  *
- * @returns { {outerBound: {x: float, y: float, z: float}[4], innerBound: {x: float, y: float, z: float}[4]}}
+ * @returns { {outerBound: {x: float, z: float}[4], innerBound: {x: float, z: float}[4]}}
  */
 export const getMapBounds = () => {
   // TODO: 다수의 맵을 지원할 시 mapId 인자 추가, 패킷명세, 게임세션 등 코드수정이 필요

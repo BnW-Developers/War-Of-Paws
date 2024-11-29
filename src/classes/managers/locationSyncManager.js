@@ -10,7 +10,7 @@ class LocationSyncManager {
    * 동기화에 사용될 위치값 업데이트
    * @param {string} userId
    * @param {int32} timestamp
-   * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
+   * @param {{unitId: int32, position: {x: float, z: float}, modified: boolean}[]} unitPositions
    */
   addSyncPositions(userId, timestamp, unitPositions) {
     // 검증: 이미 기록한 위치값인가?

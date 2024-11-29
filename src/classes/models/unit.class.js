@@ -114,7 +114,7 @@ class Unit {
 
   /**
    * 유닛의 목적지를 반환
-   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   * @returns {{point: {x: float, z: float}, area: {x: float, z: float}[4][]}}
    */
   getDestination() {
     return { point: this.destinationPoint, area: this.destinationArea };
@@ -139,7 +139,7 @@ class Unit {
 
   /**
    * 유닛이 목적지에 도달했을 때 호출하여 다음 목적지를 설정
-   * @returns {{point: {x: float, y: float, z: float}, area: {x: float, z: float}[4][]}}
+   * @returns {{point: {x: float, z: float}, area: {x: float, z: float}[4][]}}
    */
   updateDestination() {
     this.destinationPoint = this.path[++this.destinationIndex];

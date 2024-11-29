@@ -4,13 +4,13 @@ import isOutOfBounds from './isOutOfBounds.js';
 /**
  * 클라이언트가 보낸 유닛의 위치값이 정상인지 여부를 판단
  * @param {Unit} unit 유닛
- * @param {{x: float, y: float, z: float}} pos 움직이려는 위치
+ * @param {{x: float, z: float}} pos 움직이려는 위치
  * @param {int32} timestamp 도착시간
  * @return boolean
  */
 const isValidPos = (unit, pos, timestamp) => {
   // 검증: 좌표의 형식이 올바른가?
-  if (!pos || !pos.x || !pos.y || !pos.z) {
+  if (!pos || !pos.x || !pos.z) {
     throw new Error('잘못된 좌표입니다: pos', pos);
   }
 
