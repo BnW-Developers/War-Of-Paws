@@ -56,7 +56,7 @@ export const LOCATION_SYNC_TEST_2 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2007, toTop: false, timestamp: Date.now() },
+    payload: { assetId: 2007, toTop: true, timestamp: Date.now() },
     duration: 1000,
   },
   {

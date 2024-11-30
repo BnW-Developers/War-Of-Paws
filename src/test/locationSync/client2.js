@@ -11,7 +11,9 @@ import { ASSET_TYPE, DIRECTION } from '../../constants/assets.js';
 import Unit from '../../classes/models/unit.class.js';
 import calcDist from '../../utils/location/calcDist.js';
 import { loadGameAssets } from '../../init/loadAssets.js';
-import logger from '../../utils/logger.js';
+import formatTime from '../../utils/formatter/timeFormatter.js';
+import chalk from 'chalk';
+import formatCoords from '../../utils/formatter/formatCoords.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,7 +28,7 @@ switch (pureFileName) {
     contents = LOCATION_SYNC_TEST_2;
     break;
   default:
-    throw new Error('invalid filename:', pureFileName);
+    console.error(chalk.redBright(`invalid filename: ${pureFileName}`));
 }
 
 const SERVER_ADDRESS = Object.freeze({
@@ -45,7 +47,7 @@ const UNIT_TEST = Object.freeze({
 });
 
 // 서버 주소 설정
-const isLocal = false; // true: LOCAL   false: REMOTE
+const isLocal = true; // true: LOCAL   false: REMOTE
 const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
 
 // 유닛 테스트 선택
@@ -53,6 +55,10 @@ const currentTest = UNIT_TEST.BASIC; //eslint-disable-line
 
 const moveInterval = 50;
 const locationPacketSendInterval = 200; // ms
+
+function printTime(header) {
+  console.log(`${header} ${formatTime(Date.now()).toString().split('  ')[1]}`);
+}
 
 class DummyClient {
   constructor(id) {
@@ -74,6 +80,7 @@ class DummyClient {
     const unit = new Unit(unitId, unitData, direction, null);
     this.myUnits.push(unit);
     this.myUnitMap.set(unitId, unit);
+    return unit;
   }
 
   addOpponentUnit(assetId, unitId, toTop) {
@@ -82,6 +89,7 @@ class DummyClient {
     const unit = new Unit(unitId, unitData, direction, null);
     this.opponentUnits.push(unit);
     this.opponentUnitMap.set(unitId, unit);
+    return unit;
   }
 
   moveUnit(unit, time) {
@@ -143,12 +151,13 @@ class DummyClient {
   connect(host, port) {
     return new Promise((resolve, reject) => {
       this.socket.connect(port, host, () => {
-        console.log(`[클라이언트 ${this.id}] 서버에 연결됨`);
+        printTime('[연결]');
         resolve();
       });
 
       this.socket.on('error', (error) => {
-        console.error(`[클라이언트 ${this.id}] 소켓 에러:`, error);
+        printTime('[소켓 에러]');
+        console.error(chalk.redBright(error));
         reject(error);
       });
     });
@@ -226,8 +235,9 @@ class DummyClient {
         sequence,
         payload,
       };
-    } catch (err) {
-      console.error(`[클라이언트 ${this.id}] 패킷 파싱 중 오류 발생:`, err);
+    } catch (error) {
+      printTime('[패킷 파싱 오류]');
+      console.error(chalk.redBright(error));
     }
   }
 
@@ -248,7 +258,11 @@ class DummyClient {
       const packetType = packet.packetType;
       if (packetType) {
         const packetName = PACKET_TYPE_REVERSED[packetType];
-        logger.info(packetName + ' 받았음!');
+        printTime('[수신]');
+        if (packetType === PACKET_TYPE.ERROR_NOTIFICATION) {
+          console.log(chalk.redBright(packetName));
+        }
+        console.log(packetName);
         const response = { ...decodedPayload[snakeToCamel(packetName)] };
         switch (packetType) {
           case PACKET_TYPE.MATCH_NOTIFICATION: {
@@ -261,34 +275,44 @@ class DummyClient {
           }
           case PACKET_TYPE.SPAWN_UNIT_RESPONSE: {
             const { assetId, unitId, toTop } = response;
-            console.log(`내 유닛 소환 - unitId: ${unitId}, assetId:, ${assetId}`);
-            this.addMyUnit(assetId, unitId, toTop);
+            const unit = this.addMyUnit(assetId, unitId, toTop);
+            const position = unit.getPosition();
+            console.log(chalk.greenBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`));
             break;
           }
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
             const { assetId, unitId, toTop } = response;
-            this.addOpponentUnit(assetId, unitId, toTop);
-            console.log(`상대방 유닛 소환:, ${unitId}`);
+            const unit = this.addOpponentUnit(assetId, unitId, toTop);
+            const position = unit.getPosition();
+            console.log(chalk.yellowBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`));
             break;
           }
           case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
             const { unitPositions } = response;
             unitPositions.forEach((unitPosition) => {
               const { unitId, position } = unitPosition;
-              let team = '내';
               let unit = this.myUnitMap.get(unitId);
+              let isMyUnit = true;
               if (!unit) {
                 unit = this.opponentUnitMap.get(unitId);
-                team = '상대방';
+                isMyUnit = false;
               }
-              console.log(`--- ${team} 유닛 ${unitId} 의 위치 보정`);
-              console.log(
-                `기존 위치: ${Math.trunc(unit.getPosition().x)}, z: ${Math.trunc(unit.getPosition().z)}`,
-              );
+              const pos_before = unit.getPosition();
               this.setUnitPosition(unit, position);
-              console.log(
-                `보정된 위치: ${Math.trunc(unit.getPosition().x)}, z: ${Math.trunc(unit.getPosition().z)}`,
-              );
+              const pos_after = unit.getPosition();
+              if (isMyUnit) {
+                console.log(
+                  chalk.greenBright(
+                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
+                  ),
+                );
+              } else {
+                console.log(
+                  chalk.yellowBright(
+                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
+                  ),
+                );
+              }
             });
             break;
           }
@@ -302,7 +326,8 @@ class DummyClient {
         }
       }
     } catch (error) {
-      logger.error(`[클라이언트 ${this.id}] 패킷 처리 중 오류 발생:`, error);
+      printTime('[패킷 처리 오류]');
+      console.error(chalk.redBright(error));
     }
   }
 
@@ -322,14 +347,15 @@ class DummyClient {
         }
 
         this.packetSendTimer = setInterval(() => {
+          printTime('     [발신]');
+          console.log('    ', PACKET_TYPE_REVERSED[packetType]);
           // 유닛 업데이트 부분
           const unitPositions = [];
           this.myUnits.forEach((unit) => {
             const unitId = unit.getUnitId();
             const position = unit.getPosition();
             unitPositions.push({ unitId, position });
-            console.log(`--- 서버로 유닛 위치 전송`);
-            console.log(`유닛 ${unitId}: ${Math.trunc(position.x)}, z: ${Math.trunc(position.z)}`);
+            console.log(chalk.greenBright(`     유닛${unitId}:(${formatCoords(position, 2)})`));
           });
 
           const timestamp = Date.now();
@@ -343,16 +369,17 @@ class DummyClient {
         }, locationPacketSendInterval); // n초마다 실행
       } else {
         this.socket.write(packet);
+        printTime('     [발신]');
+        console.log('    ', PACKET_TYPE_REVERSED[packetType]);
       }
 
-      logger.info(`${PACKET_TYPE_REVERSED[packetType]} 패킷을 전송하였습니다.`);
       await delay(content.duration);
     }
   }
 
   close() {
     this.socket.end();
-    logger.info(`[클라이언트 ${this.id}] 연결이 종료되었습니다`);
+    printTime('[연결 종료]');
   }
 }
 
@@ -368,7 +395,8 @@ async function simulateClients(clientCount, host, port) {
       client.playContents();
       clients.push(client);
     } catch (error) {
-      console.error(`[클라이언트 ${i}] 초기화 실패:`, error);
+      printTime('[클라이언트 초기화 실패]');
+      console.error(chalk.redBright(error));
     }
   }
 
@@ -381,7 +409,7 @@ async function main() {
 
   setTimeout(async () => {
     clients.forEach((client) => client.close());
-    console.log('모든 클라이언트 연결 종료');
+    printTime('[모든 클라이언트 연결 종료]');
   }, 100000); // 5초 후 종료
 }
 
