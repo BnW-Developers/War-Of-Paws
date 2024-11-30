@@ -6,12 +6,12 @@
  */
 const calcDist = (pos1, pos2) => {
   // 검증: 좌표의 형식이 올바른가?
-  if (!pos1 || !pos1.x || !pos1.z) {
+  if (!pos1 || pos1.x === null || pos1.z === null) {
     throw new Error('잘못된 좌표입니다: pos1', pos1);
   }
 
-  if (!pos2 || !pos2.x || !pos2.z) {
-    throw new Error('잘못된 좌표입니다: pos1', pos2);
+  if (!pos2 || pos2.x === null || pos2.z === null) {
+    throw new Error('잘못된 좌표입니다: pos2', pos2);
   }
 
   // √((x1-x2)^2 + (z1-z2)^2)
