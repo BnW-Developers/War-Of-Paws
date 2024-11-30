@@ -47,7 +47,7 @@ const UNIT_TEST = Object.freeze({
 });
 
 // 서버 주소 설정
-const isLocal = true; // true: LOCAL   false: REMOTE
+const isLocal = false; // true: LOCAL   false: REMOTE
 const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
 
 // 유닛 테스트 선택
