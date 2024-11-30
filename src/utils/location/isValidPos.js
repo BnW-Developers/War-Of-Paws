@@ -10,7 +10,7 @@ import isTooFast from './isTooFast.js';
  */
 const isValidPos = (unit, pos, timestamp) => {
   // 검증: 좌표의 형식이 올바른가?
-  if (!pos || !pos.x || !pos.z) {
+  if (!pos || pos.x === null || pos.z === null) {
     throw new Error('잘못된 좌표입니다: pos', pos);
   }
 
