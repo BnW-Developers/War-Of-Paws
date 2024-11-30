@@ -2,7 +2,7 @@ import net from 'net';
 import protobuf from 'protobufjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { LOCATION_SYNC_TEST_2 } from './contents.js';
+import { LOCATION_SYNC_TEST_1, LOCATION_SYNC_TEST_2 } from './contents.js';
 import { PACKET_TYPE, PACKET_TYPE_REVERSED } from '../../constants/header.js';
 import { delay } from '../../utils/util/delay.js';
 import { snakeToCamel } from '../../utils/formatter/snakeToCamel.js';
@@ -15,7 +15,19 @@ import logger from '../../utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const contents = LOCATION_SYNC_TEST_2;
+const dirs = __filename.split('\\');
+const pureFileName = dirs[dirs.length - 1];
+let contents = null;
+switch (pureFileName) {
+  case 'client1.js':
+    contents = LOCATION_SYNC_TEST_1;
+    break;
+  case `client2.js`:
+    contents = LOCATION_SYNC_TEST_2;
+    break;
+  default:
+    throw new Error('invalid filename:', pureFileName);
+}
 
 const SERVER_ADDRESS = Object.freeze({
   REMOTE: { HOST: '13.124.152.37', PORT: 3000 },
