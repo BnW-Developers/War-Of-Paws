@@ -56,8 +56,35 @@ const currentTest = UNIT_TEST.BASIC; //eslint-disable-line
 const moveInterval = 50;
 const locationPacketSendInterval = 200; // ms
 
-function printTime(header) {
-  console.log(`${header} ${formatTime(Date.now()).toString().split('  ')[1]}`);
+function printHeader(tag, outgoing = false, error = false) {
+  let header = `[${tag}] ${formatTime(Date.now()).toString().split('  ')[1]}`;
+  if (outgoing) {
+    header = '     ' + header;
+  }
+  if (error) {
+    header = chalk.redBright(header);
+  }
+  console.log(header);
+}
+
+function printMessage(message, outgoing = false, error = false) {
+  if (outgoing) {
+    message = '     ' + message;
+  }
+  if (error) {
+    message = chalk.redBright(message);
+  }
+  console.log(message);
+}
+
+function printLsHeader(tag, outgoing = false) {
+  let header = `[${tag}] ${formatTime(Date.now()).toString().split('  ')[1]}`;
+  if (outgoing) {
+    header = '     ' + header + ' LOCATION';
+  } else {
+    header = header + ' LOCATION_SYNC';
+  }
+  console.log(header);
 }
 
 class DummyClient {
@@ -151,13 +178,13 @@ class DummyClient {
   connect(host, port) {
     return new Promise((resolve, reject) => {
       this.socket.connect(port, host, () => {
-        printTime('[연결]');
+        printHeader('연결');
         resolve();
       });
 
       this.socket.on('error', (error) => {
-        printTime('[소켓 에러]');
-        console.error(chalk.redBright(error));
+        printHeader('소켓 에러', false, true);
+        printMessage(error, false, true);
         reject(error);
       });
     });
@@ -236,8 +263,8 @@ class DummyClient {
         payload,
       };
     } catch (error) {
-      printTime('[패킷 파싱 오류]');
-      console.error(chalk.redBright(error));
+      printHeader('패킷 파싱 오류', false, true);
+      printMessage(error, false, true);
     }
   }
 
@@ -258,11 +285,15 @@ class DummyClient {
       const packetType = packet.packetType;
       if (packetType) {
         const packetName = PACKET_TYPE_REVERSED[packetType];
-        printTime('[수신]');
         if (packetType === PACKET_TYPE.ERROR_NOTIFICATION) {
-          console.log(chalk.redBright(packetName));
+          printHeader('수신', false, true);
+          printMessage(packetName, false, true);
+        } else if (packetType === PACKET_TYPE.LOCATION_SYNC_NOTIFICATION) {
+          printLsHeader('수신');
+        } else {
+          printHeader('수신');
+          printMessage(packetName);
         }
-        console.log(packetName);
         const response = { ...decodedPayload[snakeToCamel(packetName)] };
         switch (packetType) {
           case PACKET_TYPE.MATCH_NOTIFICATION: {
@@ -277,14 +308,16 @@ class DummyClient {
             const { assetId, unitId, toTop } = response;
             const unit = this.addMyUnit(assetId, unitId, toTop);
             const position = unit.getPosition();
-            console.log(chalk.greenBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`));
+            const message = chalk.greenBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
+            printMessage(message);
             break;
           }
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
             const { assetId, unitId, toTop } = response;
             const unit = this.addOpponentUnit(assetId, unitId, toTop);
             const position = unit.getPosition();
-            console.log(chalk.yellowBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`));
+            const message = chalk.yellowBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
+            printMessage(message);
             break;
           }
           case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
@@ -301,17 +334,15 @@ class DummyClient {
               this.setUnitPosition(unit, position);
               const pos_after = unit.getPosition();
               if (isMyUnit) {
-                console.log(
-                  chalk.greenBright(
-                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
-                  ),
+                const message = chalk.greenBright(
+                  `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
+                printMessage(message);
               } else {
-                console.log(
-                  chalk.yellowBright(
-                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
-                  ),
+                const message = chalk.yellowBright(
+                  `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
+                printMessage(message);
               }
             });
             break;
@@ -326,8 +357,8 @@ class DummyClient {
         }
       }
     } catch (error) {
-      printTime('[패킷 처리 오류]');
-      console.error(chalk.redBright(error));
+      printHeader('패킷 처리 오류', false, true);
+      printMessage(error, false, true);
     }
   }
 
@@ -347,15 +378,15 @@ class DummyClient {
         }
 
         this.packetSendTimer = setInterval(() => {
-          printTime('     [발신]');
-          console.log('    ', PACKET_TYPE_REVERSED[packetType]);
+          printLsHeader('발신', true);
           // 유닛 업데이트 부분
           const unitPositions = [];
           this.myUnits.forEach((unit) => {
             const unitId = unit.getUnitId();
             const position = unit.getPosition();
             unitPositions.push({ unitId, position });
-            console.log(chalk.greenBright(`     유닛${unitId}:(${formatCoords(position, 2)})`));
+            const message = chalk.greenBright(`유닛${unitId}:(${formatCoords(position, 2)})`);
+            printMessage(message, true);
           });
 
           const timestamp = Date.now();
@@ -369,8 +400,8 @@ class DummyClient {
         }, locationPacketSendInterval); // n초마다 실행
       } else {
         this.socket.write(packet);
-        printTime('     [발신]');
-        console.log('    ', PACKET_TYPE_REVERSED[packetType]);
+        printHeader('발신', true);
+        printMessage(PACKET_TYPE_REVERSED[packetType], true);
       }
 
       await delay(content.duration);
@@ -379,7 +410,7 @@ class DummyClient {
 
   close() {
     this.socket.end();
-    printTime('[연결 종료]');
+    printHeader('연결 종료');
   }
 }
 
@@ -395,8 +426,8 @@ async function simulateClients(clientCount, host, port) {
       client.playContents();
       clients.push(client);
     } catch (error) {
-      printTime('[클라이언트 초기화 실패]');
-      console.error(chalk.redBright(error));
+      printHeader('클라이언트 초기화 실패', false, true);
+      printMessage(error, false, true);
     }
   }
 
@@ -409,7 +440,7 @@ async function main() {
 
   setTimeout(async () => {
     clients.forEach((client) => client.close());
-    printTime('[모든 클라이언트 연결 종료]');
+    printHeader('모든 클라이언트 연결 종료');
   }, 100000); // 5초 후 종료
 }
 
