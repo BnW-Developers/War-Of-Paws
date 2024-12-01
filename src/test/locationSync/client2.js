@@ -2,7 +2,12 @@ import net from 'net';
 import protobuf from 'protobufjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { LOCATION_SYNC_TEST_1, LOCATION_SYNC_TEST_2 } from './contents.js';
+import {
+  LOCATION_SYNC_TEST_1,
+  LOCATION_SYNC_TEST_2,
+  LOCATION_SYNC_TEST_3,
+  LOCATION_SYNC_TEST_4,
+} from './contents.js';
 import { PACKET_TYPE, PACKET_TYPE_REVERSED } from '../../constants/header.js';
 import { delay } from '../../utils/util/delay.js';
 import { snakeToCamel } from '../../utils/formatter/snakeToCamel.js';
@@ -27,6 +32,12 @@ switch (pureFileName) {
   case `client2.js`:
     contents = LOCATION_SYNC_TEST_2;
     break;
+  case `client3.js`:
+    contents = LOCATION_SYNC_TEST_3;
+    break;
+  case `client4.js`:
+    contents = LOCATION_SYNC_TEST_4;
+    break;
   default:
     console.error(chalk.redBright(`invalid filename: ${pureFileName}`));
 }
@@ -47,7 +58,7 @@ const UNIT_TEST = Object.freeze({
 });
 
 // 서버 주소 설정
-const isLocal = false; // true: LOCAL   false: REMOTE
+const isLocal = true; // true: LOCAL   false: REMOTE
 const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
 
 // 유닛 테스트 선택
@@ -385,7 +396,7 @@ class DummyClient {
             const unitId = unit.getUnitId();
             const position = unit.getPosition();
             unitPositions.push({ unitId, position });
-            const message = chalk.greenBright(`유닛${unitId}:(${formatCoords(position, 2)})`);
+            const message = chalk.greenBright(`유닛${unitId}:${formatCoords(position, 2)}`);
             printMessage(message, true);
           });
 
