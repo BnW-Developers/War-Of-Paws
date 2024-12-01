@@ -70,6 +70,7 @@ const locationNotification = (socket, payload) => {
     // 동기화 위치값을 서버에 저장
     locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
 
+    locationSyncManager.lock.acquire();
     // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
     if (locationSyncManager.isSyncReady()) {
       // 패킷 작성 및 전송
@@ -88,6 +89,10 @@ const locationNotification = (socket, payload) => {
     }
   } catch (err) {
     handleErr(socket, err);
+  } finally {
+    const { gameSession } = checkSessionInfo(socket);
+    const locationSyncManager = gameSession.getLocationSyncManager();
+    locationSyncManager.lock.release();
   }
 };
 

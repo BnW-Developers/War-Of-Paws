@@ -1,4 +1,6 @@
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
+import { Mutex } from 'async-mutex';
+
 class LocationSyncManager {
   constructor(userId, opponentId) {
     this.playerIds = [userId, opponentId];
@@ -7,6 +9,8 @@ class LocationSyncManager {
     this.positionsToSync = new Map();
     this.positionsToSync.set(userId, []);
     this.positionsToSync.set(opponentId, []);
+
+    this.lock = new Mutex();
   }
 
   /**
