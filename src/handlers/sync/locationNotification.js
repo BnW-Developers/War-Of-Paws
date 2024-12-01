@@ -30,7 +30,7 @@ import isValidPos from '../../utils/location/isValidPos.js';
  * @param {net.Socket} socket
  * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}}[], timestamp: int32}} payload
  */
-const locationNotification = (socket, payload) => {
+const locationNotification = async (socket, payload) => {
   try {
     const { gameSession, userId, userGameData, opponentId, opponentSocket } =
       checkSessionInfo(socket);
@@ -70,7 +70,7 @@ const locationNotification = (socket, payload) => {
     // 동기화 위치값을 서버에 저장
     locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
 
-    locationSyncManager.lock.acquire();
+    await locationSyncManager.lock.acquire();
     // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
     if (locationSyncManager.isSyncReady()) {
       // 패킷 작성 및 전송
