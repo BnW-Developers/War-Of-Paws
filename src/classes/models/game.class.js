@@ -266,27 +266,6 @@ class Game {
     return null; // 상대방이 없는 경우
   }
 
-  getAllPlayerGameDataBySocket(socket) {
-    // 플레이어가 2명이 아니면 null 반환
-    if (this.players.size !== 2)
-      throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '게임 세션 내 유저가 2명이 아닙니다.');
-
-    let player = undefined;
-    let opponent = undefined;
-
-    // eslint-disable-next-line no-unused-vars
-    for (const [_, value] of this.players.entries()) {
-      if (value.socket === socket) {
-        player = value;
-      } else {
-        opponent = value;
-      }
-    }
-
-    // 두 플레이어가 모두 확인되었을 때 반환
-    return player && opponent ? { player, opponent } : null;
-  }
-
   removeUser(userId) {
     // userId에 해당하는 세션이 있으면 삭제하고 성공 여부 반환
     return this.players.delete(userId);

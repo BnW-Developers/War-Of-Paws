@@ -98,12 +98,6 @@ class GameSessionManager {
     const gameSession = this.getGameSessionByGameId(gameId);
     return gameSession;
   }
-
-  getAllPlayerGameDataBySocket(socket) {
-    // 각각 메서드에서 문제가 있을 경우 에러를 던져주기 때문에 그대로 흘림.
-    const gameSession = this.getGameSessionBySocket(socket);
-    return gameSession.getAllPlayerGameDataBySocket(socket);
-  }
 }
 
 const gameSessionManager = new GameSessionManager();
