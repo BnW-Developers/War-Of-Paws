@@ -9,3 +9,5 @@ export const ATTACK_COOLDOWN_ERROR_MARGIN = 200;
 export const SKILL_COOLDOWN_ERROR_MARGIN = 200;
 export const ATTACK_RANGE_ERROR_MARGIN = 0.2;
 export const SPEED_MARGIN_OF_ERROR = 1.0001; // 속도 허용 오차배율
+
+export const INITIAL_UNIT_ROTATION = Object.freeze({ up: 0, down: 180 });
