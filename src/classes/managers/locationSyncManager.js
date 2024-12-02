@@ -1,28 +1,27 @@
-import { MAX_PLAYERS } from '../../constants/game.constants.js';
+import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
+import { Mutex } from 'async-mutex';
+
 class LocationSyncManager {
-  constructor() {
+  constructor(userId, opponentId) {
+    this.playerIds = [userId, opponentId];
+
     // 동기화에 사용될 위치값 초기화
     this.positionsToSync = new Map();
+    this.positionsToSync.set(userId, []);
+    this.positionsToSync.set(opponentId, []);
+
+    this.lock = new Mutex();
   }
 
   /**
    * 동기화에 사용될 위치값 업데이트
    * @param {string} userId
-   * @param {{unitId: int32, position: {x: float, y: float, z: float}, modified: boolean}[]} unitPositions
+   * @param {int32} timestamp
+   * @param {{unitId: int32, position: {x: float, z: float}, modified: boolean}[]} unitPositions
    */
-  addSyncPositions(userId, unitPositions) {
-    // 검증: 이미 기록한 위치값인가?
-    if (this.positionsToSync.has(userId)) {
-      throw new Error('이미 해당 클라이언트의 위치값을 기록했습니다: userid', userId);
-    }
-
-    // 검증: 최대 플레이어 수를 초과하는가?
-    if (this.positionsToSync.size === MAX_PLAYERS) {
-      throw new Error(`플레이어 정원을 초과하였습니다.`);
-    }
-
-    // 해당 유저의 동기화 위치값 저장
-    this.positionsToSync.set(userId, unitPositions);
+  addSyncPositions(userId, timestamp, unitPositions) {
+    const positionToSync = { timestamp, unitPositions };
+    this.positionsToSync.get(userId).push(positionToSync); // Queue에 추가
   }
 
   /**
@@ -32,33 +31,32 @@ class LocationSyncManager {
    * @returns {boolean}
    */
   isSyncReady() {
-    return this.positionsToSync.size === MAX_PLAYERS;
+    const player1Ready = this.positionsToSync.get(this.playerIds[0]).length > 0;
+    const player2Ready = this.positionsToSync.get(this.playerIds[1]).length > 0;
+
+    return player1Ready && player2Ready;
   }
 
   /**
    * 각 클라이언트로 전송할 위치 동기화 패킷을 작성
    * @param {string} userId
    * @param {string} opponentId
-   * @param {net.Socket} socket
-   * @param {net.Socket} opponentSocket
    * @return {{userPacket: Buffer, opponentPacket: Buffer}}
    */
-  createLocationSyncPacket(gameId, userId, opponentId) {
-    // 해당 게임의 모든 동기화 위치값
-    const userSyncPositions = this.positionsToSync.get(userId);
-    const opponentSyncPositions = this.positionsToSync.get(opponentId);
+  createLocationSyncPacket(userId, opponentId) {
+    // 해당 게임의 모든 동기화 위치값 (Queue의 첫 번째 항목)
+    const { unitPositions: userSyncPositions } = this.positionsToSync.get(userId)[0];
+    const { unitPositions: opponentSyncPositions } = this.positionsToSync.get(opponentId)[0];
 
     // 1. User 패킷 작성
     const userPacketData = { unitPositions: [] };
 
     // 본인 (User) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const userSyncPosition of userSyncPositions) {
-      if (!userSyncPosition.modified) {
-        continue;
+      if (userSyncPosition.modified) {
+        const { unitId, position } = userSyncPosition;
+        userPacketData.unitPositions.push({ unitId, position });
       }
-
-      const { unitId, position } = userSyncPosition;
-      userPacketData.unitPositions.push({ unitId, position });
     }
 
     // 상대방 (Opponent) 소유의 유닛은 전부 전송
@@ -72,12 +70,10 @@ class LocationSyncManager {
 
     // 본인 (Opponent) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const opponentSyncPosition of opponentSyncPositions) {
-      if (!opponentSyncPosition.modified) {
-        continue;
+      if (opponentSyncPosition.modified) {
+        const { unitId, position } = opponentSyncPosition;
+        opponentPacketData.unitPositions.push({ unitId, position });
       }
-
-      const { unitId, position } = opponentSyncPosition;
-      opponentPacketData.unitPositions.push({ unitId, position });
     }
 
     // 상대방 (User) 소유의 유닛은 전부 전송
@@ -90,10 +86,38 @@ class LocationSyncManager {
   }
 
   /**
-   * 위치 동기화 완료 후 서버에 저장한 동기화 위치값을 리셋
+   * 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
+   * @param {net.Socket} socket
    */
-  resetSyncPositions() {
-    this.positionsToSync = new Map();
+  moveUnits(socket) {
+    const { userId, opponentId, userGameData, opponentGameData } = checkSessionInfo(socket);
+
+    // 동기화 후 유닛들의 새로운 위치값 (Queue의 첫 번째 항목)
+    const { unitPositions: userSyncPositions, timestamp: userTimestamp } =
+      this.positionsToSync.get(userId)[0];
+    const { unitPositions: opponentSyncPositions, timestamp: opponentTimestamp } =
+      this.positionsToSync.get(opponentId)[0];
+
+    // 유저 소유 유닛 업데이트
+    for (const userSyncPosition of userSyncPositions) {
+      const { unitId, position } = userSyncPosition;
+      const unit = userGameData.getUnit(unitId);
+      unit.move(position, userTimestamp);
+    }
+    // 상대방 소유 유닛 업데이트
+    for (const opponentSyncPosition of opponentSyncPositions) {
+      const { unitId, position } = opponentSyncPosition;
+      const unit = opponentGameData.getUnit(unitId);
+      unit.move(position, opponentTimestamp);
+    }
+  }
+
+  /**
+   * 위치 동기화 완료 후 서버에 저장한 동기화 위치값을 삭제
+   */
+  deleteSyncPositions() {
+    this.positionsToSync.get(this.playerIds[0]).shift();
+    this.positionsToSync.get(this.playerIds[1]).shift();
   }
 }
 

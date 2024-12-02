@@ -8,7 +8,11 @@
     "dev": "nodemon ./src/server.js",
     "dummy1": "nodemon ./src/test/dummy.js",
     "dummy2": "nodemon ./src/test/dummy2.js",
-    "migrate": "node src/mysql/migration/createSchemas.js"
+    "migrate": "node src/mysql/migration/createSchemas.js",
+    "ls1": "node ./src/test/locationSync/client1.js",
+    "ls2": "node ./src/test/locationSync/client2.js",
+    "ls3": "node ./src/test/locationSync/client3.js",
+    "ls4": "node ./src/test/locationSync/client4.js"
   },
   "keywords": [],
   "author": "BnW-Developers",
@@ -36,5 +40,16 @@
     "eslint": "^9.15.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
+  },
+  "cspell": {
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [],
+    "ignoreWords": [
+      "coolDown"
+    ],
+    "import": []
   }
 }

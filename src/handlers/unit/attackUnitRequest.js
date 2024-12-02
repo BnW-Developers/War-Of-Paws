@@ -1,5 +1,7 @@
 import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/logger.js';
@@ -16,6 +18,10 @@ const attackUnitRequest = (socket, payload) => {
 
     // 공격 유닛 가져오기
     const attackUnit = userGameData.getUnit(unitId);
+    if (!attackUnit) {
+      throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+    }
+
     let damage = attackUnit.getAttackPower();
     // distance는 시시각각 변하기 때문에 사소한 차이를 보정하기 위해 에러마진 추가
     const attackRange = attackUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
@@ -36,6 +42,9 @@ const attackUnitRequest = (socket, payload) => {
       // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
+        if (!targetUnit) {
+          throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+        }
 
         // 사거리 검증
         const attackerPosition = attackUnit.getPosition();
@@ -54,6 +63,11 @@ const attackUnitRequest = (socket, payload) => {
         // 데미지 적용
         const resultHp = targetUnit.applyDamage(damage);
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
+
+        // 같은 라인이여야 공격 가능
+        if (targetUnit.direction !== attackUnit.direction) {
+          damage = 0;
+        }
 
         // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
         if (targetUnit.isDead()) {

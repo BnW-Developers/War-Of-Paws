@@ -6,13 +6,18 @@ syntax = "proto3";
   게임 데이터 명세
 */
 message Position {
-  int32 x = 1;
-  int32 y = 2;
+  float x = 1;
+  float z = 2;
+}
+
+message Rotation {
+  float y = 1;
 }
 
 message UnitPosition {
   int32 unitId = 1;
   Position position = 2;
+  Rotation rotation = 3;
 }
 
 message UnitInfo {
@@ -161,6 +166,7 @@ message C2SGameEndNotification {
 
 message C2SLocationNotification {
   repeated UnitPosition unitPositions = 1;
+  int32 timestamp = 2;
 }
 
 message S2CLocationSyncNotification {
@@ -206,6 +212,16 @@ message S2CEnemyBuffUnitNotification {
   repeated int32 unitIds = 1;
   int32 buffAmount = 2;
   int32 buffDuration = 3;
+}
+
+message C2SUnitAnimationNotification {
+  int32 unitId = 1;
+  int32 animationId = 2;
+}
+
+message S2CEnemyUnitAnimationNotification {
+  int32 unitId = 1;
+  int32 animationId = 2;
 }
 
 
@@ -285,6 +301,10 @@ message GamePacket {
     C2SBuffUnitRequest buffUnitRequest = 38;
     S2CBuffUnitResponse buffUnitResponse = 39;
     S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 40;
+
+    // 애니메이션 관련
+    C2SUnitAnimationNotification unitAnimationNotification = 41;
+    S2CEnemyUnitAnimationNotification enemyUnitNotification = 42;
   }
 }
 

@@ -99,35 +99,48 @@ class Game {
   }
 
   startGame() {
-    logger.info(`start game users: ${[...this.startRequestUsers]}`);
-    // 타이머 제거
-    if (this.startRequestTimer) {
-      clearTimeout(this.startRequestTimer);
-    }
-
-    this.inProgress = true;
-
-    // 각 플레이어에게 게임 시작 알림
-    // eslint-disable-next-line no-unused-vars
-    for (const [userId, _] of this.players) {
-      const user = userSessionManager.getUserByUserId(userId);
-      if (user) {
-        const species = user.getCurrentSpecies();
-        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { species });
+    try {
+      // 게임이 이미 실행중이라면 리턴
+      if (this.inProgress) {
+        return;
       }
-    }
 
-    this.initGame();
+      logger.info(`start game users: ${[...this.startRequestUsers]}`);
+      // 타이머 제거
+      if (this.startRequestTimer) {
+        clearTimeout(this.startRequestTimer);
+      }
+
+      this.inProgress = true;
+
+      this.initGame();
+
+      // 각 플레이어에게 게임 시작 알림
+      // eslint-disable-next-line no-unused-vars
+      for (const [userId, _] of this.players) {
+        const user = userSessionManager.getUserByUserId(userId);
+        if (user) {
+          const species = user.getCurrentSpecies();
+          sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { species });
+        }
+      }
+    } catch (err) {
+      handleErr(null, err);
+      this.cancelGame();
+    }
   }
 
   initGame() {
+    const playerIds = [];
     const playerData = [];
     // 체크포인트 매니저 생성 및 플레이어 게임 데이터 인자 추가
-    for (let player of this.players.values()) {
-      playerData.push(player);
+    for (let [key, value] of this.players.entries()) {
+      playerIds.push(key);
+      playerData.push(value);
     }
+
+    this.locationSyncManager = new LocationSyncManager(playerIds[0], playerIds[1]);
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
-    this.locationSyncManager = new LocationSyncManager();
 
     this.mineralSyncManager.startSyncLoop(this.players);
   }
@@ -178,6 +191,7 @@ class Game {
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
+      this.mineralSyncManager.stopSyncLoop();
       if (players.length >= 2) {
         // 첫 번째 유저
         const [firstUserId, firstUserData] = players[0];
