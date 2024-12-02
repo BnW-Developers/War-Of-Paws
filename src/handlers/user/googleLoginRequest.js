@@ -42,7 +42,7 @@ const googleLoginRequest = async (socket, payload) => {
     }
 
     // 구글 아이디로 로그인 한 유저 검색 / 없으면 저장
-    const user = await findOrCreateUserByGoogleId(googleId, email, name);
+    await findOrCreateUserByGoogleId(googleId, email, name);
 
     // 현재 로그인 상태 확인
     const alreadyLoginUser = userSessionManager.getUserByUserId(googleId);
