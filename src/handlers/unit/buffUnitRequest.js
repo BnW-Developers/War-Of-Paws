@@ -1,8 +1,10 @@
 import { UNIT_TYPE } from '../../constants/assets.js';
+import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import calcDist from '../../utils/location/calcDist.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
@@ -42,6 +44,10 @@ const buffUnitRequest = (socket, payload) => {
     // 결과 저장용 배열
     const affectedUnits = [];
 
+    // 사거리 검증
+    const buffUnitPosition = buffUnit.getPosition();
+    const effectiveRange = buffUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
+
     // 각 대상 유닛에 버프 적용
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
@@ -51,6 +57,15 @@ const buffUnitRequest = (socket, payload) => {
         continue;
       }
 
+      const targetUnitPosition = targetUnit.getPosition();
+      const distance = calcDist(buffUnitPosition, targetUnitPosition);
+
+      if (distance > effectiveRange) {
+        console.info(
+          `Target unit ${targetId} is out of range. Distance: ${distance}, Range: ${effectiveRange}`,
+        );
+        continue;
+      }
       // 같은 라인이여야 버프 가능
       if (targetUnit.direction !== buffUnit.direction) {
         buffAmount = 0;

@@ -1,3 +1,8 @@
+import {
+  ATTACK_COOLDOWN_ERROR_MARGIN,
+  INITIAL_UNIT_ROTATION,
+  SKILL_COOLDOWN_ERROR_MARGIN,
+} from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 
 class Unit {
@@ -11,6 +16,7 @@ class Unit {
     this.maxHp = unitData.maxHp;
     this.hp = unitData.maxHp;
     this.attackPower = unitData.atk;
+    this.attackRange = unitData.atkRange;
     this.def = unitData.def;
     this.speed = unitData.spd;
 
@@ -29,6 +35,7 @@ class Unit {
     this.direction = direction; // 체크포인트 유닛 위치 파악용
     this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
+    this.rotation = { y: INITIAL_UNIT_ROTATION[direction] };
     this.destinationIndex = 1;
     this.destinationPoint = this.path[this.destinationIndex];
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
@@ -64,8 +71,12 @@ class Unit {
     return this.attackPower;
   }
 
+  getAttackRange() {
+    return this.attackRange;
+  }
+
   isAttackAvailable(timestamp) {
-    return timestamp - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+    return timestamp - this.lastAttackTime >= this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN;
   }
 
   resetLastAttackTime(timestamp) {
@@ -77,7 +88,7 @@ class Unit {
   }
 
   isSkillAvailable(timestamp) {
-    return timestamp - this.lastSkillTime >= this.skillCooldown;
+    return timestamp - this.lastSkillTime >= this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN;
   }
 
   // 체력 감소 메서드
@@ -110,6 +121,10 @@ class Unit {
 
   getPosition() {
     return this.position;
+  }
+
+  getRotation() {
+    return this.rotation;
   }
 
   /**
@@ -165,11 +180,13 @@ class Unit {
 
   /**
    * 유닛의 위치와 목적지를 업데이트
-   * @param {{x: float, z: float}} pos
-   * @param {int32} timestamp
+   * @param {{x: float, z: float}} position
+   * @param {{y: float}} rotation
+   * @param {int64} timestamp
    */
-  move(pos, timestamp) {
-    this.position = pos;
+  move(position, rotation, timestamp) {
+    this.position = position;
+    this.rotation = rotation;
     this.lastTimestamp = timestamp;
 
     if (this.arrivedAtDestination()) {

@@ -207,6 +207,7 @@ class MatchingSystem {
     gameSession.addUser(user1);
     gameSession.addUser(user2);
 
+    logger.info(`Match complete user1: ${user1Id} vs user2: ${user2Id}`);
     // 유저에게 매칭 결과 전송
     this.matchNotification(user1, user2);
   }
@@ -245,6 +246,7 @@ class MatchingSystem {
   // 매칭 큐에서 유저 삭제
   async removeUser(userId, species) {
     try {
+      logger.info(`Remove user in matching queue id: ${userId}, species: ${species}`);
       // 유저 매치매이킹 상태 업데이트 (false)
       const user = userSessionManager.getUserByUserId(userId);
       user.setIsMatchmaking(false);

@@ -1,7 +1,9 @@
+import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
@@ -21,12 +23,20 @@ const attackUnitRequest = (socket, payload) => {
     }
 
     let damage = attackUnit.getAttackPower();
+    // distance는 시시각각 변하기 때문에 사소한 차이를 보정하기 위해 에러마진 추가
+    const attackRange = attackUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
+
     // 결과 저장용 배열
     const opponentUnitInfos = [];
     const deathNotifications = [];
 
     // 공격 쿨타임 검증
     if (!attackUnit.isAttackAvailable(timestamp)) {
+      logger.info(
+        `Attack not available: Unit ID ${attackUnit.id}, ` +
+          `Current Cooldown: ${attackUnit.currentCooldown}, `,
+        +`Reaming time: ${attackUnit.currentCooldown - (timestamp - attackUnit.lastAttackTime)}`,
+      );
       damage = 0;
     } else {
       // 대상 유닛 처리
@@ -34,6 +44,20 @@ const attackUnitRequest = (socket, payload) => {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
         if (!targetUnit) {
           throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+        }
+
+        // 사거리 검증
+        const attackerPosition = attackUnit.getPosition();
+        const targetPosition = targetUnit.getPosition();
+        const distance = calcDist(attackerPosition, targetPosition);
+
+        // 너무 먼 사거리 공격 방지용
+        if (distance > attackRange) {
+          logger.info(
+            `Target ${opponentUnitId} is out of range.` +
+              `Distance: ${distance}, Range: ${attackRange}`,
+          );
+          damage = 0;
         }
 
         // 데미지 적용

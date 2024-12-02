@@ -1,8 +1,11 @@
 import { UNIT_TYPE } from '../../constants/assets.js';
+import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import calcDist from '../../utils/location/calcDist.js';
+import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
@@ -15,6 +18,8 @@ const healUnitRequest = (socket, payload) => {
 
     // 힐러 유닛과 대상 유닛 가져오기
     const healerUnit = userGameData.getUnit(unitId);
+    const healRange = healerUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
+
     const targetUnit = userGameData.getUnit(targetId);
 
     if (!healerUnit || !targetUnit) {
@@ -32,6 +37,17 @@ const healUnitRequest = (socket, payload) => {
       healAmount = 0;
     }
 
+    // 사거리 검증
+    const healerPosition = healerUnit.getPosition();
+    const targetPosition = targetUnit.getPosition();
+    const distance = calcDist(healerPosition, targetPosition);
+
+    // 너무 먼 사거리 공격 방지용
+    if (distance > healRange) {
+      logger.info(
+        `Target ${targetId} is out of range.` + `Distance: ${distance}, Range: ${healRange}`,
+      );
+    }
     // 같은 라인이여야 버프 가능
     if (targetUnit.direction !== healerUnit.direction) {
       healAmount = 0;

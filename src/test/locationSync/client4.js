@@ -142,6 +142,7 @@ class DummyClient {
     const z = startPos.z + (endPos.z - startPos.z) * progressRate;
 
     unit.position = { x, z };
+    unit.rotation = { y: Math.floor(Math.random() * 360) };
 
     if (unit.arrivedAtDestination()) {
       unit.updateDestination();
@@ -173,8 +174,9 @@ class DummyClient {
     }
   }
 
-  setUnitPosition(unit, pos) {
+  setUnitPosition(unit, pos, rot) {
     unit.position = pos;
+    unit.rotation = rot;
   }
 
   async initialize() {
@@ -319,22 +321,26 @@ class DummyClient {
             const { assetId, unitId, toTop } = response;
             const unit = this.addMyUnit(assetId, unitId, toTop);
             const position = unit.getPosition();
+            const rotation = unit.getRotation();
             const message = chalk.greenBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
             printMessage(message);
+            printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
             break;
           }
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
             const { assetId, unitId, toTop } = response;
             const unit = this.addOpponentUnit(assetId, unitId, toTop);
             const position = unit.getPosition();
+            const rotation = unit.getRotation();
             const message = chalk.yellowBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
             printMessage(message);
+            printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
             break;
           }
           case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
             const { unitPositions } = response;
             unitPositions.forEach((unitPosition) => {
-              const { unitId, position } = unitPosition;
+              const { unitId, position, rotation } = unitPosition;
               let unit = this.myUnitMap.get(unitId);
               let isMyUnit = true;
               if (!unit) {
@@ -342,18 +348,22 @@ class DummyClient {
                 isMyUnit = false;
               }
               const pos_before = unit.getPosition();
-              this.setUnitPosition(unit, position);
+              const rot_before = unit.getRotation();
+              this.setUnitPosition(unit, position, rotation);
               const pos_after = unit.getPosition();
+              const rot_after = unit.getRotation();
               if (isMyUnit) {
                 const message = chalk.greenBright(
                   `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
                 printMessage(message);
+                printMessage(chalk.greenBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
               } else {
                 const message = chalk.yellowBright(
                   `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
                 printMessage(message);
+                printMessage(chalk.yellowBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
               }
             });
             break;
@@ -395,9 +405,12 @@ class DummyClient {
           this.myUnits.forEach((unit) => {
             const unitId = unit.getUnitId();
             const position = unit.getPosition();
-            unitPositions.push({ unitId, position });
+            const rotation = unit.getRotation();
+            unitPositions.push({ unitId, position, rotation });
             const message = chalk.greenBright(`유닛${unitId}:${formatCoords(position, 2)}`);
+
             printMessage(message, true);
+            printMessage(chalk.yellowBright(`rotation:${rotation.y}`), true);
           });
 
           const timestamp = Date.now();

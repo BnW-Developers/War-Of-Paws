@@ -99,25 +99,35 @@ class Game {
   }
 
   startGame() {
-    logger.info(`start game users: ${[...this.startRequestUsers]}`);
-    // 타이머 제거
-    if (this.startRequestTimer) {
-      clearTimeout(this.startRequestTimer);
-    }
-
-    this.inProgress = true;
-
-    // 각 플레이어에게 게임 시작 알림
-    // eslint-disable-next-line no-unused-vars
-    for (const [userId, _] of this.players) {
-      const user = userSessionManager.getUserByUserId(userId);
-      if (user) {
-        const species = user.getCurrentSpecies();
-        sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { species });
+    try {
+      // 게임이 이미 실행중이라면 리턴
+      if (this.inProgress) {
+        return;
       }
-    }
 
-    this.initGame();
+      logger.info(`start game users: ${[...this.startRequestUsers]}`);
+      // 타이머 제거
+      if (this.startRequestTimer) {
+        clearTimeout(this.startRequestTimer);
+      }
+
+      this.inProgress = true;
+
+      this.initGame();
+
+      // 각 플레이어에게 게임 시작 알림
+      // eslint-disable-next-line no-unused-vars
+      for (const [userId, _] of this.players) {
+        const user = userSessionManager.getUserByUserId(userId);
+        if (user) {
+          const species = user.getCurrentSpecies();
+          sendPacket(user.getSocket(), PACKET_TYPE.GAME_START_NOTIFICATION, { species });
+        }
+      }
+    } catch (err) {
+      handleErr(null, err);
+      this.cancelGame();
+    }
   }
 
   initGame() {
@@ -132,7 +142,6 @@ class Game {
     this.locationSyncManager = new LocationSyncManager(playerIds[0], playerIds[1]);
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
 
-    // TODO: endgame이 생기면 반드시 루프를 중지시켜줘야 함 (mineralSyncManager.stopSyncLoop() 호출)
     this.mineralSyncManager.startSyncLoop(this.players);
   }
 
@@ -176,6 +185,9 @@ class Game {
       const checkPointManager = this.getCheckPointManager();
       checkPointManager.delete();
       this.checkPointManager = null;
+
+      // 미네랄 싱크 인터벌 중지
+      this.mineralSyncManager.startSyncLoop(this.players);
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
@@ -252,27 +264,6 @@ class Game {
       }
     }
     return null; // 상대방이 없는 경우
-  }
-
-  getAllPlayerGameDataBySocket(socket) {
-    // 플레이어가 2명이 아니면 null 반환
-    if (this.players.size !== 2)
-      throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '게임 세션 내 유저가 2명이 아닙니다.');
-
-    let player = undefined;
-    let opponent = undefined;
-
-    // eslint-disable-next-line no-unused-vars
-    for (const [_, value] of this.players.entries()) {
-      if (value.socket === socket) {
-        player = value;
-      } else {
-        opponent = value;
-      }
-    }
-
-    // 두 플레이어가 모두 확인되었을 때 반환
-    return player && opponent ? { player, opponent } : null;
   }
 
   removeUser(userId) {
