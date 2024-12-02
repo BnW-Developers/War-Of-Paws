@@ -1,8 +1,11 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
+  ATTACK_RANGE_ERROR_MARGIN,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
+import calcDist from '../../utils/location/calcDist.js';
+import logger from '../../utils/logger.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -184,6 +187,21 @@ class Unit {
     if (this.arrivedAtDestination()) {
       this.updateDestination();
     }
+  }
+
+  /**
+   * 목표 유닛이 사거리 밖에 있는지 확인
+   * @param {Unit} targetUnit 대상 유닛
+   * @returns {boolean} 사거리 밖 여부
+   */
+  isTargetOutOfRange(targetUnit) {
+    const distance = calcDist(this.getPosition(), targetUnit.getPosition());
+    const attackRange = this.getAttackRange() * ATTACK_RANGE_ERROR_MARGIN;
+    logger.info(
+      `Target ${targetUnit.getUnitId()} is out of range.` +
+        `Distance: ${distance}, Range: ${attackRange}`,
+    );
+    return distance > attackRange;
   }
 }
 
