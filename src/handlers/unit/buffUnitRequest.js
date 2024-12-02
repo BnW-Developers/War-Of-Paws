@@ -37,7 +37,6 @@ const buffUnitRequest = (socket, payload) => {
     // 결과 저장용 배열
     const affectedUnits = [];
 
-    // 스킬 쿨타임 검증
     if (!bufferUnit.isSkillAvailable(timestamp)) {
       logger.info(`buff not available: Unit ID ${bufferUnit.id}, `);
     } else {
@@ -49,7 +48,7 @@ const buffUnitRequest = (socket, payload) => {
           continue;
         }
 
-        // TODO 버프 중복인지 검증
+        // 버프 중복인지 검증
         if (targetUnit.isBuffed()) {
           logger.info(`Target ${targetUnit.getUnitId()} is already buffed`);
           continue;
@@ -70,10 +69,9 @@ const buffUnitRequest = (socket, payload) => {
         targetUnit.applyBuff(buffAmount, buffDuration);
         affectedUnits.push(targetId);
       }
-
-      bufferUnit.resetLastSkillTime(timestamp);
+       bufferUnit.resetLastSkillTime(timestamp);
     }
-
+    
     // 리스폰스 전송
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,

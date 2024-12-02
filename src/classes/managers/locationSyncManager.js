@@ -16,8 +16,8 @@ class LocationSyncManager {
   /**
    * 동기화에 사용될 위치값 업데이트
    * @param {string} userId
-   * @param {int32} timestamp
-   * @param {{unitId: int32, position: {x: float, z: float}, modified: boolean}[]} unitPositions
+   * @param {int64} timestamp
+   * @param {{unitId: int32, position: {x: float, z: float}, rotation: {y: float}, modified: boolean}[]} unitPositions
    */
   addSyncPositions(userId, timestamp, unitPositions) {
     const positionToSync = { timestamp, unitPositions };
@@ -54,15 +54,15 @@ class LocationSyncManager {
     // 본인 (User) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const userSyncPosition of userSyncPositions) {
       if (userSyncPosition.modified) {
-        const { unitId, position } = userSyncPosition;
-        userPacketData.unitPositions.push({ unitId, position });
+        const { unitId, position, rotation } = userSyncPosition;
+        userPacketData.unitPositions.push({ unitId, position, rotation });
       }
     }
 
     // 상대방 (Opponent) 소유의 유닛은 전부 전송
     for (const opponentSyncPosition of opponentSyncPositions) {
-      const { unitId, position } = opponentSyncPosition;
-      userPacketData.unitPositions.push({ unitId, position });
+      const { unitId, position, rotation } = opponentSyncPosition;
+      userPacketData.unitPositions.push({ unitId, position, rotation });
     }
 
     // 2. Opponent 패킷 작성
@@ -71,15 +71,15 @@ class LocationSyncManager {
     // 본인 (Opponent) 소유의 유닛은 위치가 보정된 경우에만 전송
     for (const opponentSyncPosition of opponentSyncPositions) {
       if (opponentSyncPosition.modified) {
-        const { unitId, position } = opponentSyncPosition;
-        opponentPacketData.unitPositions.push({ unitId, position });
+        const { unitId, position, rotation } = opponentSyncPosition;
+        opponentPacketData.unitPositions.push({ unitId, position, rotation });
       }
     }
 
     // 상대방 (User) 소유의 유닛은 전부 전송
     for (const userSyncPosition of userSyncPositions) {
-      const { unitId, position } = userSyncPosition;
-      opponentPacketData.unitPositions.push({ unitId, position });
+      const { unitId, position, rotation } = userSyncPosition;
+      opponentPacketData.unitPositions.push({ unitId, position, rotation });
     }
 
     return { userPacketData, opponentPacketData };
@@ -100,15 +100,15 @@ class LocationSyncManager {
 
     // 유저 소유 유닛 업데이트
     for (const userSyncPosition of userSyncPositions) {
-      const { unitId, position } = userSyncPosition;
+      const { unitId, position, rotation } = userSyncPosition;
       const unit = userGameData.getUnit(unitId);
-      unit.move(position, userTimestamp);
+      unit.move(position, rotation, userTimestamp);
     }
     // 상대방 소유 유닛 업데이트
     for (const opponentSyncPosition of opponentSyncPositions) {
-      const { unitId, position } = opponentSyncPosition;
+      const { unitId, position, rotation } = opponentSyncPosition;
       const unit = opponentGameData.getUnit(unitId);
-      unit.move(position, opponentTimestamp);
+      unit.move(position, rotation, opponentTimestamp);
     }
   }
 
