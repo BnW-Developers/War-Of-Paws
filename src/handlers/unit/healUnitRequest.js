@@ -47,6 +47,8 @@ const healUnitRequest = (socket, payload) => {
       logger.info(
         `Target ${targetId} is out of range.` + `Distance: ${distance}, Range: ${healRange}`,
       );
+      healAmount = 0;
+    }
     // 같은 라인이여야 버프 가능
     if (targetUnit.direction !== healerUnit.direction) {
       healAmount = 0;
