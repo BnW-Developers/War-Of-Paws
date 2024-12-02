@@ -65,6 +65,7 @@ const buffUnitRequest = (socket, payload) => {
           `Target unit ${targetId} is out of range. Distance: ${distance}, Range: ${effectiveRange}`,
         );
         continue;
+      }
       // 같은 라인이여야 버프 가능
       if (targetUnit.direction !== buffUnit.direction) {
         buffAmount = 0;
