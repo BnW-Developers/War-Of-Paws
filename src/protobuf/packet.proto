@@ -63,7 +63,7 @@ message C2SMatchCancelRequest {
 }
 
 message C2SGameStartRequest {
-  int32 timestamp = 1;
+  int64 timestamp = 1;
 }
 
 message S2CGameStartNotification {
@@ -84,7 +84,7 @@ message S2CAddEnemyBuildingNotification {
 
 message C2SSpawnUnitRequest {
   int32 assetId = 1;
-  int32 timestamp = 2;
+  int64 timestamp = 2;
   bool toTop = 3;
 }
 
@@ -102,7 +102,7 @@ message S2CSpawnEnemyUnitNotification {
 
 message C2SAttackUnitRequest {
   int32 unitId = 1;
-  int32 timestamp = 2;
+  int64 timestamp = 2;
   repeated int32 opponentUnitIds = 3;
 }
 
@@ -166,7 +166,7 @@ message C2SGameEndNotification {
 
 message C2SLocationNotification {
   repeated UnitPosition unitPositions = 1;
-  int32 timestamp = 2;
+  int64 timestamp = 2;
 }
 
 message S2CLocationSyncNotification {
@@ -179,7 +179,7 @@ message S2CMineralSyncNotification {
 
 message C2SHealUnitRequest {
   int32 unitId = 1;
-  int32 timestamp = 2;
+  int64 timestamp = 2;
   int32 targetId = 3;
   int32 healAmount = 4;
 }
@@ -196,7 +196,7 @@ message S2CEnemyHealUnitNotification {
 
 message C2SBuffUnitRequest {
   int32 unitId = 1;
-  int32 timestamp = 2;
+  int64 timestamp = 2;
   repeated int32 targetIds = 3;
   int32 buffAmount = 4;
   int32 buffDuration = 5;
