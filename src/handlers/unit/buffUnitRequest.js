@@ -34,38 +34,44 @@ const buffUnitRequest = (socket, payload) => {
       throw new Error('Unit Type Error');
     }
 
-    // 스킬 쿨타임 검증
-    if (!bufferUnit.isSkillAvailable(timestamp)) {
-      buffAmount = 0;
-      buffDuration = 0;
-    }
-
     // 결과 저장용 배열
     const affectedUnits = [];
 
-    // 각 대상 유닛에 버프 적용
-    for (const targetId of targetIds) {
-      const targetUnit = userGameData.getUnit(targetId);
-      if (!targetUnit) {
-        logger.info(`Target unit with ID ${targetId} not found`);
-        continue;
+    // 스킬 쿨타임 검증
+    if (!bufferUnit.isSkillAvailable(timestamp)) {
+      logger.info(`buff not available: Unit ID ${bufferUnit.id}, `);
+    } else {
+      // 각 대상 유닛에 버프 적용
+      for (const targetId of targetIds) {
+        const targetUnit = userGameData.getUnit(targetId);
+        if (!targetUnit) {
+          logger.info(`Target unit with ID ${targetId} not found`);
+          continue;
+        }
+
+        // TODO 버프 중복인지 검증
+        if (targetUnit.isBuffed()) {
+          logger.info(`Target ${targetUnit.getUnitId()} is already buffed`);
+          continue;
+        }
+
+        // 너무 먼 사거리 공격 방지용
+        if (bufferUnit.isTargetOutOfRange(targetUnit)) {
+          logger.info(`Target ${targetUnit.getUnitId()} is out of range.`);
+          continue;
+        }
+
+        // 같은 라인이여야 버프 가능
+        if (targetUnit.direction !== bufferUnit.direction) {
+          logger.info(`Target ${targetUnit} is not your line`);
+          continue;
+        }
+
+        targetUnit.applyBuff(buffAmount, buffDuration);
+        affectedUnits.push(targetId);
       }
 
-      // 너무 먼 사거리 공격 방지용
-      if (bufferUnit.isTargetOutOfRange(targetUnit)) {
-        continue;
-      }
-
-      // 같은 라인이여야 버프 가능
-      if (targetUnit.direction !== bufferUnit.direction) {
-        logger.info(`Target ${targetUnit} is not your line`);
-        continue;
-      }
-
-      targetUnit.applyBuff(buffAmount, buffDuration);
       bufferUnit.resetLastSkillTime(timestamp);
-
-      affectedUnits.push(targetId);
     }
 
     // 리스폰스 전송

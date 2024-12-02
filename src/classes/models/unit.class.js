@@ -5,7 +5,6 @@ import {
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
-import logger from '../../utils/logger.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -21,6 +20,7 @@ class Unit {
     this.attackRange = unitData.atkRange;
     this.def = unitData.def;
     this.speed = unitData.spd;
+    this.buffState = false;
 
     // 쿨타임 관련
     this.cooldown = unitData.cd;
@@ -62,6 +62,10 @@ class Unit {
   // 사망 여부 확인 메서드
   isDead() {
     return this.hp <= 0;
+  }
+
+  isBuffed() {
+    return this.buffState;
   }
 
   getSpeed() {
@@ -108,10 +112,11 @@ class Unit {
 
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
-
+    this.buffState = true;
     // 일정 시간 후 버프 해제
     setTimeout(() => {
       this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
+      this.buffState = false;
     }, duration);
   }
 
@@ -197,10 +202,6 @@ class Unit {
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * ATTACK_RANGE_ERROR_MARGIN;
-    logger.info(
-      `Target ${targetUnit.getUnitId()} is out of range.` +
-        `Distance: ${distance}, Range: ${attackRange}`,
-    );
     return distance > attackRange;
   }
 }

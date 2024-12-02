@@ -1,4 +1,3 @@
-import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -23,7 +22,6 @@ const attackUnitRequest = (socket, payload) => {
 
     let damage = attackUnit.getAttackPower();
     // distance는 시시각각 변하기 때문에 사소한 차이를 보정하기 위해 에러마진 추가
-    const attackRange = attackUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
 
     // 결과 저장용 배열
     const opponentUnitInfos = [];
@@ -47,6 +45,7 @@ const attackUnitRequest = (socket, payload) => {
 
         // 너무 먼 사거리 공격 방지용
         if (attackUnit.isTargetOutOfRange(targetUnit)) {
+          logger.info(`Target ${targetUnit.getUnitId()} is out of range.`);
           continue;
         }
 
