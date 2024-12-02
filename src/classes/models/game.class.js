@@ -4,6 +4,7 @@ import {
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -14,7 +15,6 @@ import userSessionManager from '../managers/userSessionManager.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 import PlayerGameData from './playerGameData.class.js';
-import redisClient from '../../redis/redisClient.js';
 
 class Game {
   constructor(gameId) {
@@ -129,7 +129,6 @@ class Game {
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
     this.locationSyncManager = new LocationSyncManager();
 
-    // TODO: endgame이 생기면 반드시 루프를 중지시켜줘야 함 (mineralSyncManager.stopSyncLoop() 호출)
     this.mineralSyncManager.startSyncLoop(this.players);
   }
 
@@ -173,6 +172,9 @@ class Game {
       const checkPointManager = this.getCheckPointManager();
       checkPointManager.delete();
       this.checkPointManager = null;
+
+      // 미네랄 싱크 인터벌 중지
+      this.mineralSyncManager.startSyncLoop(this.players);
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
