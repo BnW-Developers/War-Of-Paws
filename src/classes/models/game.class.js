@@ -186,6 +186,9 @@ class Game {
       checkPointManager.delete();
       this.checkPointManager = null;
 
+      // 미네랄 싱크 인터벌 중지
+      this.mineralSyncManager.startSyncLoop(this.players);
+
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
       this.mineralSyncManager.stopSyncLoop();

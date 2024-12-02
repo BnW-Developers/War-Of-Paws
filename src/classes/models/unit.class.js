@@ -1,3 +1,7 @@
+import {
+  ATTACK_COOLDOWN_ERROR_MARGIN,
+  SKILL_COOLDOWN_ERROR_MARGIN,
+} from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 
 class Unit {
@@ -11,6 +15,7 @@ class Unit {
     this.maxHp = unitData.maxHp;
     this.hp = unitData.maxHp;
     this.attackPower = unitData.atk;
+    this.attackRange = unitData.atkRange;
     this.def = unitData.def;
     this.speed = unitData.spd;
 
@@ -64,8 +69,12 @@ class Unit {
     return this.attackPower;
   }
 
+  getAttackRange() {
+    return this.attackRange;
+  }
+
   isAttackAvailable(timestamp) {
-    return timestamp - this.lastAttackTime >= this.currentCooldown; // 현재 쿨타임(버프 되었든 아니든)
+    return timestamp - this.lastAttackTime >= this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN;
   }
 
   resetLastAttackTime(timestamp) {
@@ -77,7 +86,7 @@ class Unit {
   }
 
   isSkillAvailable(timestamp) {
-    return timestamp - this.lastSkillTime >= this.skillCooldown;
+    return timestamp - this.lastSkillTime >= this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN;
   }
 
   // 체력 감소 메서드
