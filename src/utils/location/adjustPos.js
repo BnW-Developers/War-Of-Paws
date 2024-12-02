@@ -3,7 +3,7 @@ import calcDist from './calcDist.js';
 /**
  * 서버가 예측하는 유닛의 현재 위치값을 반환
  * @param {Unit} unit 유닛
- * @param {int32} timestamp 현재 위치동기화 시간
+ * @param {int64} timestamp 현재 위치동기화 시간
  * @return {{x: float, z: float}}
  */
 const adjustPos = (unit, timestamp) => {

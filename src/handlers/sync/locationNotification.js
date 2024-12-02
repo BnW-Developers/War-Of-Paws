@@ -28,7 +28,7 @@ import isValidPos from '../../utils/location/isValidPos.js';
      5. `deleteSyncPositions()`: 서버에 저장한 동기화 위치값을 삭제
      6. 각 클라이언트는 수신한 위치값으로 해당 유닛들의 위치를 수정 (보간 적용)
  * @param {net.Socket} socket
- * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}}[], timestamp: int32}} payload
+ * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}}[], timestamp: int64}} payload
  */
 const locationNotification = async (socket, payload) => {
   try {

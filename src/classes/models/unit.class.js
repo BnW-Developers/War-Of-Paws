@@ -175,7 +175,7 @@ class Unit {
   /**
    * 유닛의 위치와 목적지를 업데이트
    * @param {{x: float, z: float}} pos
-   * @param {int32} timestamp
+   * @param {int64} timestamp
    */
   move(pos, timestamp) {
     this.position = pos;
