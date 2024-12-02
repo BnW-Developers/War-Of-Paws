@@ -158,6 +158,9 @@ class Game {
         }
       }
 
+      // 혹시나 실행됐던 매니저들 삭제
+      this.endGameProcess();
+
       // 게임 세션 제거 요청 (redis의 pub)
       redisClient.publish(
         'game:cancel',
@@ -181,17 +184,10 @@ class Game {
     let winTeam = 'DRAW'; // 기본값 설정
 
     try {
-      // 체크포인트 인터벌 중지
-      const checkPointManager = this.getCheckPointManager();
-      checkPointManager.delete();
-      this.checkPointManager = null;
-
-      // 미네랄 싱크 인터벌 중지
-      this.mineralSyncManager.startSyncLoop(this.players);
+      this.endGameProcess();
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
-      this.mineralSyncManager.stopSyncLoop();
       if (players.length >= 2) {
         // 첫 번째 유저
         const [firstUserId, firstUserData] = players[0];
@@ -238,6 +234,19 @@ class Game {
       err.message = 'endGame error: ' + err.message;
       handleErr(null, err);
     }
+  }
+
+  // 실행됐던 인터벌, 매니저 등 삭제
+  endGameProcess() {
+    // 체크포인트 인터벌 중지
+    const checkPointManager = this.getCheckPointManager();
+    if (checkPointManager) {
+      checkPointManager.delete();
+    }
+    this.checkPointManager = null;
+
+    // 미네랄 싱크 인터벌 중지
+    this.mineralSyncManager.stopSyncLoop();
   }
 
   // userId로 게임 세션에서 유저 검색
