@@ -13,7 +13,7 @@ const spawnUnitRequest = (socket, payload) => {
     const { assetId, timestamp, toTop } = payload;
 
     const { gameSession, userGameData, opponentSocket } = checkSessionInfo(socket);
-    logger.info(`spawn unit request id: ${assetId} toTop: ${toTop} time: ${timestamp}`);
+    logger.info(`spawn unit request id: ${assetId} toTop: ${toTop || false} time: ${timestamp}`);
 
     // 유닛 데이터 검증
     const unitCost = getGameAssetById(ASSET_TYPE.UNIT, assetId)?.cost;
@@ -29,7 +29,7 @@ const spawnUnitRequest = (socket, payload) => {
     userGameData.spendMineral(unitCost);
 
     // 유닛 생성
-    const unitId = userGameData.addUnit(gameSession, assetId, toTop, timestamp);
+    const unitId = userGameData.addUnit(gameSession, assetId, toTop || false, timestamp);
 
     // 패킷 전송
     sendPacket(socket, PACKET_TYPE.SPAWN_UNIT_RESPONSE, {
