@@ -1,9 +1,7 @@
-import { ATTACK_RANGE_ERROR_MARGIN } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
@@ -24,7 +22,6 @@ const attackUnitRequest = (socket, payload) => {
 
     let damage = attackUnit.getAttackPower();
     // distance는 시시각각 변하기 때문에 사소한 차이를 보정하기 위해 에러마진 추가
-    const attackRange = attackUnit.getAttackRange() + ATTACK_RANGE_ERROR_MARGIN;
 
     // 결과 저장용 배열
     const opponentUnitInfos = [];
@@ -37,37 +34,30 @@ const attackUnitRequest = (socket, payload) => {
           `Current Cooldown: ${attackUnit.currentCooldown}, `,
         +`Reaming time: ${attackUnit.currentCooldown - (timestamp - attackUnit.lastAttackTime)}`,
       );
-      damage = 0;
     } else {
       // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
         if (!targetUnit) {
-          throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+          logger.info(`Target unit with ID ${opponentUnitId} not found`);
+          continue;
         }
 
-        // 사거리 검증
-        const attackerPosition = attackUnit.getPosition();
-        const targetPosition = targetUnit.getPosition();
-        const distance = calcDist(attackerPosition, targetPosition);
-
         // 너무 먼 사거리 공격 방지용
-        if (distance > attackRange) {
-          logger.info(
-            `Target ${opponentUnitId} is out of range.` +
-              `Distance: ${distance}, Range: ${attackRange}`,
-          );
-          damage = 0;
+        if (attackUnit.isTargetOutOfRange(targetUnit)) {
+          logger.info(`Target ${targetUnit.getUnitId()} is out of range.`);
+          continue;
+        }
+
+        // 같은 라인이여야 공격 가능
+        if (targetUnit.direction !== attackUnit.direction) {
+          logger.info(`Target ${opponentUnitId} is not your line`);
+          continue;
         }
 
         // 데미지 적용
         const resultHp = targetUnit.applyDamage(damage);
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
-
-        // 같은 라인이여야 공격 가능
-        if (targetUnit.direction !== attackUnit.direction) {
-          damage = 0;
-        }
 
         // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
         if (targetUnit.isDead()) {
