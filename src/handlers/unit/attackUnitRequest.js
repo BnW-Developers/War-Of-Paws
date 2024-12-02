@@ -43,7 +43,9 @@ const attackUnitRequest = (socket, payload) => {
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
         if (!targetUnit) {
-          throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
+          // 경고인 이유: 다른 유닛에게 사망시 unit이 이미 삭제되었을 가능성 있음
+          console.warn(`Target unit with ID ${opponentUnitId} not found`);
+          continue;
         }
 
         // 사거리 검증
