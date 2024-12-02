@@ -1,7 +1,5 @@
 import { recordGame } from '../../mysql/game/game.db.js';
 import redisClient from '../../redis/redisClient.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/logger.js';
 import { uuid } from '../../utils/util/uuid.js';
@@ -95,11 +93,7 @@ class GameSessionManager {
    */
   getGameSessionBySocket(socket) {
     const user = userSessionManager.getUserBySocket(socket);
-    if (!user)
-      throw new CustomErr(
-        ERR_CODES.USER_NOT_FOUND,
-        '유저 세션에서 유저 정보를 가져오는데 실패했습니다.',
-      );
+    if (!user) return null;
     const gameId = user.getCurrentGameId();
     const gameSession = this.getGameSessionByGameId(gameId);
     return gameSession;

@@ -6,6 +6,7 @@ import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import adjustPos from '../../utils/location/adjustPos.js';
 import isValidPos from '../../utils/location/isValidPos.js';
+import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -90,9 +91,11 @@ const locationNotification = async (socket, payload) => {
   } catch (err) {
     handleErr(socket, err);
   } finally {
-    const { gameSession } = checkSessionInfo(socket);
-    const locationSyncManager = gameSession.getLocationSyncManager();
-    locationSyncManager.lock.release();
+    const gameSession = gameSessionManager.getGameSessionBySocket(socket);
+    if (gameSession) {
+      const locationSyncManager = gameSession.getLocationSyncManager();
+      locationSyncManager.lock.release();
+    }
   }
 };
 
