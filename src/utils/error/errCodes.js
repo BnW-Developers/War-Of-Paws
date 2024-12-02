@@ -16,6 +16,8 @@ export const ERR_CODES = {
   // Login 관련 에러
   INVALID_CREDENTIALS: 10200, // 잘못된 사용자 ID 또는 비밀번호
   ALREADY_LOGIN: 10201, // 이미 로그인 된 계정
+  INVALID_GOOGLE_TOKEN: 10210, // 구글 토큰 정보와 불일치
+  EXPIRED_GOOGLE_TOKEN: 10211, // 구글 토큰 유효성 오류
 
   // Match 관련 에러
   MATCH_NOT_FOUND: 10300, // 매칭 상대를 찾을 수 없음
@@ -24,7 +26,7 @@ export const ERR_CODES = {
   // Game Start 관련 에러
   GAME_ALREADY_STARTED: 10400, // 게임이 이미 시작됨
   GAME_NOT_READY: 10401, // 게임 시작 준비가 안 됨
-  GAME_CANCELED: 10402,  // 게임 취소
+  GAME_CANCELED: 10402, // 게임 취소
 
   // Building Purchase 관련 에러
   BUILDING_INSUFFICIENT_FUNDS: 10500, // 자금 부족

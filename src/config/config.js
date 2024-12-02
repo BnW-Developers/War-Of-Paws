@@ -9,6 +9,9 @@ import {
   DB2_PASSWORD,
   DB2_PORT,
   DB2_USER,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
   HOST,
   PEPPER,
   PORT,
@@ -66,5 +69,10 @@ export const config = {
     pepper: PEPPER,
     salt: SALT,
     secret_key: SECRET_KEY,
+  },
+  googleApi: {
+    clientId: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    redirectURI: GOOGLE_REDIRECT_URI,
   },
 };
