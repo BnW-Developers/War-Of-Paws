@@ -29,7 +29,7 @@ import gameSessionManager from '../../classes/managers/gameSessionManager.js';
      5. `deleteSyncPositions()`: 서버에 저장한 동기화 위치값을 삭제
      6. 각 클라이언트는 수신한 위치값으로 해당 유닛들의 위치를 수정 (보간 적용)
  * @param {net.Socket} socket
- * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}}[], timestamp: int64}} payload
+ * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}, rotation: {y: float}}[], timestamp: int64}} payload
  */
 const locationNotification = async (socket, payload) => {
   try {
@@ -47,7 +47,7 @@ const locationNotification = async (socket, payload) => {
     // 각 유닛의 동기화 위치값을 계산
     for (const unitPosition of unitPositions) {
       // 클라이언트에서 보낸 유닛의 위치
-      const { unitId, position } = unitPosition;
+      const { unitId, position, rotation } = unitPosition;
 
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
       const unit = userGameData.getUnit(unitId);
@@ -64,7 +64,7 @@ const locationNotification = async (socket, payload) => {
       }
 
       // 보정한 위치를 동기화 위치 배열에 추가
-      const syncPosition = { unitId, position: adjustedPos, modified };
+      const syncPosition = { unitId, position: adjustedPos, rotation, modified };
       syncPositions.push(syncPosition);
     }
 

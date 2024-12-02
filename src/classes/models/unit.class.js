@@ -1,5 +1,6 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
+  INITIAL_UNIT_ROTATION,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
@@ -34,6 +35,7 @@ class Unit {
     this.direction = direction; // 체크포인트 유닛 위치 파악용
     this.path = getPath(this.species, this.direction);
     this.position = this.path[0];
+    this.rotation = { y: INITIAL_UNIT_ROTATION[direction] };
     this.destinationIndex = 1;
     this.destinationPoint = this.path[this.destinationIndex];
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
@@ -121,6 +123,10 @@ class Unit {
     return this.position;
   }
 
+  getRotation() {
+    return this.rotation;
+  }
+
   /**
    * 유닛의 목적지를 반환
    * @returns {{point: {x: float, z: float}, area: {x: float, z: float}[4][]}}
@@ -174,11 +180,13 @@ class Unit {
 
   /**
    * 유닛의 위치와 목적지를 업데이트
-   * @param {{x: float, z: float}} pos
+   * @param {{x: float, z: float}} position
+   * @param {{y: float}} rotation
    * @param {int64} timestamp
    */
-  move(pos, timestamp) {
-    this.position = pos;
+  move(position, rotation, timestamp) {
+    this.position = position;
+    this.rotation = rotation;
     this.lastTimestamp = timestamp;
 
     if (this.arrivedAtDestination()) {
