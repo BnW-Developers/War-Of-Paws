@@ -304,7 +304,7 @@ message GamePacket {
 
     // 애니메이션 관련
     C2SUnitAnimationNotification unitAnimationNotification = 41;
-    S2CEnemyUnitAnimationNotification enemyUnitNotification = 42;
+    S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 42;
   }
 }
 
