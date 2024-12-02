@@ -48,6 +48,9 @@ const locationNotification = async (socket, payload) => {
     for (const unitPosition of unitPositions) {
       // 클라이언트에서 보낸 유닛의 위치
       const { unitId, position, rotation } = unitPosition;
+      if (position.x === null) position.x = 0;
+      if (position.z === null) position.z = 0;
+      if (rotation.y === null) rotation.y = 0;
 
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
       const unit = userGameData.getUnit(unitId);
