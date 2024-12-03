@@ -54,7 +54,8 @@ const UNIT_TEST = Object.freeze({
   OUT_OF_BOUNDS_N: 3,
   OUT_OF_BOUNDS_E: 4,
   OUT_OF_BOUNDS_S: 5,
-  TOO_FAST: 6,
+  WRONG_SIDE: 6,
+  TOO_FAST: 7,
   // 추가
 });
 
@@ -139,6 +140,9 @@ class DummyClient {
       case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
         unit.destinationPoint.x = 10000;
         break;
+      case UNIT_TEST.WRONG_SIDE:
+        unit.destinationPoint.z = direction === DIRECTION.UP ? -10000 : 10000;
+        break;
       default:
         break;
     }
@@ -163,6 +167,9 @@ class DummyClient {
         break;
       case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
         unit.destinationPoint.x = 10000;
+        break;
+      case UNIT_TEST.WRONG_SIDE:
+        unit.destinationPoint.z = direction === DIRECTION.UP ? -10000 : 10000;
         break;
       default:
         break;
