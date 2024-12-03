@@ -49,11 +49,12 @@ const SERVER_ADDRESS = Object.freeze({
 
 const UNIT_TEST = Object.freeze({
   BASIC: 0,
-  OUT_OF_BOUNDS_W: 1,
-  OUT_OF_BOUNDS_N: 2,
-  OUT_OF_BOUNDS_E: 3,
-  OUT_OF_BOUNDS_S: 4,
-  TOO_FAST: 5,
+  ROTATION: 1,
+  OUT_OF_BOUNDS_W: 2,
+  OUT_OF_BOUNDS_N: 3,
+  OUT_OF_BOUNDS_E: 4,
+  OUT_OF_BOUNDS_S: 5,
+  TOO_FAST: 6,
   // 추가
 });
 
@@ -62,20 +63,25 @@ const isLocal = true; // true: LOCAL   false: REMOTE
 const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
 
 // 유닛 테스트 선택
-const currentTest = UNIT_TEST.BASIC; //eslint-disable-line
+const currentTest = UNIT_TEST.OUT_OF_BOUNDS_N;
 
 const moveInterval = 50;
 const locationPacketSendInterval = 200; // ms
 
 function printHeader(tag, outgoing = false, error = false) {
-  let header = `[${tag}] ${formatTime(Date.now()).toString().split('  ')[1]}`;
+  const timestamp = Date.now();
+
+  let header = `[${tag}] ${formatTime(timestamp, false)}`;
+
   if (outgoing) {
     header = '     ' + header;
   }
   if (error) {
     header = chalk.redBright(header);
   }
+
   console.log(header);
+  return timestamp;
 }
 
 function printMessage(message, outgoing = false, error = false) {
@@ -89,13 +95,18 @@ function printMessage(message, outgoing = false, error = false) {
 }
 
 function printLsHeader(tag, outgoing = false) {
-  let header = `[${tag}] ${formatTime(Date.now()).toString().split('  ')[1]}`;
+  const timestamp = Date.now();
+
+  let header = `[${tag}] ${formatTime(timestamp, false)}`;
+
   if (outgoing) {
     header = '     ' + header + ' LOCATION';
   } else {
     header = header + ' LOCATION_SYNC';
   }
+
   console.log(header);
+  return timestamp;
 }
 
 class DummyClient {
@@ -116,6 +127,28 @@ class DummyClient {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
     const unit = new Unit(unitId, unitData, direction, null);
+
+    switch (currentTest) {
+      case UNIT_TEST.OUT_OF_BOUNDS_N:
+        unit.destinationArea = null;
+        unit.destinationPoint.z = 3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_S:
+        unit.destinationArea = null;
+        unit.destinationPoint.z = -3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_W:
+        unit.destinationArea = null;
+        unit.destinationPoint.x = -3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_E:
+        unit.destinationArea = null;
+        unit.destinationPoint.x = 3.7;
+        break;
+      default:
+        break;
+    }
+
     this.myUnits.push(unit);
     this.myUnitMap.set(unitId, unit);
     return unit;
@@ -125,6 +158,28 @@ class DummyClient {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
     const unit = new Unit(unitId, unitData, direction, null);
+
+    switch (currentTest) {
+      case UNIT_TEST.OUT_OF_BOUNDS_N:
+        unit.destinationArea = null;
+        unit.destinationPoint.z = 3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_S:
+        unit.destinationArea = null;
+        unit.destinationPoint.z = -3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_W:
+        unit.destinationArea = null;
+        unit.destinationPoint.x = -3.7;
+        break;
+      case UNIT_TEST.OUT_OF_BOUNDS_E:
+        unit.destinationArea = null;
+        unit.destinationPoint.x = 3.7;
+        break;
+      default:
+        break;
+    }
+
     this.opponentUnits.push(unit);
     this.opponentUnitMap.set(unitId, unit);
     return unit;
@@ -324,7 +379,8 @@ class DummyClient {
             const rotation = unit.getRotation();
             const message = chalk.greenBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
             printMessage(message);
-            printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
+            if (currentTest === UNIT_TEST.ROTATION)
+              printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
             break;
           }
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
@@ -334,7 +390,8 @@ class DummyClient {
             const rotation = unit.getRotation();
             const message = chalk.yellowBright(`유닛 ${unitId} 소환: ${formatCoords(position, 2)}`);
             printMessage(message);
-            printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
+            if (currentTest === UNIT_TEST.ROTATION)
+              printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
             break;
           }
           case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
@@ -357,13 +414,15 @@ class DummyClient {
                   `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
                 printMessage(message);
-                printMessage(chalk.greenBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
+                if (currentTest === UNIT_TEST.ROTATION)
+                  printMessage(chalk.greenBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
               } else {
                 const message = chalk.yellowBright(
                   `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
                 );
                 printMessage(message);
-                printMessage(chalk.yellowBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
+                if (currentTest === UNIT_TEST.ROTATION)
+                  printMessage(chalk.yellowBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
               }
             });
             break;
@@ -388,44 +447,60 @@ class DummyClient {
       const packetType = content.packetType;
       let payload = content.payload;
 
-      let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
-      let packet = this.createPacket(packetType, encodedPayload);
+      switch (packetType) {
+        case PACKET_TYPE.SPAWN_UNIT_REQUEST: {
+          const timestamp = printHeader('발신', true);
+          printMessage(PACKET_TYPE_REVERSED[packetType], true);
 
-      if (packetType === PACKET_TYPE.LOCATION_NOTIFICATION) {
-        // 기존 타이머가 있다면 제거
-        if (this.packetSendTimer) {
-          clearInterval(this.packetSendTimer);
-          this.moveTimer = null;
+          payload.timestamp = timestamp;
+          break;
         }
 
-        this.packetSendTimer = setInterval(() => {
-          printLsHeader('발신', true);
-          // 유닛 업데이트 부분
-          const unitPositions = [];
-          this.myUnits.forEach((unit) => {
-            const unitId = unit.getUnitId();
-            const position = unit.getPosition();
-            const rotation = unit.getRotation();
-            unitPositions.push({ unitId, position, rotation });
-            const message = chalk.greenBright(`유닛${unitId}:${formatCoords(position, 2)}`);
+        case PACKET_TYPE.LOCATION_NOTIFICATION: {
+          // 기존 타이머가 있다면 제거
+          if (this.packetSendTimer) {
+            clearInterval(this.packetSendTimer);
+            this.moveTimer = null;
+          }
 
-            printMessage(message, true);
-            printMessage(chalk.yellowBright(`rotation:${rotation.y}`), true);
-          });
+          this.packetSendTimer = setInterval(() => {
+            const timestamp = printLsHeader('발신', true);
+            // 유닛 업데이트 부분
+            const unitPositions = [];
+            this.myUnits.forEach((unit) => {
+              const unitId = unit.getUnitId();
+              const position = unit.getPosition();
+              const rotation = unit.getRotation();
+              unitPositions.push({ unitId, position, rotation });
+              const message = chalk.greenBright(`유닛${unitId}:${formatCoords(position, 2)}`);
 
-          const timestamp = Date.now();
-          payload = { unitPositions, timestamp };
+              printMessage(message, true);
+              if (currentTest === UNIT_TEST.ROTATION)
+                printMessage(chalk.yellowBright(`rotation:${rotation.y}`), true);
+            });
 
-          // 패킷 생성 및 전송 부분
-          let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
-          let packet = this.createPacket(packetType, encodedPayload);
+            payload = { unitPositions, timestamp };
 
-          this.socket.write(packet);
-        }, locationPacketSendInterval); // n초마다 실행
-      } else {
+            // 패킷 생성 및 전송 부분
+            let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
+            let packet = this.createPacket(packetType, encodedPayload);
+
+            this.socket.write(packet);
+          }, locationPacketSendInterval); // n초마다 실행
+          break;
+        }
+
+        default: {
+          printHeader('발신', true);
+          printMessage(PACKET_TYPE_REVERSED[packetType], true);
+          break;
+        }
+      }
+
+      if (packetType !== PACKET_TYPE.LOCATION_NOTIFICATION) {
+        let encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
+        let packet = this.createPacket(packetType, encodedPayload);
         this.socket.write(packet);
-        printHeader('발신', true);
-        printMessage(PACKET_TYPE_REVERSED[packetType], true);
       }
 
       await delay(content.duration);

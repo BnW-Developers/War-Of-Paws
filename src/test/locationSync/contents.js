@@ -23,7 +23,7 @@ export const LOCATION_SYNC_TEST_1 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2001, toTop: false, timestamp: Date.now() },
+    payload: { assetId: 2001, toTop: false, timestamp: null },
     duration: 1000,
   },
   {
@@ -89,7 +89,7 @@ export const LOCATION_SYNC_TEST_3 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2001, toTop: false, timestamp: Date.now() },
+    payload: { assetId: 2001, toTop: false, timestamp: null },
     duration: 1000,
   },
   {
@@ -122,7 +122,7 @@ export const LOCATION_SYNC_TEST_4 = [
   },
   {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2007, toTop: true, timestamp: Date.now() },
+    payload: { assetId: 2007, toTop: true, timestamp: null },
     duration: 1000,
   },
   {
