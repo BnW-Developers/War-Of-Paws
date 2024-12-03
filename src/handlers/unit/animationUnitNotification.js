@@ -5,7 +5,7 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
-const animationUnitNotification = (socket, payload) => {
+const unitAnimationNotification = (socket, payload) => {
   try {
     const { unitId, animationId } = payload;
 
@@ -28,4 +28,4 @@ const animationUnitNotification = (socket, payload) => {
   }
 };
 
-export default animationUnitNotification;
+export default unitAnimationNotification;
