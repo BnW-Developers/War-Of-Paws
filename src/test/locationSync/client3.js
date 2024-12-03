@@ -129,21 +129,17 @@ class DummyClient {
     const unit = new Unit(unitId, unitData, direction, null);
 
     switch (currentTest) {
-      case UNIT_TEST.OUT_OF_BOUNDS_N:
-        unit.destinationArea = null;
-        unit.destinationPoint.z = 3.7;
+      case UNIT_TEST.OUT_OF_BOUNDS_N: // 바깥쪽: z > 3.5    안쪽: z > -1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_S:
-        unit.destinationArea = null;
-        unit.destinationPoint.z = -3.7;
+      case UNIT_TEST.OUT_OF_BOUNDS_S: // 바깥쪽: z < -3.5    안쪽: z < 1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_W:
+      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.6   안쪽: x < 5.2
         unit.destinationArea = null;
-        unit.destinationPoint.x = -3.7;
+        unit.destinationPoint.x = -10000;
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_E:
+      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
         unit.destinationArea = null;
-        unit.destinationPoint.x = 3.7;
+        unit.destinationPoint.x = 10000;
         break;
       default:
         break;
@@ -160,21 +156,17 @@ class DummyClient {
     const unit = new Unit(unitId, unitData, direction, null);
 
     switch (currentTest) {
-      case UNIT_TEST.OUT_OF_BOUNDS_N:
-        unit.destinationArea = null;
-        unit.destinationPoint.z = 3.7;
+      case UNIT_TEST.OUT_OF_BOUNDS_N: // 바깥쪽: z > 3.5    안쪽: z > -1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_S:
-        unit.destinationArea = null;
-        unit.destinationPoint.z = -3.7;
+      case UNIT_TEST.OUT_OF_BOUNDS_S: // 바깥쪽: z < -3.5    안쪽: z < 1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_W:
+      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.6   안쪽: x < 5.2
         unit.destinationArea = null;
-        unit.destinationPoint.x = -3.7;
+        unit.destinationPoint.x = -10000;
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_E:
+      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
         unit.destinationArea = null;
-        unit.destinationPoint.x = 3.7;
+        unit.destinationPoint.x = 10000;
         break;
       default:
         break;
@@ -186,6 +178,13 @@ class DummyClient {
   }
 
   moveUnit(unit, time) {
+    if (-7.8 + 0.3 < unit.position.x && unit.position.x < 5.2 - 0.3) {
+      if (currentTest === UNIT_TEST.OUT_OF_BOUNDS_N)
+        unit.destinationPoint = { x: unit.position.x, z: 10000 };
+      if (currentTest === UNIT_TEST.OUT_OF_BOUNDS_S)
+        unit.destinationPoint = { x: unit.position.x, z: -10000 };
+    }
+
     const startPos = unit.getPosition();
     const endPos = unit.getDestination().point;
 
