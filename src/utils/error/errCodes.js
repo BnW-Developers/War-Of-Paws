@@ -24,7 +24,7 @@ export const ERR_CODES = {
   // Game Start 관련 에러
   GAME_ALREADY_STARTED: 10400, // 게임이 이미 시작됨
   GAME_NOT_READY: 10401, // 게임 시작 준비가 안 됨
-  GAME_CANCELED: 10402,  // 게임 취소
+  GAME_CANCELED: 10402, // 게임 취소
 
   // Building Purchase 관련 에러
   BUILDING_INSUFFICIENT_FUNDS: 10500, // 자금 부족
@@ -54,6 +54,7 @@ export const ERR_CODES = {
   LOCATION_UPDATE_FAILED: 11001, // 위치 업데이트 실패
   UNOWNED_UNIT: 11002, // 유저가 보유하지 않은 유닛
   INVALID_TIME: 11003, // 잘못된 시간값
+  INVALID_DIRECTION: 11004, // 잘못된 공격로 타입
 
   // GameSession 관련 에러
   GAME_NOT_FOUND: 11100, // 유저가 플레이중인 게임을 찾지 못함
