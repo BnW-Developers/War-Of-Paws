@@ -1,4 +1,5 @@
 const formatTime = (timestamp, includeDate = true) => {
+  if (typeof timestamp !== 'string') timestamp = Number(timestamp);
   const date = new Date(timestamp);
 
   const year = date.getFullYear();
