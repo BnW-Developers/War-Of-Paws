@@ -87,7 +87,11 @@ class PacketManager {
         const handler = handlers[payloadName];
 
         if (!handler) {
-          throw new CustomErr(ERR_CODES.HANDLER_NOT_FOUND, 'Handler not found', socket);
+          throw new CustomErr(
+            ERR_CODES.HANDLER_NOT_FOUND,
+            `Handler not found: packetType ${packetType}`,
+            socket,
+          );
         }
 
         const decodedPayload = { ...GamePacket.decode(payload)[payloadName] };
