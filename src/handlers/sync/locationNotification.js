@@ -33,8 +33,7 @@ import gameSessionManager from '../../classes/managers/gameSessionManager.js';
  */
 const locationNotification = async (socket, payload) => {
   try {
-    const { gameSession, userId, userGameData, opponentId, opponentSocket } =
-      checkSessionInfo(socket);
+    const { gameSession, userId, userGameData, opponentSocket } = checkSessionInfo(socket);
 
     const locationSyncManager = gameSession.getLocationSyncManager();
 
@@ -72,22 +71,23 @@ const locationNotification = async (socket, payload) => {
     locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
 
     await locationSyncManager.lock.acquire();
-    // 두 클라이언트가 가진 모든 유닛의 동기화 위치값이 산출되었다면 위치 동기화 실행
-    if (locationSyncManager.isSyncReady()) {
-      // 패킷 작성 및 전송
-      const { userPacketData, opponentPacketData } = locationSyncManager.createLocationSyncPacket(
-        userId,
-        opponentId,
-      );
+
+    // 패킷 작성 및 전송
+    const { userPacketData, opponentPacketData } =
+      locationSyncManager.createLocationSyncPacket(userId);
+
+    if (userPacketData.unitPositions.length > 0) {
       sendPacket(socket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, userPacketData);
-      sendPacket(opponentSocket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, opponentPacketData);
-
-      // 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
-      locationSyncManager.moveUnits(socket);
-
-      // 서버에 저장한 동기화 위치값 제거
-      locationSyncManager.deleteSyncPositions();
     }
+    if (opponentPacketData.unitPositions.length > 0) {
+      sendPacket(opponentSocket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, opponentPacketData);
+    }
+
+    // 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
+    locationSyncManager.moveUnits(userId, userGameData);
+
+    // 서버에 저장한 동기화 위치값 제거
+    locationSyncManager.deleteSyncPositions(userId);
   } catch (err) {
     handleErr(socket, err);
   } finally {
