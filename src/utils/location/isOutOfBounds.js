@@ -24,10 +24,10 @@ const isOutOfBounds = (pos) => {
 
   // 안쪽 경계를 벗어났는지 검증
   if (
-    (pos.x > innerBound[0].x && // 서쪽으로 벗어남
-      pos.z < innerBound[0].z) || // 북쪽으로 벗어남
-    (pos.x < innerBound[2].x && // 동쪽으로 벗어남
-      pos.z > innerBound[2].z) // 남쪽으로 벗어남
+    pos.x > innerBound[0].x && // 서쪽으로 벗어남
+    pos.z < innerBound[0].z && // 북쪽으로 벗어남
+    pos.x < innerBound[2].x && // 동쪽으로 벗어남
+    pos.z > innerBound[2].z // 남쪽으로 벗어남
   ) {
     return true;
   }
