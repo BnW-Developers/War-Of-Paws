@@ -64,7 +64,7 @@ const isLocal = true; // true: LOCAL   false: REMOTE
 const { HOST, PORT } = isLocal ? SERVER_ADDRESS.LOCAL : SERVER_ADDRESS.REMOTE;
 
 // 유닛 테스트 선택
-const currentTest = UNIT_TEST.OUT_OF_BOUNDS_N;
+const currentTest = UNIT_TEST.TOO_FAST;
 
 const moveInterval = 50;
 const locationPacketSendInterval = 200; // ms
@@ -143,6 +143,9 @@ class DummyClient {
       case UNIT_TEST.WRONG_SIDE:
         unit.destinationPoint.z = direction === DIRECTION.UP ? -10000 : 10000;
         break;
+      case UNIT_TEST.TOO_FAST:
+        unit.speed *= 1.01;
+        break;
       default:
         break;
     }
@@ -170,6 +173,9 @@ class DummyClient {
         break;
       case UNIT_TEST.WRONG_SIDE:
         unit.destinationPoint.z = direction === DIRECTION.UP ? -10000 : 10000;
+        break;
+      case UNIT_TEST.TOO_FAST:
+        unit.speed *= 1.01;
         break;
       default:
         break;
