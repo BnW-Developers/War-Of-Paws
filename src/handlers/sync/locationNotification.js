@@ -7,6 +7,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import adjustPos from '../../utils/location/adjustPos.js';
 import isValidPos from '../../utils/location/isValidPos.js';
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
+import formatCoords from '../../utils/formatter/formatCoords.js';
 
 /**
  * **위치 동기화 핸들러**
