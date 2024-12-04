@@ -1,3 +1,4 @@
+import gameSessionManager from '../classes/managers/gameSessionManager.js';
 import userSessionManager from '../classes/managers/userSessionManager.js';
 import matchingSystem from '../matchmakingQueue/matchingSystem.js';
 import { handleErr } from '../utils/error/handlerErr.js';
@@ -16,7 +17,11 @@ export const onError = (socket) => (err) => {
       }
 
       if (user.getCurrentGameId()) {
-        // TODO 게임 중 접속 종료 시 처리 추가
+        // 게임 중 접속 종료 시 처리
+        const gameSession = gameSessionManager.getGameSessionByGameId(user.getCurrentGameId());
+        if (gameSession) {
+          gameSession.endGameByDisconnect(user.getUserId());
+        }
       }
       userSessionManager.removeUser(user.getUserId());
     }

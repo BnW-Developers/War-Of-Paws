@@ -236,6 +236,58 @@ class Game {
     }
   }
 
+  endGameByDisconnect(userId) {
+    if (!this.inProgress) return;
+    this.inProgress = false;
+
+    let catUserId = null;
+    let dogUserId = null;
+    let winTeam = null;
+
+    try {
+      this.endGameProcess();
+
+      const players = Array.from(this.players.entries());
+
+      if (players.length >= 2) {
+        // 첫 번째 플레이어의 정보 확인
+        // eslint-disable-next-line no-unused-vars
+        const [firstUserId, firstPlayerData] = players[0];
+        catUserId = firstUserId;
+        // 두 번째 플레이어의 정보 확인
+        // eslint-disable-next-line no-unused-vars
+        const [secondUserId, secondPlayerData] = players[1];
+        dogUserId = secondUserId;
+
+        // 접속 종료한 유저의 상대가 승리
+        const winUserId = catUserId === userId ? dogUserId : catUserId;
+        winTeam = catUserId === userId ? 'DOG' : 'CAT';
+
+        // 남은 유저에게만 게임 종료 알림 전송
+        const winUser = userSessionManager.getUserByUserId(winUserId);
+        if (winUser) {
+          winUser.setCurrentGameId(null);
+          sendPacket(winUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+        }
+      }
+
+      // 게임 세션 제거 요청 (redis의 pub)
+      redisClient.publish(
+        'game:end',
+        JSON.stringify({
+          gameId: this.gameId,
+          catUserId,
+          dogUserId,
+          winTeam,
+          type: 'end_by_disconnect',
+        }),
+      );
+    } catch (err) {
+      err.message = 'endGameByDisconnect error: ' + err.message;
+      handleErr(null, err);
+    }
+  }
+
   // 실행됐던 인터벌, 매니저 등 삭제
   endGameProcess() {
     // 체크포인트 인터벌 중지
