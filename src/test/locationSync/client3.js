@@ -134,10 +134,10 @@ class DummyClient {
         break;
       case UNIT_TEST.OUT_OF_BOUNDS_S: // 바깥쪽: z < -3.5    안쪽: z < 1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.6   안쪽: x < 5.2
+      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.2   안쪽: x < 5.6
         unit.destinationPoint.x = -10000;
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
+      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.4    안쪽: x > -7.4
         unit.destinationPoint.x = 10000;
         break;
       case UNIT_TEST.WRONG_SIDE:
@@ -165,10 +165,10 @@ class DummyClient {
         break;
       case UNIT_TEST.OUT_OF_BOUNDS_S: // 바깥쪽: z < -3.5    안쪽: z < 1.7
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.6   안쪽: x < 5.2
+      case UNIT_TEST.OUT_OF_BOUNDS_W: // 바깥쪽: x < -9.2   안쪽: x < 5.6
         unit.destinationPoint.x = -10000;
         break;
-      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.0    안쪽: x > -7.8
+      case UNIT_TEST.OUT_OF_BOUNDS_E: // 바깥쪽: x > 7.4    안쪽: x > -7.4
         unit.destinationPoint.x = 10000;
         break;
       case UNIT_TEST.WRONG_SIDE:
