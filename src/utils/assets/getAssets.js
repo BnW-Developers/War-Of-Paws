@@ -143,11 +143,15 @@ export const getMapCorners = (species, direction) => {
  *
  * 호출 예시: `const { outerBound, innerBound } = getMapBounds();`
  *
- * @returns { {outerBound: {x: float, z: float}[4], innerBound: {x: float, z: float}[4]}}
+ * @returns { {centerLine: {z: float} , outerBound: {x: float, z: float}[4], innerBound: {x: float, z: float}[4]}}
  */
 export const getMapBounds = () => {
   // TODO: 다수의 맵을 지원할 시 mapId 인자 추가, 패킷명세, 게임세션 등 코드수정이 필요
   // 현재는 하나의 맵만 지원하므로 해당 ID (5001)를 하드코딩
   const mapData = getGameAssetById(ASSET_TYPE.MAP, 5001);
-  return { outerBound: mapData.outerBound, innerBound: mapData.innerBound };
+  return {
+    centerLine: mapData.centerLine,
+    outerBound: mapData.outerBound,
+    innerBound: mapData.innerBound,
+  };
 };

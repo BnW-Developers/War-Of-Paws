@@ -1,4 +1,5 @@
-const formatTime = (timestamp) => {
+const formatTime = (timestamp, includeDate = true) => {
+  if (typeof timestamp !== 'string') timestamp = Number(timestamp);
   const date = new Date(timestamp);
 
   const year = date.getFullYear();
@@ -16,7 +17,7 @@ const formatTime = (timestamp) => {
     month +
     '-' +
     day +
-    '  ' +
+    ' ' +
     hours +
     ':' +
     minutes.substr(-2) +
@@ -25,7 +26,7 @@ const formatTime = (timestamp) => {
     '.' +
     milliseconds.substr(-3);
 
-  return formattedTime;
+  return includeDate ? formattedTime : formattedTime.split(' ')[1];
 };
 
 export default formatTime;

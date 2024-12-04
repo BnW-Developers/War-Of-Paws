@@ -1,3 +1,4 @@
+import isOnWrongSide from './isOnWrongSide.js';
 import isOutOfBounds from './isOutOfBounds.js';
 import isTooFast from './isTooFast.js';
 
@@ -15,7 +16,12 @@ const isValidPos = (unit, pos, timestamp) => {
   }
 
   // 맵 경계를 벗어났는지 확인
-  if (isOutOfBounds(unit, pos)) {
+  if (isOutOfBounds(pos)) {
+    return false;
+  }
+
+  // 잘못된 공격로 (반대편)에 있는지 확인
+  if (isOnWrongSide(unit, pos)) {
     return false;
   }
 
