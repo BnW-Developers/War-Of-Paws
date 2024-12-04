@@ -55,9 +55,9 @@ const locationNotification = async (socket, payload) => {
       if (!rotation) {
         throw new Error('잘못된 좌표입니다: rotation', rotation);
       }
-      if (position.x === null) position.x = 0;
-      if (position.z === null) position.z = 0;
-      if (rotation.y === null) rotation.y = 0;
+      //if (position.x === null) position.x = 0;
+      //if (position.z === null) position.z = 0;
+      //if (rotation.y === null) rotation.y = 0;
 
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
       const unit = userGameData.getUnit(unitId);
@@ -71,6 +71,9 @@ const locationNotification = async (socket, payload) => {
       if (!isValidPos(unit, position, timestamp)) {
         adjustedPos = adjustPos(unit, timestamp);
         modified = true;
+        console.log(
+          `adjusting position: ${formatCoords(position, 2)}->${formatCoords(adjustedPos, 2)}`,
+        );
       }
 
       // 보정한 위치를 동기화 위치 배열에 추가
