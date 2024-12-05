@@ -142,7 +142,7 @@ class Game {
     this.locationSyncManager = new LocationSyncManager(playerIds[0], playerIds[1]);
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
 
-    this.mineralSyncManager.startSyncLoop(this.players);
+    this.mineralSyncManager.startSyncLoop(this.players, this.checkPointManager);
   }
 
   cancelGame() {

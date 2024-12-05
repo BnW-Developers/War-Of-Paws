@@ -1,4 +1,9 @@
-import { MINERAL_SYNC_INTERVAL } from '../../constants/game.constants.js';
+import {
+  INITIAL_MINERAL_RATE,
+  MINERAL_SYNC_INTERVAL,
+  OCCUR_ONE_CHECKPOINT_MINERAL_RATE,
+  OCCUR_TWO_CHECKPOINT_MINERAL_RATE,
+} from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 
@@ -7,29 +12,33 @@ class MineralSyncManager {
     this.timer = null; // 단일 타이머
   }
 
-  updateMineral(players) {
+  // players -> playerGameData배열
+  updateMineral(players, checkpointManager) {
     players.forEach((playerGameData) => {
-      const intervalSeconds = Math.floor(MINERAL_SYNC_INTERVAL / 1000); // 인터벌 seconds 변환
+      const occurredCheckPoint = checkpointManager.getOccupiedCheckPointsByPlayer(playerGameData);
 
-      // 미네랄 현황 가져옴
-      const mineralRate = playerGameData.getMineralRate();
+      const mineralRateMap = {
+        0: INITIAL_MINERAL_RATE,
+        1: OCCUR_ONE_CHECKPOINT_MINERAL_RATE,
+        2: OCCUR_TWO_CHECKPOINT_MINERAL_RATE,
+      };
 
-      // 증가할 미네랄 계산
-      const mineralToAdd = mineralRate * intervalSeconds; // 미네랄 증가율 * 인터벌(3초)
+      // 점령된 거점 수에 해당하는 미네랄 레이트 가져오기
+      const mineralRate = mineralRateMap[occurredCheckPoint] || INITIAL_MINERAL_RATE;
 
       // 미네랄 적용
-      playerGameData.addMineral(mineralToAdd);
+      playerGameData.addMineral(mineralRate);
     });
   }
 
-  startSyncLoop(players) {
+  startSyncLoop(players, checkpointManager) {
     const interval = MINERAL_SYNC_INTERVAL;
 
     // 기존 타이머가 있다면 제거
     this.stopSyncLoop();
 
     this.timer = setInterval(() => {
-      this.updateMineral(players);
+      this.updateMineral(players, checkpointManager);
 
       players.forEach((playerGameData) => {
         const socket = playerGameData.getSocket();
