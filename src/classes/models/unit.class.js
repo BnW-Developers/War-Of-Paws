@@ -6,6 +6,7 @@ import {
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
+import logger from '../../utils/logger.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -72,7 +73,11 @@ class Unit {
   }
 
   isBuffed() {
-    return this.buffFlag;
+    if (this.buffFlag) {
+      logger.info(`Target ${this.unitId} is already buffed`);
+      return true;
+    }
+    return false;
   }
 
   getSpeed() {
@@ -88,7 +93,20 @@ class Unit {
   }
 
   isAttackAvailable(timestamp) {
-    return timestamp - this.lastAttackTime >= this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN;
+    const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
+    const requiredTime = this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
+
+    // 쿨타임이 안된다면 로그 출력 & false 반환
+    if (elapsed < requiredTime) {
+      logger.info(
+        `Attack not available: Unit ID ${this.unitId}, ` +
+          `Current Cooldown: ${this.currentCooldown}, ` +
+          `Remaining time: ${requiredTime - elapsed}`,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   resetLastAttackTime(timestamp) {
@@ -100,7 +118,19 @@ class Unit {
   }
 
   isSkillAvailable(timestamp) {
-    return timestamp - this.lastSkillTime >= this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN;
+    const elapsed = timestamp - this.lastSkillTime; // 경과 시간 계산
+    const requiredTime = this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN; // 스킬 쿨다운 기준 계산
+
+    if (elapsed < requiredTime) {
+      logger.info(
+        `Skill not available: Unit ID ${this.unitId}, ` +
+          `Skill Cooldown: ${this.skillCooldown}, ` +
+          `Remaining time: ${requiredTime - elapsed}`,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   // 체력 감소 메서드

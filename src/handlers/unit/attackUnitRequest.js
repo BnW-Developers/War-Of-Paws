@@ -5,77 +5,48 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
+import validateTarget from '../../utils/unit/validationTarget.js';
 
 const attackUnitRequest = (socket, payload) => {
   try {
-    const { unitId, timestamp, opponentUnitIds } = payload; // 여러 대상 유닛 처리
+    const { unitId, timestamp, opponentUnitIds } = payload;
 
     logger.info(`attack unit request id: ${unitId} to ${opponentUnitIds} time: ${timestamp}`);
     const { userGameData, opponentGameData, opponentSocket, gameSession } =
       checkSessionInfo(socket);
 
-    // 공격 유닛 가져오기
     const attackUnit = userGameData.getUnit(unitId);
     if (!attackUnit) {
       throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
     }
-
-    let damage = attackUnit.getAttackPower();
-    // distance는 시시각각 변하기 때문에 사소한 차이를 보정하기 위해 에러마진 추가
 
     // 결과 저장용 배열
     const opponentUnitInfos = [];
     const deathNotifications = [];
 
     // 공격 쿨타임 검증
-    if (!attackUnit.isAttackAvailable(timestamp)) {
-      logger.info(
-        `Attack not available: Unit ID ${attackUnit.id}, ` +
-          `Current Cooldown: ${attackUnit.currentCooldown}, `,
-        +`Reaming time: ${attackUnit.currentCooldown - (timestamp - attackUnit.lastAttackTime)}`,
-      );
-    } else {
+    if (attackUnit.isAttackAvailable(timestamp)) {
       // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
-        if (!targetUnit) {
-          logger.info(`Target unit with ID ${opponentUnitId} not found`);
-          continue;
-        }
 
-        // 너무 먼 사거리 공격 방지용
-        if (attackUnit.isTargetOutOfRange(targetUnit)) {
-          logger.info(`Target ${targetUnit.getUnitId()} is out of range.`);
-          continue;
-        }
-
-        // 같은 라인이여야 공격 가능
-        if (targetUnit.direction !== attackUnit.direction) {
-          logger.info(`Target ${opponentUnitId} is not your line`);
-          continue;
-        }
+        // 유닛 존재, 라인, 사거리 검증
+        if (!validateTarget(attackUnit, targetUnit)) continue;
 
         // 데미지 적용
-        const resultHp = targetUnit.applyDamage(damage);
+        const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower());
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
 
+        // Hp와 사망처리를 둘다 체크하는 이유는 동시성 제어 때문.
+        // 두개의 패킷이 동시에 들어와 최후의 일격을 가한다면 이미 remove된 유닛을 다시 remove할 가능성이 있음
         if (targetUnit.getHp() <= 0) {
-          // Hp와 사망처리를 둘다 체크하는 이유는 동시성 제어 때문.
-          // 두개의 패킷이 동시에 들어와 최후의 일격을 가한다면 이미 remove된 유닛을 다시 remove할 가능성이 있음
-          if (!targetUnit.isDead()) {
-            targetUnit.markAsDead(); // 플래그 설정을 제일 먼저 함
-            // 사망 처리 시작
-
-            const checkPointManager = gameSession.getCheckPointManager(); // 체크포인트 매니저 로드
-            // 체크포인트에 있는 유닛이라면 체크포인트에서도 삭제 진행
-            if (checkPointManager.isExistUnit(opponentUnitId))
-              checkPointManager.removeUnit(opponentUnitId);
-
-            opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
-            deathNotifications.push(opponentUnitId); // 사망 알림 추가
-          } else {
-            logger.info(`Unit ${opponentUnitId} is already dead.`);
-          }
+          processingDeath(
+            targetUnit,
+            opponentGameData,
+            opponentUnitId,
+            gameSession,
+            deathNotifications,
+          );
         }
 
         // 공격당한 유닛 정보 추가
@@ -95,18 +66,37 @@ const attackUnitRequest = (socket, payload) => {
       unitInfos: opponentUnitInfos,
     });
 
-    // 사망한 유닛이 있다면, A, B 클라이언트에게 사망 알림
-    if (deathNotifications.length > 0) {
-      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
-        unitIds: deathNotifications,
-      });
-
-      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-        unitIds: deathNotifications,
-      });
-    }
+    // 양 클라이언트에 사망 패킷 전송
+    sendDeathNotifications(socket, opponentSocket, deathNotifications);
   } catch (err) {
     handleErr(socket, err);
+  }
+};
+
+const processingDeath = (unit, gameData, unitId, session, notifications) => {
+  if (unit.isDead()) {
+    logger.info(`Unit ${unitId} is already dead.`);
+    return false;
+  }
+
+  unit.markAsDead(); // 플래그 설정
+  const checkPointManager = session.getCheckPointManager();
+  if (checkPointManager.isExistUnit(unitId)) {
+    checkPointManager.removeUnit(unitId);
+  }
+
+  gameData.removeUnit(unitId); // 데이터 삭제
+  notifications.push(unitId); // 사망 알림
+  logger.info(`Unit ${unitId} death processing is done.`);
+  return true;
+};
+
+const sendDeathNotifications = (socket, opponentSocket, notifications) => {
+  if (notifications.length > 0) {
+    sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: notifications });
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
+      unitIds: notifications,
+    });
   }
 };
 
