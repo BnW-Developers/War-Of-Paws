@@ -60,6 +60,22 @@ class CheckPointManager {
     return `occupied${team}` === status;
   }
 
+  getOccupiedCheckPointsByPlayer(playerGameData) {
+    const stats = [this.#topPoint.getStatus(), this.#bottomPoint.getStatus()];
+
+    if (!stats[0] || !stats[1]) {
+      const errorPoint = !stats[0] ? 'top' : 'bottom';
+      throw new Error(`체크포인트 상태 가져오기 실패: ${errorPoint}`);
+    }
+
+    // 인자로 받은 플레이어 팀 구하기
+    const team = this.playerA === playerGameData ? 0 : 1;
+    // 점령 카운트
+    const occupiedCnt = stats.filter((stat) => stat === `occupied${team}`).length;
+
+    return occupiedCnt;
+  }
+
   delete() {
     console.log('체크매니저 딜리트 진행');
     this.#topPoint.delete();
