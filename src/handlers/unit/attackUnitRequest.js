@@ -59,16 +59,23 @@ const attackUnitRequest = (socket, payload) => {
         const resultHp = targetUnit.applyDamage(damage);
         attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
 
-        // 사망 시 체크포인트 유닛 확인 후 유저 게임데이터에서 removeUnit 진행
-        if (targetUnit.isDead()) {
-          const checkPointManager = gameSession.getCheckPointManager(); // 체크포인트 매니저 로드
-          // 체크포인트에 있는 유닛이라면 체크포인트에서도 삭제 진행
-          if (checkPointManager.isExistUnit(opponentUnitId))
-            checkPointManager.removeUnit(opponentUnitId);
+        if (targetUnit.getHp() <= 0) {
+          // Hp와 사망처리를 둘다 체크하는 이유는 동시성 제어 때문.
+          // 두개의 패킷이 동시에 들어와 최후의 일격을 가한다면 이미 remove된 유닛을 다시 remove할 가능성이 있음
+          if (!targetUnit.isDead()) {
+            targetUnit.markAsDead(); // 플래그 설정을 제일 먼저 함
+            // 사망 처리 시작
 
-          opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
+            const checkPointManager = gameSession.getCheckPointManager(); // 체크포인트 매니저 로드
+            // 체크포인트에 있는 유닛이라면 체크포인트에서도 삭제 진행
+            if (checkPointManager.isExistUnit(opponentUnitId))
+              checkPointManager.removeUnit(opponentUnitId);
 
-          deathNotifications.push(opponentUnitId); // 사망 알림 추가
+            opponentGameData.removeUnit(opponentUnitId); // 유닛 제거
+            deathNotifications.push(opponentUnitId); // 사망 알림 추가
+          } else {
+            logger.info(`Unit ${opponentUnitId} is already dead.`);
+          }
         }
 
         // 공격당한 유닛 정보 추가

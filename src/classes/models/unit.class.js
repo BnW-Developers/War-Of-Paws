@@ -21,7 +21,8 @@ class Unit {
     this.attackRange = unitData.atkRange;
     this.def = unitData.def;
     this.speed = unitData.spd;
-    this.buffState = false;
+    this.buffFlag = false;
+    this.deadFlag = false;
 
     // 쿨타임 관련
     this.cooldown = unitData.cd;
@@ -63,11 +64,15 @@ class Unit {
 
   // 사망 여부 확인 메서드
   isDead() {
-    return this.hp <= 0;
+    return this.deadFlag;
+  }
+
+  markAsDead() {
+    this.deadFlag = true;
   }
 
   isBuffed() {
-    return this.buffState;
+    return this.buffFlag;
   }
 
   getSpeed() {
@@ -114,11 +119,11 @@ class Unit {
 
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
-    this.buffState = true;
+    this.buffFlag = true;
     // 일정 시간 후 버프 해제
     setTimeout(() => {
       this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
-      this.buffState = false;
+      this.buffFlag = false;
     }, duration);
   }
 
@@ -210,6 +215,8 @@ class Unit {
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * ATTACK_RANGE_ERROR_MARGIN;
+    console.log('distance between units:', distance);
+    console.log('attackUnit attack range(error margin version)', attackRange);
     return distance > attackRange;
   }
 }
