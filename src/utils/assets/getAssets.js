@@ -6,7 +6,7 @@ import { SPECIES, DIRECTION } from '../../constants/assets.js';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
- * @returns {{buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
+ * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const getAllGameAssets = () => {
   return gameAssets;
@@ -20,9 +20,11 @@ export const getAllGameAssets = () => {
  * @returns {{name: string, version: string, data: {}}}} JSON화된 게임에셋
  */
 export const getGameAsset = (assetType) => {
-  const { buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, units } = getAllGameAssets();
 
   switch (assetType) {
+    case ASSET_TYPE.ANIMATION:
+      return animations;
     case ASSET_TYPE.BUILDING:
       return buildings;
     case ASSET_TYPE.MAP:
@@ -49,10 +51,13 @@ export const getGameAsset = (assetType) => {
  * @returns {JSON} 해당 id의 데이터 ( 예시: `{ id: 2003, DisplayName: "불 테리어", ... }` )
  */
 export const getGameAssetById = (assetType, id) => {
-  const { buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, units } = getAllGameAssets();
 
   let data = null;
   switch (assetType) {
+    case ASSET_TYPE.ANIMATION:
+      data = animations.data.find((animation) => animation.id === id);
+      break;
     case ASSET_TYPE.BUILDING:
       data = buildings.data.find((building) => building.id === id);
       break;

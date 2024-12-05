@@ -1,8 +1,9 @@
 export const ASSET_TYPE = Object.freeze({
-  BUILDING: 0,
-  MAP: 1,
-  PATH: 2,
-  UNIT: 3,
+  ANIMATION: 0,
+  BUILDING: 1,
+  MAP: 2,
+  PATH: 3,
+  UNIT: 4,
 });
 
 export const SPECIES = Object.freeze({

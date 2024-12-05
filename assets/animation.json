@@ -1,0 +1,22 @@
+{
+  "name": "animation",
+  "version": "1.0.0",
+  "data": [
+    {
+      "id": 6001,
+      "DisplayName": "idle"
+    },
+    {
+      "id": 6002,
+      "DisplayName": "run"
+    },
+    {
+      "id": 6003,
+      "DisplayName": "attack"
+    },
+    {
+      "id": 6004,
+      "DisplayName": "die"
+    }
+  ]
+}
