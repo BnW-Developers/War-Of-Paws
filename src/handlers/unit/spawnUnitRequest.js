@@ -26,7 +26,7 @@ const spawnUnitRequest = (socket, payload) => {
     }
 
     // 골드 차감
-    userGameData.spendMineral(unitCost);
+    const resultMineral = userGameData.spendMineral(unitCost);
 
     // 유닛 생성
     const unitId = userGameData.addUnit(gameSession, assetId, toTop || false, timestamp);
@@ -37,6 +37,8 @@ const spawnUnitRequest = (socket, payload) => {
       unitId,
       toTop,
     });
+
+    sendPacket(socket, PACKET_TYPE.MINERAL_SYNC_NOTIFICATION, { mineral: resultMineral });
 
     // 패킷 전송
     sendPacket(opponentSocket, PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION, {
