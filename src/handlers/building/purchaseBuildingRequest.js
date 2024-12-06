@@ -28,7 +28,7 @@ const purchaseBuildingRequest = (socket, payload) => {
     }
 
     // 골드 차감
-    userGameData.spendMineral(buildingCost);
+    const resultMineral = userGameData.spendMineral(buildingCost);
 
     // buildings에 추가
     userGameData.addBuilding(assetId);
@@ -36,6 +36,8 @@ const purchaseBuildingRequest = (socket, payload) => {
     sendPacket(socket, PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, {
       assetId,
     });
+
+    sendPacket(socket, PACKET_TYPE.MINERAL_SYNC_NOTIFICATION, { mineral: resultMineral });
 
     sendPacket(opponentSocket, PACKET_TYPE.ADD_ENEMY_BUILDING_NOTIFICATION, {
       assetId,
