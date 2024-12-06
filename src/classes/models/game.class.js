@@ -193,29 +193,34 @@ class Game {
         const [firstUserId, firstUserData] = players[0];
         catUserId = firstUserId;
         const catBaseHp = firstUserData.baseHp;
-        // 유저들에게 게임 종료 알림 전송
         const catUser = userSessionManager.getUserByUserId(catUserId);
-        if (catUser) {
-          catUser.setCurrentGameId(null);
-          sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
-        }
 
         // 두 번째 유저
         const [secondUserId, secondUserData] = players[1];
         dogUserId = secondUserId;
         const dogBaseHp = secondUserData.baseHp;
-        // 유저들에게 게임 종료 알림 전송
         const dogUser = userSessionManager.getUserByUserId(dogUserId);
-        if (dogUser) {
-          dogUser.setCurrentGameId(null);
-          sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
-        }
 
         // baseHp 비교
         if (catBaseHp > dogBaseHp) {
           winTeam = 'CAT';
         } else if (catBaseHp < dogBaseHp) {
           winTeam = 'DOG';
+        }
+
+        // 유저들에게 게임 종료 알림 전송
+        if (catUser) {
+          catUser.setCurrentGameId(null);
+          sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+            isWin: winTeam === 'CAT',
+          });
+        }
+
+        if (dogUser) {
+          dogUser.setCurrentGameId(null);
+          sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+            isWin: winTeam === 'DOG',
+          });
         }
       }
 
@@ -267,7 +272,9 @@ class Game {
         const winUser = userSessionManager.getUserByUserId(winUserId);
         if (winUser) {
           winUser.setCurrentGameId(null);
-          sendPacket(winUser.getSocket(), PACKET_TYPE.GAME_END_NOTIFICATION);
+          sendPacket(winUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+            isWin: true,
+          });
         }
       }
 
