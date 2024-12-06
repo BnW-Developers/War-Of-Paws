@@ -3,9 +3,9 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
+import validateTarget from '../../utils/unit/validationTarget.js';
 
 const buffUnitRequest = (socket, payload) => {
   try {
@@ -37,41 +37,21 @@ const buffUnitRequest = (socket, payload) => {
     // 결과 저장용 배열
     const affectedUnits = [];
 
-    if (!bufferUnit.isSkillAvailable(timestamp)) {
-      logger.info(`buff not available: Unit ID ${bufferUnit.id}, `);
-    } else {
-      // 각 대상 유닛에 버프 적용
+    if (bufferUnit.isSkillAvailable(timestamp)) {
       for (const targetId of targetIds) {
         const targetUnit = userGameData.getUnit(targetId);
-        if (!targetUnit) {
-          logger.info(`Target unit with ID ${targetId} not found`);
-          continue;
-        }
 
-        // 버프 중복인지 검증
-        if (targetUnit.isBuffed()) {
-          logger.info(`Target ${targetUnit.getUnitId()} is already buffed`);
-          continue;
-        }
+        // 존재, 라인, 사거리 검증
 
-        // 너무 먼 사거리 공격 방지용
-        if (bufferUnit.isTargetOutOfRange(targetUnit)) {
-          logger.info(`Target ${targetUnit.getUnitId()} is out of range.`);
-          continue;
-        }
-
-        // 같은 라인이여야 버프 가능
-        if (targetUnit.direction !== bufferUnit.direction) {
-          logger.info(`Target ${targetUnit} is not your line`);
-          continue;
-        }
+        // 검증: 유효성 확인 및 중복 버프 체크
+        if (!validateTarget(bufferUnit, targetUnit) || targetUnit.isBuffed()) continue;
 
         targetUnit.applyBuff(buffAmount, buffDuration);
         affectedUnits.push(targetId);
       }
-       bufferUnit.resetLastSkillTime(timestamp);
+      bufferUnit.resetLastSkillTime(timestamp);
     }
-    
+
     // 리스폰스 전송
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,

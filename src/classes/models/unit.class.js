@@ -6,6 +6,7 @@ import {
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
+import logger from '../../utils/logger.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -21,7 +22,8 @@ class Unit {
     this.attackRange = unitData.atkRange;
     this.def = unitData.def;
     this.speed = unitData.spd;
-    this.buffState = false;
+    this.buffFlag = false;
+    this.deadFlag = false;
 
     // 쿨타임 관련
     this.cooldown = unitData.cd;
@@ -63,11 +65,19 @@ class Unit {
 
   // 사망 여부 확인 메서드
   isDead() {
-    return this.hp <= 0;
+    return this.deadFlag;
+  }
+
+  markAsDead() {
+    this.deadFlag = true;
   }
 
   isBuffed() {
-    return this.buffState;
+    if (this.buffFlag) {
+      logger.info(`Target ${this.unitId} is already buffed`);
+      return true;
+    }
+    return false;
   }
 
   getSpeed() {
@@ -83,7 +93,20 @@ class Unit {
   }
 
   isAttackAvailable(timestamp) {
-    return timestamp - this.lastAttackTime >= this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN;
+    const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
+    const requiredTime = this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
+
+    // 쿨타임이 안된다면 로그 출력 & false 반환
+    if (elapsed < requiredTime) {
+      logger.info(
+        `Attack not available: Unit ID ${this.unitId}, ` +
+          `Current Cooldown: ${this.currentCooldown}, ` +
+          `Remaining time: ${requiredTime - elapsed}`,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   resetLastAttackTime(timestamp) {
@@ -95,7 +118,19 @@ class Unit {
   }
 
   isSkillAvailable(timestamp) {
-    return timestamp - this.lastSkillTime >= this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN;
+    const elapsed = timestamp - this.lastSkillTime; // 경과 시간 계산
+    const requiredTime = this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN; // 스킬 쿨다운 기준 계산
+
+    if (elapsed < requiredTime) {
+      logger.info(
+        `Skill not available: Unit ID ${this.unitId}, ` +
+          `Skill Cooldown: ${this.skillCooldown}, ` +
+          `Remaining time: ${requiredTime - elapsed}`,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   // 체력 감소 메서드
@@ -114,11 +149,11 @@ class Unit {
 
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
-    this.buffState = true;
+    this.buffFlag = true;
     // 일정 시간 후 버프 해제
     setTimeout(() => {
       this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
-      this.buffState = false;
+      this.buffFlag = false;
     }, duration);
   }
 
@@ -210,6 +245,8 @@ class Unit {
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * ATTACK_RANGE_ERROR_MARGIN;
+    console.log('distance between units:', distance);
+    console.log('attackUnit attack range(error margin version)', attackRange);
     return distance > attackRange;
   }
 }
