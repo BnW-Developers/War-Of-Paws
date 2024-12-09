@@ -13,6 +13,7 @@ import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
+  HEALTH_SERVER_HOST,
   HOST,
   PEPPER,
   PORT,
@@ -34,6 +35,7 @@ export const config = {
   server: {
     host: HOST,
     port: PORT,
+    health: HEALTH_SERVER_HOST,
   },
   client: {
     version: '1.0.0',

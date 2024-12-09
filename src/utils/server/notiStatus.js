@@ -41,7 +41,7 @@ export const notificationStatus = async () => {
     const sessionCnt = gameSessionManager.getGameSessionSize();
 
     // API 요청
-    const url = 'http://10.178.0.11:13571/check/svrStatus';
+    const url = config.server.health;
     const key = await hashed(config.auth.api_key);
     const data = {
       ip: myIp,
