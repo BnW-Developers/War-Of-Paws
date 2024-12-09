@@ -1,4 +1,5 @@
 import {
+  API_KEY,
   DB1_HOST,
   DB1_NAME,
   DB1_PASSWORD,
@@ -69,6 +70,7 @@ export const config = {
     pepper: PEPPER,
     salt: SALT,
     secret_key: SECRET_KEY,
+    api_key: API_KEY,
   },
   googleApi: {
     clientId: GOOGLE_CLIENT_ID,

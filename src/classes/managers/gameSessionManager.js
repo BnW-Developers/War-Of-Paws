@@ -98,6 +98,9 @@ class GameSessionManager {
     const gameSession = this.getGameSessionByGameId(gameId);
     return gameSession;
   }
+  getGameSessionSize() {
+    return this.gameSessions.size;
+  }
 }
 
 const gameSessionManager = new GameSessionManager();
