@@ -29,6 +29,10 @@ export const REDIS_DATABASE = process.env.REDIS_DATABASE || 0;
 export const PEPPER = process.env.PEPPER;
 export const SALT = process.env.SALT;
 export const SECRET_KEY = process.env.SECRET_KEY;
+export const API_KEY = process.env.API_KEY;
+
+/* ============================ HOST ============================ */
+export const HEALTH_SERVER_HOST = process.env.HEALTH_SERVER_HOST;
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;

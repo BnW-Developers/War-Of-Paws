@@ -1,4 +1,5 @@
 import {
+  API_KEY,
   DB1_HOST,
   DB1_NAME,
   DB1_PASSWORD,
@@ -12,6 +13,7 @@ import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
+  HEALTH_SERVER_HOST,
   HOST,
   PEPPER,
   PORT,
@@ -33,6 +35,7 @@ export const config = {
   server: {
     host: HOST,
     port: PORT,
+    health: HEALTH_SERVER_HOST,
   },
   client: {
     version: '1.0.0',
@@ -69,6 +72,7 @@ export const config = {
     pepper: PEPPER,
     salt: SALT,
     secret_key: SECRET_KEY,
+    api_key: API_KEY,
   },
   googleApi: {
     clientId: GOOGLE_CLIENT_ID,
