@@ -5,6 +5,7 @@ dotenv.config();
 /* ============================SERVER============================ */
 export const PORT = process.env.PORT || 3000;
 export const HOST = process.env.HOST || 'localhost';
+export const API_SERVER_PORT = process.env.API_SERVER_PORT;
 
 /* ============================ D B ============================ */
 export const DB1_NAME = process.env.DB1_NAME || 'db1';

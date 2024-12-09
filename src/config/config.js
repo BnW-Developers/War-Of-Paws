@@ -1,5 +1,6 @@
 import {
   API_KEY,
+  API_SERVER_PORT,
   DB1_HOST,
   DB1_NAME,
   DB1_PASSWORD,
@@ -36,6 +37,7 @@ export const config = {
     host: HOST,
     port: PORT,
     health: HEALTH_SERVER_HOST,
+    apiPort: API_SERVER_PORT,
   },
   client: {
     version: '1.0.0',
