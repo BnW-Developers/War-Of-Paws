@@ -55,7 +55,6 @@ class Game {
 
       const playerGameData = new PlayerGameData(user);
       this.players.set(user.userId, playerGameData);
-      user.setCurrentGameId(this.gameId);
 
       // 유저들의 gameStartRequest를 기다림
       if (this.players.size >= MAX_PLAYERS) {

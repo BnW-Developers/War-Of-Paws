@@ -10,6 +10,10 @@ class User {
     return this.socket;
   }
 
+  setSocket(socket) {
+    this.socket = socket;
+  }
+
   getUserId() {
     return this.userId;
   }
