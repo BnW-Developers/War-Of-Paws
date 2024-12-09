@@ -7,6 +7,16 @@ import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
+/**
+ * 클라이언트로부터 버프 요청을 처리하고, 대상 유닛에 버프를 적용한 뒤 응답 및 알림을 전송합니다.
+ *
+ * @param {Object} socket - 버프 요청을 보낸 플레이어의 소켓 객체.
+ * @param {string} payload.unitId - 버프를 시도하는 유닛의 ID.
+ * @param {number} payload.timestamp - 버프 요청이 발생한 타임스탬프.
+ * @param {string[]} payload.targetIds - 버프 대상 유닛들의 ID 배열.
+ * @param {number} payload.buffAmount - 버프 효과의 크기.
+ * @param {number} payload.buffDuration - 버프 지속 시간(밀리초).
+ */
 const buffUnitRequest = (socket, payload) => {
   try {
     const {
@@ -20,30 +30,23 @@ const buffUnitRequest = (socket, payload) => {
     let buffAmount = initialBuffAmount;
     let buffDuration = initialBuffDuration;
 
-    // 세션 정보 검증 및 유저 데이터 가져오기
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
 
-    // 요청 유닛(버프 유닛)과 대상 유닛 가져오기
     const bufferUnit = userGameData.getUnit(unitId);
     if (!bufferUnit) {
       throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
     }
 
-    // 버프 유닛이 올바른 유닛 타입인지 검증
     if (bufferUnit.getType() !== UNIT_TYPE.BUFFER) {
       throw new Error('Unit Type Error');
     }
 
-    // 결과 저장용 배열
     const affectedUnits = [];
 
     if (bufferUnit.isSkillAvailable(timestamp)) {
       for (const targetId of targetIds) {
         const targetUnit = userGameData.getUnit(targetId);
 
-        // 존재, 라인, 사거리 검증
-
-        // 검증: 유효성 확인 및 중복 버프 체크
         if (!validateTarget(bufferUnit, targetUnit) || targetUnit.isBuffed()) continue;
 
         targetUnit.applyBuff(buffAmount, buffDuration);
@@ -52,7 +55,6 @@ const buffUnitRequest = (socket, payload) => {
       bufferUnit.resetLastSkillTime(timestamp);
     }
 
-    // 리스폰스 전송
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,
       targetIds: affectedUnits,
@@ -60,7 +62,6 @@ const buffUnitRequest = (socket, payload) => {
       buffDuration,
     });
 
-    // 상대방 노티피케이션
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_BUFF_UNIT_NOTIFICATION, {
       unitId,
       targetIds: affectedUnits,
