@@ -7,11 +7,18 @@ import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
+/**
+ * 클라이언트로부터 공격 요청을 처리하고, 공격 로직을 수행한 뒤 공격 및 사망 응답을 전송합니다.
+ *
+ * @param {Object} socket - 공격을 시도하는 플레이어의 소켓 객체.
+ * @param {string} payload.unitId - 공격을 시도하는 유닛의 ID.
+ * @param {number} payload.timestamp - 공격 요청이 발생한 타임스탬프.
+ * @param {string[]} payload.opponentUnitIds - 공격 대상 유닛들의 ID 배열.
+ */
 const attackUnitRequest = (socket, payload) => {
   try {
     const { unitId, timestamp, opponentUnitIds } = payload;
 
-    logger.info(`attack unit request id: ${unitId} to ${opponentUnitIds} time: ${timestamp}`);
     const { userGameData, opponentGameData, opponentSocket, gameSession } =
       checkSessionInfo(socket);
 
@@ -20,25 +27,18 @@ const attackUnitRequest = (socket, payload) => {
       throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
     }
 
-    // 결과 저장용 배열
     const opponentUnitInfos = [];
     const deathNotifications = [];
 
-    // 공격 쿨타임 검증
     if (attackUnit.isAttackAvailable(timestamp)) {
-      // 대상 유닛 처리
       for (const opponentUnitId of opponentUnitIds) {
         const targetUnit = opponentGameData.getUnit(opponentUnitId);
 
-        // 유닛 존재, 라인, 사거리 검증
         if (!validateTarget(attackUnit, targetUnit)) continue;
 
-        // 데미지 적용
         const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower());
-        attackUnit.resetLastAttackTime(timestamp); // 마지막 공격시간 초기화
+        attackUnit.resetLastAttackTime(timestamp);
 
-        // Hp와 사망처리를 둘다 체크하는 이유는 동시성 제어 때문.
-        // 두개의 패킷이 동시에 들어와 최후의 일격을 가한다면 이미 remove된 유닛을 다시 remove할 가능성이 있음
         if (targetUnit.getHp() <= 0) {
           processingDeath(
             targetUnit,
@@ -49,15 +49,13 @@ const attackUnitRequest = (socket, payload) => {
           );
         }
 
-        // 공격당한 유닛 정보 추가
         opponentUnitInfos.push({
           unitId: opponentUnitId,
-          unitHp: resultHp, // HP는 음수가 될 수 없도록 처리
+          unitHp: resultHp,
         });
       }
     }
 
-    // 공격 알림
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       unitInfos: opponentUnitInfos,
     });
@@ -66,7 +64,6 @@ const attackUnitRequest = (socket, payload) => {
       unitInfos: opponentUnitInfos,
     });
 
-    // 양 클라이언트에 사망 패킷 전송
     sendDeathNotifications(socket, opponentSocket, deathNotifications);
   } catch (err) {
     handleErr(socket, err);
@@ -79,15 +76,14 @@ const processingDeath = (unit, gameData, unitId, session, notifications) => {
     return false;
   }
 
-  unit.markAsDead(); // 플래그 설정
+  unit.markAsDead();
   const checkPointManager = session.getCheckPointManager();
   if (checkPointManager.isExistUnit(unitId)) {
     checkPointManager.removeUnit(unitId);
   }
 
-  gameData.removeUnit(unitId); // 데이터 삭제
-  notifications.push(unitId); // 사망 알림
-  logger.info(`Unit ${unitId} death processing is done.`);
+  gameData.removeUnit(unitId);
+  notifications.push(unitId);
   return true;
 };
 
