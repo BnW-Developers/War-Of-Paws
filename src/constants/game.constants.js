@@ -22,7 +22,7 @@ export const SKILL_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
 export const SPELL_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
 
 // 사정거리 허용 오차
-export const ATTACK_RANGE_ERROR_MARGIN = 1.05; // 5%
+export const RANGE_ERROR_MARGIN = 1.05; // 5%
 
 // 속도 허용 오차
 export const SPEED_MARGIN_OF_ERROR = 1.05; // 5%
