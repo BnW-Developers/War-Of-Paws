@@ -74,4 +74,8 @@ export const ERR_CODES = {
   // Game과 User Session 관련 에러
   GAME_SESSION_NOT_FOUND: 11400, // 게임 세션을 찾을 수 없음
   USER_SESSION_NOT_FOUND: 11401, // 유저 세션을 찾을 수 없음
+
+  // 카드 관련
+  INVALID_BUTTON_TYPE: 11500,
+  MAX_CARDS_REACHED: 115001,
 };
