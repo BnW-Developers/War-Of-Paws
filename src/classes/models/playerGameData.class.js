@@ -77,6 +77,10 @@ class PlayerGameData {
     return this.units.get(unitId);
   }
 
+  isBuildingPurchased(assetId) {
+    return this.buildings.includes(assetId);
+  }
+
   // 체크포인트 removeUser 시 유닛의 위치 정보를 얻기 위한 메서드
   getUnitDirection(unitId) {
     const unit = this.getUnit(unitId);
