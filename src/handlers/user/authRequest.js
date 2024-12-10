@@ -4,6 +4,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import { sendPacket } from '../../utils/packet/packetManager.js';
 
 const authRequest = (socket, payload) => {
   try {
@@ -24,11 +25,8 @@ const authRequest = (socket, payload) => {
     const game = gameSessionManager.getGameSessionByGameId(gameId);
     game.addUser(user);
 
-    // 패킷 전송
-    // sendPacket(socket, PACKET_TYPE.ENEMY_UNIT_ANIMATION_NOTIFICATION, {
-    //   unitId,
-    //   animationId,
-    // });
+    //패킷 전송
+    sendPacket(socket, PACKET_TYPE.AUTH_RESPONSE);
   } catch (err) {
     handleErr(socket, err);
   }
