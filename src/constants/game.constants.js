@@ -12,8 +12,8 @@ export const INITIAL_MINERAL_RATE = 10; // 10원
 export const INITIAL_UNIT_ROTATION = Object.freeze({ up: 0, down: 180 });
 
 // 자원
-export const OCCUR_ONE_CHECKPOINT_MINERAL_RATE = 15;
-export const OCCUR_TWO_CHECKPOINT_MINERAL_RATE = 20;
+export const OCCUPY_ONE_CHECKPOINT_MINERAL_RATE = 15;
+export const OCCUPY_TWO_CHECKPOINT_MINERAL_RATE = 20;
 export const MINERAL_SYNC_INTERVAL = 2000; // 2초당
 
 // 쿨타임 허용 오차
