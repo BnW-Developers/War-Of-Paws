@@ -181,3 +181,44 @@ export const getSpell = (spellType) => {
 
   return getGameAssetById(ASSET_TYPE.SPELL, spellType);
 };
+
+/**
+ * 유저 스펠 데이터를 초기화
+ * @returns {Map<SPELL_TYPE, JSON>} 스펠 데이터
+ */
+export const initializeSpells = () => {
+  const spellData = new Map();
+
+  const attackSpell = getSpell(SPELL_TYPE.ATTACK);
+  {
+    const { damage, range, cd, cost } = attackSpell;
+    spellData.set(SPELL_TYPE.ATTACK, { damage, range, cooldown: cd, lastSpellTime: 0, cost });
+  }
+
+  const healSpell = getSpell(SPELL_TYPE.HEAL);
+  {
+    const { healAmount, range, cd, cost } = healSpell;
+    spellData.set(SPELL_TYPE.HEAL, { healAmount, range, cooldown: cd, lastSpellTime: 0, cost });
+  }
+
+  const buffSpell = getSpell(SPELL_TYPE.BUFF);
+  {
+    const { atkUp, range, duration, cd, cost } = buffSpell;
+    spellData.set(SPELL_TYPE.BUFF, {
+      atkUp,
+      range,
+      duration,
+      cooldown: cd,
+      lastSpellTime: 0,
+      cost,
+    });
+  }
+
+  const stunSpell = getSpell(SPELL_TYPE.STUN);
+  {
+    const { range, duration, cd, cost } = stunSpell;
+    spellData.set(SPELL_TYPE.STUN, { range, duration, cooldown: cd, lastSpellTime: 0, cost });
+  }
+
+  return spellData;
+};
