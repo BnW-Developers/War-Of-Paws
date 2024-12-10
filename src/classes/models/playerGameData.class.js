@@ -24,9 +24,14 @@ class PlayerGameData {
     this.mineralRate = INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
-    this.spells = initializeSpells();
+
     this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
+
+    /**
+     * @type { Map<SPELL_TYPE, { damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
+     */
+    this.spells = initializeSpells();
   }
 
   addUnit(gameSession, assetId, toTop, spawnTime) {
@@ -140,7 +145,7 @@ class PlayerGameData {
    *
    * 호출 예시: `const { atkUp, range, duration, cost } = userGameData.getSpellData(SPELL_DATA.BUFF);`
    * @param {SPELL_TYPE} spellType 사용할 스펠타입
-   * @returns {JSON} 스펠 데이터
+   * @returns {{ damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }} 스펠 데이터
    */
   getSpellData(spellType) {
     const spell = this.spells.get(spellType);

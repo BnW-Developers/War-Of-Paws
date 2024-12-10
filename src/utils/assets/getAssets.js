@@ -184,7 +184,7 @@ export const getSpell = (spellType) => {
 
 /**
  * 유저 스펠 데이터를 초기화
- * @returns {Map<SPELL_TYPE, JSON>} 스펠 데이터
+ * @returns { Map<SPELL_TYPE, { damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
  */
 export const initializeSpells = () => {
   const spellData = new Map();
