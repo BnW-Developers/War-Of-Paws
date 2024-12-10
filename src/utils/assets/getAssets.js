@@ -165,3 +165,19 @@ export const getMapBounds = () => {
     innerBound: mapData.innerBound,
   };
 };
+
+/**
+ * 특정 스펠의 데이터를 반환
+ *
+ * 호출 예시: `const spellData = getSpell(SPELL_TYPE.HEAL);`
+ * @param {SPELL_TYPE} spellType 조회할 스펠 종류
+ * @returns {JSON} 스펠 데이터 ( 예시: `{ id: 7002, DisplayName: "힐 스펠", ... }` )
+ */
+export const getSpell = (spellType) => {
+  // 검증: 파라미터 유효성
+  if (!Object.values(SPELL_TYPE).includes(spellType)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 스펠입니다:', spellType);
+  }
+
+  return getGameAssetById(ASSET_TYPE.SPELL, spellType);
+};
