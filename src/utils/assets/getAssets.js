@@ -192,13 +192,13 @@ export const initializeSpells = () => {
   const attackSpell = getSpell(SPELL_TYPE.ATTACK);
   {
     const { damage, range, cd, cost } = attackSpell;
-    spellData.set(SPELL_TYPE.ATTACK, { damage, range, cooldown: cd, lastSpellTime: 0, cost });
+    spellData.set(SPELL_TYPE.ATTACK, { damage, range, cost, cooldown: cd, lastSpellTime: 0 });
   }
 
   const healSpell = getSpell(SPELL_TYPE.HEAL);
   {
     const { healAmount, range, cd, cost } = healSpell;
-    spellData.set(SPELL_TYPE.HEAL, { healAmount, range, cooldown: cd, lastSpellTime: 0, cost });
+    spellData.set(SPELL_TYPE.HEAL, { healAmount, range, cost, cooldown: cd, lastSpellTime: 0 });
   }
 
   const buffSpell = getSpell(SPELL_TYPE.BUFF);
@@ -208,16 +208,16 @@ export const initializeSpells = () => {
       atkUp,
       range,
       duration,
+      cost,
       cooldown: cd,
       lastSpellTime: 0,
-      cost,
     });
   }
 
   const stunSpell = getSpell(SPELL_TYPE.STUN);
   {
     const { range, duration, cd, cost } = stunSpell;
-    spellData.set(SPELL_TYPE.STUN, { range, duration, cooldown: cd, lastSpellTime: 0, cost });
+    spellData.set(SPELL_TYPE.STUN, { range, duration, cost, cooldown: cd, lastSpellTime: 0 });
   }
 
   return spellData;
