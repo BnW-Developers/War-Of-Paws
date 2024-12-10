@@ -6,7 +6,7 @@
       "id": 7001,
       "DisplayName": "공격 스펠",
       "Description": "",
-      "atk": 40,
+      "damage": 40,
       "range": 1.5,
       "cd": 60000,
       "cost": 200
@@ -15,7 +15,7 @@
       "id": 7002,
       "DisplayName": "힐 스펠",
       "Description": "",
-      "atk": 30,
+      "healAmount": 30,
       "range": 1.5,
       "cd": 45000,
       "cost": 150
