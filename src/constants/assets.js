@@ -24,6 +24,10 @@ export const SPELL_TYPE = Object.freeze({
   STUN: 7004,
 });
 
+export const SPELL_TYPE_REVERSED = Object.fromEntries(
+  Object.entries(SPELL_TYPE).map(([key, value]) => [value, key]),
+);
+
 export const UNIT_TYPE = Object.freeze({
   NORMAL: 'normal',
   HEALER: 'healer',

@@ -7,8 +7,11 @@ export const OCCUR_ONE_CHECKPOINT_MINERAL_RATE = 15;
 export const OCCUR_TWO_CHECKPOINT_MINERAL_RATE = 20;
 export const MINERAL_SYNC_INTERVAL = 2000; // 2초당
 export const INITIAL_BASE_HP = 1000;
+
 export const ATTACK_COOLDOWN_ERROR_MARGIN = 200;
 export const SKILL_COOLDOWN_ERROR_MARGIN = 200;
+export const SPELL_COOLDOWN_ERROR_MARGIN = 200;
+
 export const ATTACK_RANGE_ERROR_MARGIN = 1.05; // 5%
 export const SPEED_MARGIN_OF_ERROR = 1.05; // 속도 허용 오차배율
 
