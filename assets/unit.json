@@ -13,9 +13,23 @@
       "cd": 1000,
       "spd": 1,
       "def": 2,
-      "cost": 20,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3001
+    },
+    {
+      "id": 3001,
+      "species": "dog",
+      "DisplayName": "엘리트 비글",
+      "Description": "비글 유닛의 강화 버전",
+      "maxHp": 300,
+      "atk": 60,
+      "atkRange": 1.5,
+      "cd": 1000,
+      "spd": 1,
+      "def": 6,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2002,
@@ -28,9 +42,23 @@
       "cd": 1000,
       "spd": 2,
       "def": 2,
-      "cost": 40,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3002
+    },
+    {
+      "id": 3002,
+      "species": "dog",
+      "DisplayName": "엘리트 보더 콜리",
+      "Description": "보더 콜리 유닛의 강화 버전",
+      "maxHp": 360,
+      "atk": 60,
+      "atkRange": 1.5,
+      "cd": 1000,
+      "spd": 2,
+      "def": 6,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2003,
@@ -43,9 +71,23 @@
       "cd": 1000,
       "spd": 2,
       "def": 0,
-      "cost": 50,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3003
+    },
+    {
+      "id": 3003,
+      "species": "dog",
+      "DisplayName": "엘리트 불 테리어",
+      "Description": "불 테리어 유닛의 강화 버전",
+      "maxHp": 240,
+      "atk": 120,
+      "atkRange": 1.8,
+      "cd": 1000,
+      "spd": 2,
+      "def": 0,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2004,
@@ -58,9 +100,23 @@
       "cd": 2000,
       "spd": 1,
       "def": 2,
-      "cost": 70,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 2,
+      "eliteId": 3004
+    },
+    {
+      "id": 3004,
+      "species": "dog",
+      "DisplayName": "엘리트 저먼 셰퍼드",
+      "Description": "저먼 셰퍼드 유닛의 강화 버전",
+      "maxHp": 450,
+      "atk": 240,
+      "atkRange": 2.0,
+      "cd": 2000,
+      "spd": 1,
+      "def": 6,
+      "type": "normal",
+      "tier": 2
     },
     {
       "id": 2005,
@@ -73,9 +129,23 @@
       "cd": 1000,
       "spd": 1.5,
       "def": 2,
-      "cost": 100,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 3,
+      "eliteId": 3005
+    },
+    {
+      "id": 3005,
+      "species": "dog",
+      "DisplayName": "엘리트 도베르만",
+      "Description": "도베르만 유닛의 강화 버전",
+      "maxHp": 750,
+      "atk": 210,
+      "atkRange": 2.0,
+      "cd": 1000,
+      "spd": 1.5,
+      "def": 6,
+      "type": "normal",
+      "tier": 3
     },
     {
       "id": 2006,
@@ -83,14 +153,34 @@
       "DisplayName": "세인트 버나드",
       "Description": "전투 중인 유닛 2마리 공격속도 2배 (지속시간 3초)",
       "maxHp": 100,
-      "atk": 0,
+      "atk": 5,
       "atkRange": 3.0,
       "cd": 3000,
       "spd": 1,
       "def": 0,
-      "cost": 80,
-      "skillCd": 3000,
-      "type": "buffer"
+      "type": "buffer",
+      "tier": 2,
+      "eliteId": 3006,
+      "skillCd": 4000,
+      "buffAmount": 2,
+      "buffDuration": 3000
+    },
+    {
+      "id": 3006,
+      "species": "dog",
+      "DisplayName": "엘리트 세인트 버나드",
+      "Description": "세인트 버나드 유닛의 강화 버전",
+      "maxHp": 300,
+      "atk": 5,
+      "atkRange": 3.0,
+      "cd": 3000,
+      "spd": 1,
+      "def": 0,
+      "type": "buffer",
+      "tier": 2,
+      "skillCd": 5000,
+      "buffAmount": 3,
+      "buffDuration": 5000
     },
     {
       "id": 2007,
@@ -103,9 +193,23 @@
       "cd": 1000,
       "spd": 1,
       "def": 2,
-      "cost": 50,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3007
+    },
+    {
+      "id": 3007,
+      "species": "cat",
+      "DisplayName": "엘리트 재패니즈 밥테일",
+      "Description": "재패니즈 밥테일 유닛의 강화 버전",
+      "maxHp": 450,
+      "atk": 75,
+      "atkRange": 1.5,
+      "cd": 1000,
+      "spd": 1,
+      "def": 6,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2008,
@@ -118,9 +222,23 @@
       "cd": 1000,
       "spd": 2,
       "def": 2,
-      "cost": 80,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3008
+    },
+    {
+      "id": 3008,
+      "species": "cat",
+      "DisplayName": "엘리트 태비",
+      "Description": "태비 유닛의 강화 버전",
+      "maxHp": 480,
+      "atk": 50,
+      "atkRange": 1.5,
+      "cd": 1000,
+      "spd": 4,
+      "def": 6,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2009,
@@ -133,24 +251,56 @@
       "cd": 666,
       "spd": 1,
       "def": 0,
-      "cost": 120,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 1,
+      "eliteId": 3009
+    },
+    {
+      "id": 3009,
+      "species": "cat",
+      "DisplayName": "엘리트 페르시안",
+      "Description": "페르시안 유닛의 강화 버전",
+      "maxHp": 360,
+      "atk": 60,
+      "atkRange": 1.8,
+      "cd": 444,
+      "spd": 1,
+      "def": 0,
+      "type": "normal",
+      "tier": 1
     },
     {
       "id": 2010,
       "species": "cat",
       "DisplayName": "러시안 블루",
-      "Description": "가장 체력이 낮은 유닛 회복 (최대 체력의 50%)",
+      "Description": "가장 체력이 낮은 유닛 회복",
       "maxHp": 100,
-      "atk": 0,
+      "atk": 5,
       "atkRange": 2.5,
       "cd": 5000,
       "spd": 1,
       "def": 0,
-      "cost": 140,
+      "type": "healer",
+      "tier": 2,
+      "eliteId": 3010,
       "skillCd": 5000,
-      "type": "healer"
+      "healAmount": 50
+    },
+    {
+      "id": 3010,
+      "species": "cat",
+      "DisplayName": "엘리트 러시안 블루",
+      "Description": "러시안 블루 유닛의 강화 버전",
+      "maxHp": 300,
+      "atk": 5,
+      "atkRange": 2.5,
+      "cd": 5000,
+      "spd": 1,
+      "def": 0,
+      "type": "healer",
+      "tier": 2,
+      "skillCd": 5000,
+      "healAmount": 100
     },
     {
       "id": 2011,
@@ -163,9 +313,23 @@
       "cd": 1000,
       "spd": 2,
       "def": 0,
-      "cost": 180,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 3,
+      "eliteId": 3011
+    },
+    {
+      "id": 3011,
+      "species": "cat",
+      "DisplayName": "엘리트 샴",
+      "Description": "샴 유닛의 강화 버전",
+      "maxHp": 450,
+      "atk": 75,
+      "atkRange": 2.5,
+      "cd": 1000,
+      "spd": 2,
+      "def": 0,
+      "type": "normal",
+      "tier": 3
     },
     {
       "id": 2012,
@@ -173,14 +337,28 @@
       "DisplayName": "스핑크스",
       "Description": "체력 높은 탱커",
       "maxHp": 300,
-      "atk": 0,
+      "atk": 20,
       "atkRange": 1.2,
       "cd": 0,
       "spd": 0.5,
       "def": 4,
-      "cost": 160,
-      "skillCd": 0,
-      "type": "normal"
+      "type": "normal",
+      "tier": 2,
+      "eliteId": 3012
+    },
+    {
+      "id": 3012,
+      "species": "cat",
+      "DisplayName": "엘리트 스핑크스",
+      "Description": "스핑크스 유닛의 강화 버전",
+      "maxHp": 900,
+      "atk": 40,
+      "atkRange": 1.2,
+      "cd": 0,
+      "spd": 0.5,
+      "def": 12,
+      "type": "normal",
+      "tier": 2
     }
   ]
 }
