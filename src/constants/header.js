@@ -71,6 +71,11 @@ export const PACKET_TYPE = Object.freeze({
   // 애니메이션 관련
   UNIT_ANIMATION_NOTIFICATION: 37,
   ENEMY_UNIT_ANIMATION_NOTIFICATION: 38,
+
+  // 카드 관련
+  DRAW_CARD_REQUEST: 39,
+  DRAW_CARD_RESPONSE: 40,
+  ELITE_CARD_NOTIFICATION: 41,
 });
 
 export const PACKET_TYPE_REVERSED = Object.fromEntries(

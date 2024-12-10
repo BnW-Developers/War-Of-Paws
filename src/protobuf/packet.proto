@@ -205,6 +205,19 @@ message S2CEnemyUnitAnimationNotification {
   int32 animationId = 2;
 }
 
+message C2SDrawCardRequest {
+  int32 buttonType = 1;
+}
+
+message S2CDrawCardResponse {
+  int32 assetId = 1;
+}
+
+message S2CEliteCardNotification {
+  int32 consumedAssetId = 1;
+  int32 eliteAssetId = 2;
+}
+
 
 /*
   최상위 GamePacket 메시지
