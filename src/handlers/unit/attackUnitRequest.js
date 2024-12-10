@@ -32,6 +32,8 @@ const attackUnitRequest = (socket, payload) => {
       gameSession,
     );
 
+    attackUnit.resetLastAttackTime(Date.now());
+
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       unitInfos: opponentUnitInfos,
     });
@@ -115,7 +117,6 @@ const processAttack = (attackUnit, opponentUnitIds, opponentGameData, timestamp,
       if (!validateTarget(attackUnit, targetUnit)) continue;
 
       const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower());
-      attackUnit.resetLastAttackTime(timestamp);
 
       if (targetUnit.getHp() <= 0) {
         processingDeath(
