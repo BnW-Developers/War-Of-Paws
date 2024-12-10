@@ -4,7 +4,7 @@ import {
   INITIAL_MINERAL,
   INITIAL_MINERAL_RATE,
 } from '../../constants/game.constants.js';
-import { getGameAssetById } from '../../utils/assets/getAssets.js';
+import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import Unit from './unit.class.js';
 
 // 유저의 게임 데이터를 담는 클래스
@@ -19,6 +19,7 @@ class PlayerGameData {
     this.mineralRate = INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
+    this.spells = initializeSpells();
     this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
   }
