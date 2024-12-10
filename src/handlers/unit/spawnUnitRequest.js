@@ -50,7 +50,6 @@ const spawnUnitRequest = (socket, payload) => {
 
 /**
  * 유닛 생성 처리
- *
  * @param {Object} userGameData - 사용자 게임 데이터
  * @param {Object} gameSession - 현재 게임 세션
  * @param {string} assetId - 생성할 유닛의 자산 ID
