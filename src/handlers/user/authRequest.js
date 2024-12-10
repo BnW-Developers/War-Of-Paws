@@ -4,11 +4,14 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import { decodeToken } from '../../utils/jwt/decodeToken.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 
 const authRequest = (socket, payload) => {
   try {
-    const { userId } = payload;
+    const { token } = payload;
+
+    const { userId } = decodeToken(token);
 
     // 유닛 아이디 정보가 유저세션에 있는지 확인
     const user = userSessionManager.getUserByUserId(userId);

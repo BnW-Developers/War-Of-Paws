@@ -34,7 +34,7 @@ message S2CErrorNotification {
 }
 
 message C2SAuthRequest {
-  string userId = 1;
+  string token = 1;
 }
 
 message S2CAuthResponse {
