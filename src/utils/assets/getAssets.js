@@ -1,4 +1,4 @@
-import { ASSET_TYPE } from '../../constants/assets.js';
+import { ASSET_TYPE, SPELL_TYPE } from '../../constants/assets.js';
 import { gameAssets } from '../../init/loadAssets.js';
 import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
@@ -6,7 +6,7 @@ import { SPECIES, DIRECTION } from '../../constants/assets.js';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
- * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
+ * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, spells: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const getAllGameAssets = () => {
   return gameAssets;
@@ -20,7 +20,7 @@ export const getAllGameAssets = () => {
  * @returns {{name: string, version: string, data: {}}}} JSON화된 게임에셋
  */
 export const getGameAsset = (assetType) => {
-  const { animations, buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, spells, units } = getAllGameAssets();
 
   switch (assetType) {
     case ASSET_TYPE.ANIMATION:
@@ -31,6 +31,8 @@ export const getGameAsset = (assetType) => {
       return maps;
     case ASSET_TYPE.PATH:
       return paths;
+    case ASSET_TYPE.SPELL:
+      return spells;
     case ASSET_TYPE.UNIT:
       return units;
     default:
@@ -51,7 +53,7 @@ export const getGameAsset = (assetType) => {
  * @returns {JSON} 해당 id의 데이터 ( 예시: `{ id: 2003, DisplayName: "불 테리어", ... }` )
  */
 export const getGameAssetById = (assetType, id) => {
-  const { animations, buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, spells, units } = getAllGameAssets();
 
   let data = null;
   switch (assetType) {
@@ -66,6 +68,9 @@ export const getGameAssetById = (assetType, id) => {
       break;
     case ASSET_TYPE.PATH:
       data = paths.data.find((path) => path.id === id);
+      break;
+    case ASSET_TYPE.SPELL:
+      data = spells.data.find((spell) => spell.id === id);
       break;
     case ASSET_TYPE.UNIT:
       data = units.data.find((unit) => unit.id === id);

@@ -1,0 +1,43 @@
+{
+  "name": "spell",
+  "version": "1.0.0",
+  "data": [
+    {
+      "id": 7001,
+      "DisplayName": "공격 스펠",
+      "Description": "",
+      "atk": 40,
+      "range": 1.5,
+      "cd": 60000,
+      "cost": 200
+    },
+    {
+      "id": 7002,
+      "DisplayName": "힐 스펠",
+      "Description": "",
+      "atk": 30,
+      "range": 1.5,
+      "cd": 45000,
+      "cost": 150
+    },
+    {
+      "id": 7003,
+      "DisplayName": "버프 스펠",
+      "Description": "",
+      "atkUp": 10,
+      "range": 1.5,
+      "duration": 10000,
+      "cd": 30000,
+      "cost": 150
+    },
+    {
+      "id": 7004,
+      "DisplayName": "스턴 스펠",
+      "Description": "",
+      "range": 1.5,
+      "duration": 5000,
+      "cd": 60000,
+      "cost": 200
+    }
+  ]
+}
