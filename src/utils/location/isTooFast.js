@@ -1,7 +1,6 @@
 import { SPEED_MARGIN_OF_ERROR } from '../../constants/game.constants.js';
 import calcSpd from './calcSpd.js';
 import chalk from 'chalk';
-import formatCoords from '../formatter/formatCoords.js';
 import round from '../math/round.js';
 
 /**
