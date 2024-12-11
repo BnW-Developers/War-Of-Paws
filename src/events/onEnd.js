@@ -5,6 +5,8 @@ import { handleErr } from '../utils/error/handlerErr.js';
 export const onEnd = (socket) => () => {
   try {
     const user = userSessionManager.getUserBySocket(socket);
+    const port = socket.remotePort;
+    console.log(`${user.userId} - ${port}로 연결되었던 소켓 연결 해제됨`);
     if (user) {
       if (user.getCurrentGameId()) {
         // 게임 중 접속 종료 시 처리
@@ -17,5 +19,9 @@ export const onEnd = (socket) => () => {
     }
   } catch (err) {
     handleErr(null, err);
+  } finally {
+    if (!socket.destroyed) {
+      socket.destroy();
+    }
   }
 };
