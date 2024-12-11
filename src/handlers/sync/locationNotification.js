@@ -49,17 +49,6 @@ const locationNotification = async (socket, payload) => {
       // 클라이언트에서 보낸 유닛의 위치
       const { unitId, position, rotation } = unitPosition;
 
-      // 검증: 좌표의 형식이 올바른가?
-      if (!position) {
-        throw new Error('잘못된 좌표입니다: position', position);
-      }
-      if (!rotation) {
-        throw new Error('잘못된 좌표입니다: rotation', rotation);
-      }
-      //if (position.x === null) position.x = 0;
-      //if (position.z === null) position.z = 0;
-      //if (rotation.y === null) rotation.y = 0;
-
       // 검증: 해당 플레이어가 보유한 (소환한) 유닛인가?
       const unit = userGameData.getUnit(unitId);
       if (!unit) {
