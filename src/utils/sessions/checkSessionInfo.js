@@ -73,7 +73,9 @@ const checkSessionInfo = (socket) => {
       opponentSocket,
     };
   } catch (error) {
-    handleErr(socket, error);
+    // handleErr(socket, error);
+    console.error(error);
+    throw error;
   }
 };
 
