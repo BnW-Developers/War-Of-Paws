@@ -8,6 +8,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import CheckPointManager from '../managers/CheckPointManager.class.js';
+import gameSessionManager from '../managers/gameSessionManager.js';
 import LocationSyncManager from '../managers/locationSyncManager.js';
 import MineralSyncManager from '../managers/mineralSyncManager.js';
 import userSessionManager from '../managers/userSessionManager.js';
@@ -34,10 +35,6 @@ class Game {
 
   generateUnitId() {
     return this.unitIdCounter++;
-  }
-
-  getPlayerGameData(userId) {
-    return this.players.get(userId);
   }
 
   isInProgress() {
@@ -158,60 +155,47 @@ class Game {
 
       // 혹시나 실행됐던 매니저들 삭제
       this.endGameProcess();
+
+      // 게임세션 삭제
+      gameSessionManager.removeGameSession(this.gameId);
     } catch (err) {
       err.message = 'cancelGame error: ' + err.message;
       handleErr(null, err);
     }
   }
 
-  async endGame() {
+  endGame() {
     if (!this.inProgress) return;
     this.inProgress = false;
-
-    let catUserId = null;
-    let dogUserId = null;
-    let winTeam = 'DRAW'; // 기본값 설정
 
     try {
       this.endGameProcess();
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
-      if (players.length >= 2) {
-        // 첫 번째 유저
-        const [firstUserId, firstUserData] = players[0];
-        catUserId = firstUserId;
-        const catBaseHp = firstUserData.baseHp;
-        const catUser = userSessionManager.getUserByUserId(catUserId);
+      if (players.length !== 2)
+        throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 상태 오류');
 
-        // 두 번째 유저
-        const [secondUserId, secondUserData] = players[1];
-        dogUserId = secondUserId;
-        const dogBaseHp = secondUserData.baseHp;
-        const dogUser = userSessionManager.getUserByUserId(dogUserId);
+      const [player0, player1] = players;
+      // 성채 체력 습득
+      const p0BaseHp = player0[1].getBaseHp();
+      const p1BaseHp = player1[1].getBaseHp();
 
-        // baseHp 비교
-        if (catBaseHp > dogBaseHp) {
-          winTeam = 'CAT';
-        } else if (catBaseHp < dogBaseHp) {
-          winTeam = 'DOG';
-        }
+      if (!p0BaseHp || !p1BaseHp)
+        throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 데이터 정보 오류');
 
-        // 유저들에게 게임 종료 알림 전송
-        if (catUser) {
-          catUser.setCurrentGameId(null);
-          sendPacket(catUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
-            isWin: winTeam === 'CAT',
-          });
-        }
+      // 성채 체력 비교하여 승리 팀 결정
+      const winTeam = p0BaseHp > p1BaseHp ? player0[0] : player1[0];
 
-        if (dogUser) {
-          dogUser.setCurrentGameId(null);
-          sendPacket(dogUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
-            isWin: winTeam === 'DOG',
-          });
-        }
+      // 유저들에게 게임 종료 알림 전송
+      for (const [userId, userData] of players) {
+        sendPacket(userData.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+          isWin: winTeam === userId,
+        });
       }
+
+      // 게임세션 삭제
+      gameSessionManager.removeGameSession(this.gameId);
     } catch (err) {
       err.message = 'endGame error: ' + err.message;
       handleErr(null, err);
@@ -221,42 +205,21 @@ class Game {
   endGameByDisconnect(userId) {
     if (!this.inProgress) return;
     this.inProgress = false;
-
-    let catUserId = null;
-    let dogUserId = null;
-    let winTeam = null;
-
     try {
       this.endGameProcess();
 
-      const players = Array.from(this.players.entries());
+      const player = this.getOpponentGameDataByUserId(userId);
+      if (!player) throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '상대방을 찾을 수 없습니다.');
 
-      if (players.length >= 2) {
-        // 첫 번째 플레이어의 정보 확인
-        // eslint-disable-next-line no-unused-vars
-        const [firstUserId, firstPlayerData] = players[0];
-        catUserId = firstUserId;
-        // 두 번째 플레이어의 정보 확인
-        // eslint-disable-next-line no-unused-vars
-        const [secondUserId, secondPlayerData] = players[1];
-        dogUserId = secondUserId;
-
-        // 접속 종료한 유저의 상대가 승리
-        const winUserId = catUserId === userId ? dogUserId : catUserId;
-        winTeam = catUserId === userId ? 'DOG' : 'CAT';
-
-        // 남은 유저에게만 게임 종료 알림 전송
-        const winUser = userSessionManager.getUserByUserId(winUserId);
-        if (winUser) {
-          winUser.setCurrentGameId(null);
-          sendPacket(winUser.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
-            isWin: true,
-          });
-        }
-      }
+      sendPacket(player.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+        isWin: true,
+      });
     } catch (err) {
       err.message = 'endGameByDisconnect error: ' + err.message;
       handleErr(null, err);
+    } finally {
+      // 게임세션 삭제
+      gameSessionManager.removeGameSession(this.gameId);
     }
   }
 
@@ -278,22 +241,22 @@ class Game {
     return this.players.get(userId);
   }
 
-  getOpponentUserId(userId) {
-    // Map에서 자신(userId)을 제외한 다른 유저를 반환
-    for (const key of this.players.keys()) {
-      if (key !== userId) {
-        return key;
-      }
-    }
-    return null; // 상대방이 없는 경우
-  }
-
   // userId로 게임 세션의 다른 유저 검색
   getOpponentGameDataByUserId(userId) {
     // Map에서 자신(userId)을 제외한 다른 유저를 반환
     for (const [key, value] of this.players.entries()) {
       if (key !== userId) {
         return value; // PlayerGameData 객체 반환
+      }
+    }
+    return null; // 상대방이 없는 경우
+  }
+
+  getOpponentUserId(userId) {
+    // Map에서 자신(userId)을 제외한 다른 유저를 반환
+    for (const key of this.players.keys()) {
+      if (key !== userId) {
+        return key;
       }
     }
     return null; // 상대방이 없는 경우
