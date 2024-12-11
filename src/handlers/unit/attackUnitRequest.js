@@ -1,3 +1,6 @@
+import Game from '../../classes/models/game.class.js';
+import PlayerGameData from '../../classes/models/playerGameData.class.js';
+import Unit from '../../classes/models/unit.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -8,12 +11,9 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
 /**
- * 클라이언트로부터 공격 요청을 처리하고, 공격 로직을 수행한 뒤 공격 및 사망 응답을 전송합니다.
- *
- * @param {Object} socket - 공격을 시도하는 플레이어의 소켓 객체
- * @param {string} payload.unitId - 공격을 시도하는 유닛의 ID
- * @param {number} payload.timestamp - 공격 요청이 발생한 타임스탬프
- * @param {string[]} payload.opponentUnitIds - 공격 대상 유닛들의 ID 배열
+ * 클라이언트로부터 공격 요청을 처리하고, 공격 로직을 수행한 뒤 결과를 응답으로 전송
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32, timestamp: int64, opponentUnitIds: Array<int32> }} payload
  */
 const attackUnitRequest = (socket, payload) => {
   try {
@@ -28,7 +28,6 @@ const attackUnitRequest = (socket, payload) => {
       attackUnit,
       opponentUnitIds,
       opponentGameData,
-      timestamp,
       gameSession,
     );
 
@@ -50,10 +49,9 @@ const attackUnitRequest = (socket, payload) => {
 
 /**
  * 공격 유닛 검증 및 반환
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {string} unitId - 공격을 시도하는 유닛의 ID
- * @returns {Object} - 검증된 공격 유닛
- * @throws {CustomErr} - 유닛이 없거나 유효하지 않은 경우
+ * @param {PlayerGameData} userGameData
+ * @param {int32} unitId
+ * @returns {Unit}
  */
 const validateAttackUnit = (userGameData, unitId) => {
   const unit = userGameData.getUnit(unitId);
@@ -65,52 +63,63 @@ const validateAttackUnit = (userGameData, unitId) => {
 
 /**
  * 사망 처리
- * @param {Object} unit - 대상 유닛
- * @param {Object} gameData - 게임 데이터
- * @param {string} unitId - 유닛의 ID
- * @param {Object} gameSession - 게임 세션
- * @param {string[]} notifications - 사망 알림 배열
+ * @param {PlayerGameData} opponentGameData
+ * @param {Unit} opponentUnit
+ * @param {int32} opponentUnitId
+ * @param {Game} gameSession
+ * @param {Array<int32>} deathNotifications
  */
-const processingDeath = (unit, gameData, unitId, gameSession, notifications) => {
-  if (unit.isDead()) {
-    logger.info(`Unit ${unitId} is already dead.`);
+const processingDeath = (
+  opponentGameData,
+  opponentUnit,
+  opponentUnitId,
+  gameSession,
+  deathNotifications,
+) => {
+  if (opponentUnit.isDead()) {
+    logger.info(`Unit ${opponentUnitId} is already dead.`);
     return false;
   }
 
-  unit.markAsDead();
+  opponentUnit.markAsDead();
   const checkPointManager = gameSession.getCheckPointManager();
-  if (checkPointManager.isExistUnit(unitId)) {
-    checkPointManager.removeUnit(unitId);
+  if (checkPointManager.isExistUnit(opponentUnitId)) {
+    checkPointManager.removeUnit(opponentUnitId);
   }
 
-  gameData.removeUnit(unitId);
-  notifications.push(unitId);
+  opponentGameData.removeUnit(opponentUnitId);
+  deathNotifications.push(opponentUnitId);
   return true;
 };
 
-const sendDeathNotifications = (socket, opponentSocket, notifications) => {
-  if (notifications.length > 0) {
-    sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: notifications });
+/**
+ * 사망 알림 전송
+ * @param {net.Socket} socket
+ * @param {net.Socket} opponentSocket
+ * @param {Array<int32>} deathNotifications
+ */
+const sendDeathNotifications = (socket, opponentSocket, deathNotifications) => {
+  if (deathNotifications.length > 0) {
+    sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: deathNotifications });
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-      unitIds: notifications,
+      unitIds: deathNotifications,
     });
   }
 };
 
 /**
  * 공격 처리
- * @param {Object} attackUnit - 공격 유닛
- * @param {string[]} opponentUnitIds - 공격 대상 유닛들의 ID 배열
- * @param {Object} opponentGameData - 상대방의 게임 데이터
- * @param {number} timestamp - 공격 요청이 발생한 타임스탬프
- * @param {Object} gameSession - 현재 게임 세션
- * @returns {Object} - 공격 결과 및 사망 알림 정보
+ * @param {Unit} attackUnit
+ * @param {Array<int32>} opponentUnitIds
+ * @param {PlayerGameData} opponentGameData
+ * @param {Game} gameSession
+ * @returns {{ opponentUnitInfos: Array<{ unitId: number, unitHp: number }>, deathNotifications: Array<int32> }}
  */
-const processAttack = (attackUnit, opponentUnitIds, opponentGameData, timestamp, gameSession) => {
+const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSession) => {
   const opponentUnitInfos = [];
   const deathNotifications = [];
 
-  if (attackUnit.isAttackAvailable(timestamp)) {
+  if (attackUnit.isAttackAvailable(Date.now())) {
     for (const opponentUnitId of opponentUnitIds) {
       const targetUnit = opponentGameData.getUnit(opponentUnitId);
 

@@ -1,3 +1,4 @@
+import PlayerGameData from '../../classes/models/playerGameData.class.js';
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
@@ -9,8 +10,8 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 /**
  * 클라이언트로부터 건물 구매 요청을 처리하고, 결과를 응답으로 전송
- * @param {Object} socket - 건물 구매 요청을 보낸 플레이어의 소켓 객체
- * @param {string} payload.assetId - 구매할 건물의 자산 ID
+ * @param {net.Socket} socket
+ * @param {{ assetId: int32 }} payload
  */
 const purchaseBuildingRequest = (socket, payload) => {
   try {
@@ -18,7 +19,7 @@ const purchaseBuildingRequest = (socket, payload) => {
 
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
 
-    const { resultMineral } = processBuildingPurchase(userGameData, assetId);
+    const resultMineral = processBuildingPurchase(userGameData, assetId);
 
     sendPacket(socket, PACKET_TYPE.PURCHASE_BUILDING_RESPONSE, {
       assetId,
@@ -35,10 +36,10 @@ const purchaseBuildingRequest = (socket, payload) => {
 };
 
 /**
- * 건물 구매 처리
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {string} assetId - 구매할 건물의 자산 ID
- * @returns {Object} - 남은 자원 정보
+ * 건물 구매를 처리하고 사용자 데이터를 업데이트
+ * @param {PlayerGameData} userGameData
+ * @param {int32} assetId
+ * @returns {resultMineral: int32}
  */
 const processBuildingPurchase = (userGameData, assetId) => {
   const buildingCost = getGameAssetById(ASSET_TYPE.BUILDING, assetId)?.cost;
@@ -57,7 +58,7 @@ const processBuildingPurchase = (userGameData, assetId) => {
   const resultMineral = userGameData.spendMineral(buildingCost);
   userGameData.addBuilding(assetId);
 
-  return { resultMineral };
+  return resultMineral;
 };
 
 export default purchaseBuildingRequest;

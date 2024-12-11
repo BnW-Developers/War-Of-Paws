@@ -6,6 +6,8 @@ import {
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
+import PlayerGameData from '../models/playerGameData.class.js';
+import CheckPointManager from './CheckPointManager.class.js';
 
 /**
  * 미네랄 동기화 클래스
@@ -19,8 +21,8 @@ class MineralSyncManager {
 
   /**
    * 플레이어의 점령된 거점 수에 따른 미네랄 레이트 계산
-   * @param {number} checkpointCount - 점령된 거점 수
-   * @returns {number} - 계산된 미네랄 레이트
+   * @param {int32} checkpointCount
+   * @returns {int32} - 계산된 미네랄 레이트
    */
   getMineralRate(checkpointCount) {
     const mineralRateMap = {
@@ -33,8 +35,8 @@ class MineralSyncManager {
 
   /**
    * 미네랄 동기화 업데이트
-   * @param {Array<Object>} players - 플레이어 게임 데이터 배열
-   * @param {Object} checkpointManager - 체크포인트 매니저
+   * @param {Array<PlayerGameData>} players
+   * @param {CheckPointManager} checkpointManager
    */
   updateMineral(players, checkpointManager) {
     players.forEach((playerGameData) => {
@@ -47,8 +49,8 @@ class MineralSyncManager {
 
   /**
    * 미네랄 동기화 루프 시작
-   * @param {Array<Object>} players - 플레이어 게임 데이터 배열
-   * @param {Object} checkpointManager - 체크포인트 매니저
+   * @param {Array<PlayerGameData>} players
+   * @param {CheckPointManager} checkpointManager
    */
   startSyncLoop(players, checkpointManager) {
     const interval = MINERAL_SYNC_INTERVAL;

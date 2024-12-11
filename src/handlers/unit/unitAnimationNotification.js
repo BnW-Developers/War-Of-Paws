@@ -7,9 +7,8 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
 /**
  * 클라이언트로부터 유닛 애니메이션 알림을 처리하고, 상대방에게 알림을 전송
- * @param {Object} socket - 애니메이션 알림을 보낸 플레이어의 소켓 객체
- * @param {string} payload.unitId - 애니메이션을 수행하는 유닛의 ID
- * @param {string} payload.animationId - 수행할 애니메이션의 ID
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32, animationId: int32 }} payload
  */
 const unitAnimationNotification = (socket, payload) => {
   try {

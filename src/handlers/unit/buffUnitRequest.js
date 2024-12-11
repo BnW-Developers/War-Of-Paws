@@ -1,3 +1,5 @@
+import PlayerGameData from '../../classes/models/playerGameData.class.js';
+import Unit from '../../classes/models/unit.class.js';
 import { UNIT_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
@@ -8,14 +10,9 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
 /**
- * 클라이언트로부터 버프 요청을 처리하고, 대상 유닛에 버프를 적용한 뒤 응답을 전송합니다
- *
- * @param {Object} socket - 버프 요청을 보낸 플레이어의 소켓 객체
- * @param {string} payload.unitId - 버프를 시도하는 유닛의 ID
- * @param {number} payload.timestamp - 버프 요청이 발생한 타임스탬프
- * @param {string[]} payload.targetIds - 버프 대상 유닛들의 ID 배열
- * @param {number} payload.buffAmount - 버프 효과의 크기
- * @param {number} payload.buffDuration - 버프 지속 시간
+ * 클라이언트로부터 버프 요청을 처리하고, 대상 유닛에 버프를 적용한 뒤 응답을 전송
+ * @param {net.socket} socket
+ * @param {{ unitId: int32, timestamp: int64, targetIds: Array<int32>, buffAmount: int32, buffDuration: int32 }} payload
  */
 const buffUnitRequest = (socket, payload) => {
   try {
@@ -40,8 +37,9 @@ const buffUnitRequest = (socket, payload) => {
       userGameData,
       buffAmount,
       buffDuration,
-      timestamp,
     );
+
+    bufferUnit.resetLastSkillTime(Date.now());
 
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,
@@ -62,11 +60,10 @@ const buffUnitRequest = (socket, payload) => {
 };
 
 /**
- * 버프 유닛 검증 및 반환.
- *
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {string} unitId - 버프를 시도하는 유닛의 ID
- * @returns {Object} - 검증된 버프 유닛
+ * 버프 유닛 검증 및 반환
+ * @param {PlayerGameData} userGameData
+ * @param {int32} unitId
+ * @returns {Unit}
  */
 const getValidatedBufferUnit = (userGameData, unitId) => {
   const bufferUnit = userGameData.getUnit(unitId);
@@ -81,25 +78,17 @@ const getValidatedBufferUnit = (userGameData, unitId) => {
 
 /**
  * 대상 유닛들에게 버프를 적용
- * @param {Object} bufferUnit - 버프를 시도하는 유닛
- * @param {string[]} targetIds - 버프 대상 유닛들의 ID 배열
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {number} buffAmount - 버프 효과의 크기
- * @param {number} buffDuration - 버프 지속 시간
- * @param {number} timestamp - 버프 요청이 발생한 타임스탬프
- * @returns {string[]} - 버프가 적용된 대상 유닛들의 ID 배열
+ * @param {Unit} bufferUnit
+ * @param {Array<int32>} targetIds
+ * @param {PlayerGameData} userGameData
+ * @param {int32} buffAmount
+ * @param {int32} buffDuration
+ * @returns {Array<int32>} // 버프 받은 유닛 배열
  */
-const applyBuffToTargets = (
-  bufferUnit,
-  targetIds,
-  userGameData,
-  buffAmount,
-  buffDuration,
-  timestamp,
-) => {
+const applyBuffToTargets = (bufferUnit, targetIds, userGameData, buffAmount, buffDuration) => {
   const affectedUnits = [];
 
-  if (bufferUnit.isSkillAvailable(timestamp)) {
+  if (bufferUnit.isSkillAvailable(Date.now())) {
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
 
@@ -108,8 +97,6 @@ const applyBuffToTargets = (
       targetUnit.applyBuff(buffAmount, buffDuration);
       affectedUnits.push(targetId);
     }
-
-    bufferUnit.resetLastSkillTime(timestamp);
   }
 
   return affectedUnits;
