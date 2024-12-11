@@ -40,6 +40,18 @@ message C2SAuthRequest {
 message S2CAuthResponse {
 }
 
+message C2SMatchRequest {
+  string species = 1;
+}
+
+message S2CMatchNotification {
+  string opponentId = 1;
+  int32 port = 2;
+}
+
+message C2SMatchCancelRequest {
+}
+
 message C2SGameStartRequest {
   int64 timestamp = 1;
 }
@@ -293,92 +305,96 @@ message GamePacket {
     C2SAuthRequest authRequest = 2;
     S2CAuthResponse authResponse = 3;
 
+    // 매칭
+    C2SMatchRequest matchRequest = 30;
+    S2CMatchNotification matchNotification = 31;
+    C2SMatchCancelRequest matchCancelRequest = 32;
+
     // 게임 시작
-    C2SGameStartRequest gameStartRequest = 4;
-    S2CGameStartNotification gameStartNotification = 5;
+    C2SGameStartRequest gameStartRequest = 80;
+    S2CGameStartNotification gameStartNotification = 81;
 
     // 건물 구매
-    C2SPurchaseBuildingRequest purchaseBuildingRequest = 6;
-    S2CPurchaseBuildingResponse purchaseBuildingResponse = 7;
-    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 8;
+    C2SPurchaseBuildingRequest purchaseBuildingRequest = 100;
+    S2CPurchaseBuildingResponse purchaseBuildingResponse = 101;
+    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 102;
     
     // 유닛 생성
-    C2SSpawnUnitRequest spawnUnitRequest = 9;
-    S2CSpawnUnitResponse spawnUnitResponse = 10;
-    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 11;
+    C2SSpawnUnitRequest spawnUnitRequest = 200;
+    S2CSpawnUnitResponse spawnUnitResponse = 201;
+    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 202;
 
     // 유닛 공격
-    C2SAttackUnitRequest attackUnitRequest = 12;
-    S2CAttackUnitResponse attackUnitResponse = 13;
-    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 14;
+    C2SAttackUnitRequest attackUnitRequest = 300;
+    S2CAttackUnitResponse attackUnitResponse = 301;
+    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 302;
 
     // 유닛 사망
-    S2CUnitDeathNotification unitDeathNotification = 15;
-    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 16;
+    S2CUnitDeathNotification unitDeathNotification = 400;
+    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 401;
 
     // 체크포인트 점령
-    C2SEnterCheckpointNotification enterCheckpointNotification = 17;
-    C2SExitCheckpointNotification exitCheckpointNotification = 18;
-    S2CTryOccupationNotification tryOccupationNotification = 19;
-    S2CPauseOccupationNotification pauseOccupationNotification = 20;
-    S2COccupationTimerResetNotification occupationTimerResetNotification = 21;
-    S2COccupationSuccessNotification occupationSuccessNotification = 22;
+    C2SEnterCheckpointNotification enterCheckpointNotification = 500;
+    C2SExitCheckpointNotification exitCheckpointNotification = 501;
+    S2CTryOccupationNotification tryOccupationNotification = 502;
+    S2CPauseOccupationNotification pauseOccupationNotification = 503;
+    S2COccupationTimerResetNotification occupationTimerResetNotification = 504;
+    S2COccupationSuccessNotification occupationSuccessNotification = 505;
 
     // 성채공격
-    C2SAttackBaseRequest attackBaseRequest = 23;
-    S2CAttackBaseResponse attackBaseResponse = 24;
-    S2CBaseAttackedNotification baseAttackedNotification = 25;
+    C2SAttackBaseRequest attackBaseRequest = 600;
+    S2CAttackBaseResponse attackBaseResponse = 601;
+    S2CBaseAttackedNotification baseAttackedNotification = 602;
 
     // 게임 종료
-    S2CGameOverNotification gameOverNotification = 26;
-    C2SGameEndNotification gameEndNotification = 27;
+    S2CGameOverNotification gameOverNotification = 700;
+    C2SGameEndNotification gameEndNotification = 701;
 
     // 위치 동기화
-    C2SLocationNotification locationNotification = 28;
-    S2CLocationSyncNotification locationSyncNotification = 29;
+    C2SLocationNotification locationNotification = 800;
+    S2CLocationSyncNotification locationSyncNotification = 801;
 
     // 미네랄 동기화
-    S2CMineralSyncNotification mineralSyncNotification = 30;
+    S2CMineralSyncNotification mineralSyncNotification = 900;
 
     // Heal 관련
-    C2SHealUnitRequest healUnitRequest = 31;
-    S2CHealUnitResponse healUnitResponse = 32;
-    S2CEnemyHealUnitNotification enemyHealUnitNotification = 33;
+    C2SHealUnitRequest healUnitRequest = 1000;
+    S2CHealUnitResponse healUnitResponse = 1001;
+    S2CEnemyHealUnitNotification enemyHealUnitNotification = 1002;
 
     // Buff 관련
-    C2SBuffUnitRequest buffUnitRequest = 34;
-    S2CBuffUnitResponse buffUnitResponse = 35;
-    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 36;
+    C2SBuffUnitRequest buffUnitRequest = 1100;
+    S2CBuffUnitResponse buffUnitResponse = 1101;
+    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 1102;
 
     // 애니메이션 관련
-    C2SUnitAnimationNotification unitAnimationNotification = 37;
-    S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 38;
+    C2SUnitAnimationNotification unitAnimationNotification = 1200;
+    S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 1201;
 
     // 카드 관련
-    C2SDrawCardRequest drawCardRequest = 39;
-    S2CDrawCardResponse drawCardResponse = 40;
-    S2CEliteCardNotification eliteCardNotification = 41;
+    C2SDrawCardRequest drawCardRequest = 1300;
+    S2CDrawCardResponse drawCardResponse = 1301;
+    S2CEliteCardNotification eliteCardNotification = 1302;
 
     // 공격 스펠
-    C2SAttackSpellRequest attackSpellRequest = 45;
-    S2CAttackSpellResponse attackSpellResponse = 46;
-    S2CEnemyAttackSpellNotification enemyAttackSpellNotification = 47;
+    C2SAttackSpellRequest attackSpellRequest = 1400;
+    S2CAttackSpellResponse attackSpellResponse = 1401;
+    S2CEnemyAttackSpellNotification enemyAttackSpellNotification = 1402;
 
     // 힐 스펠
-    C2SHealSpellRequest healSpellRequest = 48;
-    S2CHealSpellResponse healSpellResponse = 49;
-    S2CEnemyHealSpellNotification enemyHealSpellNotification = 50;
+    C2SHealSpellRequest healSpellRequest = 1403;
+    S2CHealSpellResponse healSpellResponse = 1404;
+    S2CEnemyHealSpellNotification enemyHealSpellNotification = 1405;
 
     // 버프 스펠
-    C2SBuffSpellRequest buffSpellRequest = 51;
-    S2CBuffSpellResponse buffSpellResponse = 52;
-    S2CEnemyBuffSpellNotification enemyBuffSpellNotification = 53;
+    C2SBuffSpellRequest buffSpellRequest = 1406;
+    S2CBuffSpellResponse buffSpellResponse = 1407;
+    S2CEnemyBuffSpellNotification enemyBuffSpellNotification = 1408;
     
     // 스턴 스펠
-    C2SStunSpellRequest stunSpellRequest = 54;
-    S2CStunSpellResponse stunSpellResponse = 55;
-    S2CEnemyStunSpellNotification enemyStunSpellNotification = 56;
-
+    C2SStunSpellRequest stunSpellRequest = 1409;
+    S2CStunSpellResponse stunSpellResponse = 1410;
+    S2CEnemyStunSpellNotification enemyStunSpellNotification = 1411;
   }
 }
 
