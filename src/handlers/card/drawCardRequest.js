@@ -1,13 +1,3 @@
-// 새로 추가할 패킷
-// 1. 카드뽑기 요청
-// 2. 카드뽑기 응답
-// 3. 엘리트카드 노티피케이션
-//
-// TODO 노션에 패킷명세 추가하기
-// TODO protobuf (완료)
-// PACKET TYPE에 추가하기 (완료)
-// 로컬 테스트하기
-
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { BUTTON_CONFIG, MAX_CARDS_COUNT } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
@@ -70,7 +60,7 @@ const drawCardRequest = (socket, payload) => {
       assetId: randomUnitAssetId,
     });
 
-    // 엘리트 카드 발동 여부 체크
+    // 엘리트 카드 발동 여부 체크 -> 엘리트 카드가 3장일 경우
     if (userGameData.checkEliteCard(randomUnitAssetId)) {
       // 엘리트 카드 생성 및 노티피케이션 전송
       const eliteUnitId = userGameData.addEliteCard(randomUnitAssetId);
