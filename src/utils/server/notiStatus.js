@@ -1,7 +1,7 @@
 import { hashed } from '../auth/hashed.js';
 import { config } from '../../config/config.js';
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
-import logger from '../logger.js';
+import logger from '../log/logger.js';
 import { getCpuUsage, getMemUsage } from './calcUsage.js';
 
 let myIp = '';

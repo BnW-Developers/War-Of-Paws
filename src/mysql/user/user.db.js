@@ -1,5 +1,5 @@
 import { formatDate } from '../../utils/formatter/dateFormatter.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import pools from '../createPool.js';
 import { toCamelCase } from '../utils.js';
 import { SQL_QUERIES } from './user.queries.js';
