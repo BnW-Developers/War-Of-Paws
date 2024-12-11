@@ -1,6 +1,6 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
-import formatTime from './formatter/timeFormatter.js';
+import formatTime from '../formatter/timeFormatter.js';
 
 /**
  * 로그 메시지 형식을 정의합니다.

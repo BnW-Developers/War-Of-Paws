@@ -3,8 +3,8 @@ import userSessionManager from '../classes/managers/userSessionManager.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
-import logger from '../utils/logger.js';
 import { sendPacket } from '../utils/packet/packetManager.js';
+import logger from '../utils/log/logger.js';
 
 let errCount = 0;
 

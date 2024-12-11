@@ -1,7 +1,7 @@
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createPacket } from '../response/createPacket.js';
 import { findValueInObject } from '../util/findValueInObject.js';
-import logger from './../logger.js';
+import logger from '../log/logger.js';
 import { ERR_CODES } from './errCodes.js';
 
 export const handleErr = (socket, err) => {

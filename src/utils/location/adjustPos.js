@@ -1,7 +1,4 @@
 import calcDist from './calcDist.js';
-import formatCoords from '../formatter/formatCoords.js';
-import round from '../math/round.js';
-import formatTime from '../formatter/timeFormatter.js';
 
 /**
  * 서버가 예측하는 유닛의 현재 위치값을 반환
@@ -20,15 +17,6 @@ const adjustPos = (unit, timestamp) => {
 
   const x = startPos.x + (endPos.x - startPos.x) * progressRate;
   const z = startPos.z + (endPos.z - startPos.z) * progressRate;
-
-  // console.log(`timestamp: ${formatTime(timestamp, false)}`);
-  // console.log(`unit.getLastTimestamp(): ${formatTime(unit.getLastTimestamp(), false)}`);
-  // console.log(`timeTaken: ${timeTaken}`);
-  // console.log(`startPos: ${formatCoords(startPos, 2)}`);
-  // console.log(`endPos: ${formatCoords(endPos, 2)}`);
-  // console.log(`scalarDist: ${round(scalarDist, 2)}`);
-  // console.log(`totalScalarDist: ${round(totalScalarDist, 2)}`);
-  // console.log(`progressRate: ${round(progressRate * 100, 2)}%`);
 
   return { x, z };
 };

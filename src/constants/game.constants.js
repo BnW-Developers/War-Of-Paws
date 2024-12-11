@@ -16,6 +16,14 @@ export const OCCUPY_ONE_CHECKPOINT_MINERAL_RATE = 15;
 export const OCCUPY_TWO_CHECKPOINT_MINERAL_RATE = 20;
 export const MINERAL_SYNC_INTERVAL = 2000; // 2초당
 
+// 카드
+export const MAX_CARDS_COUNT = 8;
+export const BUTTON_CONFIG = Object.freeze({
+  0: { cost: 20, probabilities: { 1: 0.65, 2: 0.25, 3: 0.1 } }, // 낮은 등급
+  1: { cost: 40, probabilities: { 1: 0.5, 2: 0.35, 3: 0.15 } }, // 중간 등급
+  2: { cost: 80, probabilities: { 1: 0.35, 2: 0.4, 3: 0.25 } }, // 높은 등급
+});
+
 // 쿨타임 허용 오차
 export const ATTACK_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
 export const SKILL_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
@@ -26,3 +34,4 @@ export const RANGE_ERROR_MARGIN = 1.05; // 5%
 
 // 속도 허용 오차
 export const SPEED_MARGIN_OF_ERROR = 1.05; // 5%
+

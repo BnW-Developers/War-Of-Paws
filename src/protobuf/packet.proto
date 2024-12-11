@@ -205,6 +205,19 @@ message S2CEnemyUnitAnimationNotification {
   int32 animationId = 2;
 }
 
+message C2SDrawCardRequest {
+  int32 buttonType = 1;
+}
+
+message S2CDrawCardResponse {
+  int32 assetId = 1;
+}
+
+message S2CEliteCardNotification {
+  int32 consumedAssetId = 1;
+  int32 eliteAssetId = 2;
+}
+ 
 message C2SAttackSpellRequest {
   Position center = 1;
   int64 timestamp = 2;
@@ -259,12 +272,12 @@ message C2SStunSpellRequest {
 
 message S2CStunSpellResponse {
   repeated int32 unitIds = 1;
-  int32 stunDuration = 3;
+  int32 stunDuration = 2;
 }
 
 message S2CEnemyStunSpellNotification {
   repeated int32 unitIds = 1;
-  int32 stunDuration = 3;
+  int32 stunDuration = 2;
 }
 
 
@@ -341,6 +354,11 @@ message GamePacket {
     C2SUnitAnimationNotification unitAnimationNotification = 37;
     S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 38;
 
+    // 카드 관련
+    C2SDrawCardRequest drawCardRequest = 39;
+    S2CDrawCardResponse drawCardResponse = 40;
+    S2CEliteCardNotification eliteCardNotification = 41;
+
     // 공격 스펠
     C2SAttackSpellRequest attackSpellRequest = 45;
     S2CAttackSpellResponse attackSpellResponse = 46;
@@ -360,6 +378,7 @@ message GamePacket {
     C2SStunSpellRequest stunSpellRequest = 54;
     S2CStunSpellResponse stunSpellResponse = 55;
     S2CEnemyStunSpellNotification enemyStunSpellNotification = 56;
+
   }
 }
 
