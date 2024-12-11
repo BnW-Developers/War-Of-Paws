@@ -5,6 +5,7 @@ import {
   INITIAL_MINERAL_RATE,
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
+import Game from './game.class.js';
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -12,7 +13,9 @@ import logger from '../../utils/log/logger.js';
 import Unit from './unit.class.js';
 import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
 
-// 유저의 게임 데이터를 담는 클래스
+/**
+ * 유저의 게임 데이터를 관리하는 클래스
+ */
 class PlayerGameData {
   constructor(userInstance) {
     this.userId = userInstance.userId;
@@ -24,6 +27,7 @@ class PlayerGameData {
     this.mineralRate = INITIAL_MINERAL_RATE;
     this.buildings = [];
     this.units = new Map();
+    this.cards = new Map(); // 8칸짜리 인벤토리 assetId(key) - 수량(value)
 
     this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
@@ -34,7 +38,17 @@ class PlayerGameData {
     this.spells = initializeSpells();
   }
 
+  /**
+   * 유닛을 추가하는 메서드
+   * @param {Game} gameSession
+   * @param {int32} assetId
+   * @param {boolean} toTop
+   * @param {int64} spawnTime
+   * @returns {int32} 생성된 유닛 ID
+   */
   addUnit(gameSession, assetId, toTop, spawnTime) {
+    // TODO: 카드 관련 로직
+
     const unitId = gameSession.generateUnitId();
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
     const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
@@ -45,57 +59,168 @@ class PlayerGameData {
     return unitId;
   }
 
+  /**
+   * 미네랄 소비
+   * @param {int32} newMineral
+   * @returns {int32} 남은 보유 미네랄
+   */
   spendMineral(newMineral) {
     this.mineral -= newMineral;
     return this.mineral;
   }
 
-  setMineral(newMineral) {
-    this.mineral = Math.max(0, newMineral);
-  }
-
+  /**
+   * 미네랄 추가
+   * @param {int32} newMineral
+   */
   addMineral(newMineral) {
     this.mineral += newMineral;
   }
 
+  /**
+   * 현재 미네랄 반환
+   * @returns {int32}
+   */
   getMineral() {
     return this.mineral;
   }
 
+  /**
+   * 미네랄 획득 속도 반환
+   * @returns {int32}
+   */
   getMineralRate() {
     return this.mineralRate;
   }
 
+  /**
+   * 건물을 추가
+   * @param {int32} assetId
+   */
   addBuilding(assetId) {
     this.buildings.push(assetId);
   }
 
+  /**
+   * 유저 ID 반환
+   * @returns {int32}
+   */
   getUserId() {
     return this.userId;
   }
 
+  /**
+   * 유저 소켓 반환
+   * @returns {net.Socket}
+   */
   getSocket() {
     return this.socket;
   }
 
+  /**
+   * 유저의 베이스에 데미지를 입힘
+   * @param {int32} damage
+   * @returns {int32} 남은 체력
+   */
   attackBase(damage) {
     const newBaseHp = this.baseHp - damage;
     this.baseHp = newBaseHp > 0 ? newBaseHp : 0;
     return this.baseHp;
   }
 
+  /**
+   * 특정 유닛 반환
+   * @param {int32} unitId
+   * @returns {Unit}
+   */
   getUnit(unitId) {
     return this.units.get(unitId);
   }
 
-  // 체크포인트 removeUser 시 유닛의 위치 정보를 얻기 위한 메서드
+  /**
+   * 특정 건물이 구매되었는지 확인
+   * @param {int32} assetId
+   * @returns {boolean}
+   */
+  isBuildingPurchased(assetId) {
+    return this.buildings.includes(assetId);
+  }
+
+  /**
+   * 체크포인트 removeUser 시 유닛의 위치 정보를 얻기 위한 메서드
+   * @param {int32} unitId
+   * @returns {string}
+   */
   getUnitDirection(unitId) {
     const unit = this.getUnit(unitId);
     return unit.getDirection();
   }
 
+  /**
+   * 유닛 제거
+   * @param {int32} unitId
+   * @returns {boolean}
+   */
   removeUnit(unitId) {
     return this.units.delete(unitId);
+  }
+
+  addCard(assetId) {
+    const currentCount = this.cards.get(assetId) || 0;
+    this.cards.set(assetId, currentCount + 1);
+  }
+
+  getCardCount() {
+    let totalCount = 0;
+    for (const count of this.cards.values()) {
+      totalCount += count;
+    }
+    return totalCount;
+  }
+
+  removeCard(assetId, count = 1) {
+    const currentCount = this.cards.get(assetId) || 0;
+
+    if (currentCount < count) {
+      logger.warn(`Not enough cards to remove for assetId ${assetId}`);
+      throw new Error(`Not enough cards to remove for assetId ${assetId}`);
+    }
+
+    if (currentCount === count) {
+      this.cards.delete(assetId);
+    } else {
+      this.cards.set(assetId, currentCount - count);
+    }
+  }
+
+  checkEliteCard(assetId) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+
+    if (unitData.eliteId === 'elite') {
+      return false;
+    }
+
+    if (this.cards.get(assetId) >= 3) {
+      return true;
+    }
+
+    return false;
+  }
+
+  addEliteCard(assetId) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    const eliteAssetId = unitData.eliteId;
+
+    if (!eliteAssetId) {
+      logger.warn(`No eliteId defined for assetId ${assetId}`);
+      throw new Error(`No eliteId defined for assetId ${assetId}`);
+    }
+
+    this.removeCard(assetId, 3); // 합성에 사용된 3장의 카드 제거
+
+    this.addCard(eliteAssetId);
+
+    return eliteAssetId;
   }
 
   /**

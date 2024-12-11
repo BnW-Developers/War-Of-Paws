@@ -1,3 +1,5 @@
+import PlayerGameData from '../../classes/models/playerGameData.class.js';
+import Unit from '../../classes/models/unit.class.js';
 import { UNIT_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
@@ -7,38 +9,23 @@ import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
+/**
+ * 클라이언트로부터 힐 요청을 처리하고, 회복된 체력을 응답으로 전송
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32, timestamp: int64, targetId: int32, healAmount: int32 }} payload
+ */
 const healUnitRequest = (socket, payload) => {
   try {
     const { unitId, timestamp, targetId, healAmount: initialHealAmount } = payload;
-    let healAmount = initialHealAmount;
-
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
 
-    // 힐러 유닛과 대상 유닛 가져오기
-    const healerUnit = userGameData.getUnit(unitId);
+    const healerUnit = validateHealerUnit(userGameData, unitId);
 
-    const targetUnit = userGameData.getUnit(targetId);
+    const targetUnit = getTargetUnit(userGameData, targetId);
 
-    if (!healerUnit) {
-      throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
-    }
+    const healAmount = calculateHealAmount(healerUnit, targetUnit, initialHealAmount);
+    const afterHealHp = applyHealing(healerUnit, targetUnit, healAmount);
 
-    // 유닛이 힐러 타입인지 검증
-    if (healerUnit.getType() !== UNIT_TYPE.HEALER) {
-      throw new Error('Unit Type Error');
-    }
-
-    // 존재, 라인, 사거리 검증 or 쿨타임 검증
-    if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(timestamp))
-      healAmount = 0;
-
-    // 힐 로직
-    const afterHealHp = targetUnit.applyHeal(healAmount);
-
-    // 마지막 스킬 사용시간 초기화 (실패든 성공이든)
-    healerUnit.resetLastSkillTime(timestamp);
-
-    // 리스폰스 전송
     sendPacket(socket, PACKET_TYPE.HEAL_UNIT_RESPONSE, {
       unitId: targetId,
       unitHp: afterHealHp,
@@ -52,6 +39,65 @@ const healUnitRequest = (socket, payload) => {
   } catch (err) {
     handleErr(socket, err);
   }
+};
+
+/**
+ * 힐러 유닛 검증
+ * @param {PlayerGameData} userGameData
+ * @param {int32} unitId
+ * @returns {Unit}
+ */
+const validateHealerUnit = (userGameData, unitId) => {
+  const healerUnit = userGameData.getUnit(unitId);
+  if (!healerUnit) {
+    throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Healer unit not found');
+  }
+
+  if (healerUnit.getType() !== UNIT_TYPE.HEALER) {
+    throw new CustomErr(ERR_CODES.UNIT_TYPE_MISMATCH, 'Unit is not a healer type');
+  }
+  return healerUnit;
+};
+
+/**
+ * 대상 유닛을 가져오고 검증
+ * @param {PlayerGameData} userGameData
+ * @param {int32} targetId
+ * @returns {Unit}
+ */
+const getTargetUnit = (userGameData, targetId) => {
+  const targetUnit = userGameData.getUnit(targetId);
+  if (!targetUnit) {
+    throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Target unit not found');
+  }
+  return targetUnit;
+};
+
+/**
+ * 힐 양 계산
+ * @param {Unit} healerUnit
+ * @param {Unit} targetUnit
+ * @param {int32} initialHealAmount
+ * @returns {int32}
+ */
+const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount) => {
+  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(Date.now())) {
+    return 0;
+  }
+  return initialHealAmount;
+};
+
+/**
+ * 힐 적용
+ * @param {Unit} healerUnit
+ * @param {Unit} targetUnit
+ * @param {int32} healAmount
+ * @returns {int32}
+ */
+const applyHealing = (healerUnit, targetUnit, healAmount) => {
+  const afterHealHp = targetUnit.applyHeal(healAmount);
+  healerUnit.resetLastSkillTime(Date.now()); // 스킬 사용 시간 초기화
+  return afterHealHp;
 };
 
 export default healUnitRequest;
