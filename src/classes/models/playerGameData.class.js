@@ -280,6 +280,10 @@ class PlayerGameData {
 
     return spell;
   }
+
+  getBaseHp() {
+    return this.baseHp;
+  }
 }
 
 export default PlayerGameData;
