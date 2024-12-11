@@ -1,6 +1,6 @@
-import Game from '../../classes/models/game.class.js';
-import PlayerGameData from '../../classes/models/playerGameData.class.js';
-import Unit from '../../classes/models/unit.class.js';
+import Game from '../../classes/models/game.class.js'; // eslint-disable-line
+import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
+import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -17,7 +17,7 @@ import validateTarget from '../../utils/unit/validationTarget.js';
  */
 const attackUnitRequest = (socket, payload) => {
   try {
-    const { unitId, timestamp, opponentUnitIds } = payload;
+    const { unitId, opponentUnitIds } = payload;
 
     const { userGameData, opponentGameData, opponentSocket, gameSession } =
       checkSessionInfo(socket);

@@ -2,7 +2,6 @@ import logger from '../utils/log/logger.js';
 import { onData } from './onData.js';
 import { onEnd } from './onEnd.js';
 import { onError } from './onError.js';
-import { v4 as uuidV4 } from 'uuid';
 
 export const onConnection = (socket) => {
   try {
