@@ -1,4 +1,4 @@
-import logger from '../utils/logger.js';
+import logger from '../utils/log/logger.js';
 import { onData } from './onData.js';
 import { onEnd } from './onEnd.js';
 import { onError } from './onError.js';
