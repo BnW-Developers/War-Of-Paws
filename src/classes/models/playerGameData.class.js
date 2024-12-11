@@ -122,7 +122,7 @@ class PlayerGameData {
   checkEliteCard(assetId) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
 
-    if (unitData.eliteId === undefined) {
+    if (unitData.eliteId === 'elite') {
       return false;
     }
 
