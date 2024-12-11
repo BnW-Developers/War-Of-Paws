@@ -296,6 +296,7 @@ message GamePacket {
     C2SDrawCardRequest drawCardRequest = 39;
     S2CDrawCardResponse drawCardResponse = 40;
     S2CEliteCardNotification eliteCardNotification = 41;
+  }
 }
 
 
