@@ -291,7 +291,11 @@ message GamePacket {
     // 애니메이션 관련
     C2SUnitAnimationNotification unitAnimationNotification = 37;
     S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 38;
-  }
+
+    // 카드 관련
+    C2SDrawCardRequest drawCardRequest = 39;
+    S2CDrawCardResponse drawCardResponse = 40;
+    S2CEliteCardNotification eliteCardNotification = 41;
 }
 
 
