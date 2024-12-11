@@ -5,10 +5,9 @@ import {
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import CheckPointManager from '../managers/CheckPointManager.class.js';
-import LocationSyncManager from '../managers/locationSyncManager.js';
 import MineralSyncManager from '../managers/mineralSyncManager.js';
 import userSessionManager from '../managers/userSessionManager.js';
 import { ERR_CODES } from './../../utils/error/errCodes.js';
@@ -23,7 +22,6 @@ class Game {
     this.startRequestTimer = null;
     this.inProgress = false;
     this.checkPointManager = null;
-    this.locationSyncManager = null;
     this.mineralSyncManager = new MineralSyncManager();
     this.unitIdCounter = 1;
   }
@@ -129,17 +127,13 @@ class Game {
   }
 
   initGame() {
-    const playerIds = [];
     const playerData = [];
     // 체크포인트 매니저 생성 및 플레이어 게임 데이터 인자 추가
-    for (let [key, value] of this.players.entries()) {
-      playerIds.push(key);
+    for (const value of this.players.values()) {
       playerData.push(value);
     }
 
-    this.locationSyncManager = new LocationSyncManager(playerIds[0], playerIds[1]);
     this.checkPointManager = new CheckPointManager(playerData[0], playerData[1]);
-
     this.mineralSyncManager.startSyncLoop(this.players, this.checkPointManager);
   }
 
@@ -306,10 +300,6 @@ class Game {
 
   getCheckPointManager() {
     return this.checkPointManager;
-  }
-
-  getLocationSyncManager() {
-    return this.locationSyncManager;
   }
 }
 

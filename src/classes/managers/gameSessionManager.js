@@ -1,6 +1,6 @@
 import { recordGame } from '../../mysql/game/game.db.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import { uuid } from '../../utils/util/uuid.js';
 import Game from '../models/game.class.js';
 import userSessionManager from './userSessionManager.js';

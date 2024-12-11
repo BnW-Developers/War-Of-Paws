@@ -6,7 +6,7 @@ import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 

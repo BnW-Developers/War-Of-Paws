@@ -9,7 +9,7 @@ import Game from './game.class.js';
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import Unit from './unit.class.js';
 import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
 
