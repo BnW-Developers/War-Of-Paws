@@ -38,7 +38,7 @@ import {
  */
 const locationNotification = async (socket, payload) => {
   try {
-    const { gameSession, userId, userGameData, opponentSocket } = checkSessionInfo(socket);
+    const { gameSession, userGameData, opponentSocket } = checkSessionInfo(socket);
 
     const locationSyncManager = gameSession.getLocationSyncManager();
 
@@ -84,12 +84,9 @@ const locationNotification = async (socket, payload) => {
       syncPositions.push(syncPosition);
     }
 
-    // 동기화 위치값을 서버에 저장
-    locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
-
     // 패킷 작성 및 전송
     const { userPacketData, opponentPacketData } =
-      locationSyncManager.createLocationSyncPacket(userId);
+      locationSyncManager.createLocationSyncPacket(syncPositions);
 
     if (userPacketData.unitPositions.length > 0) {
       sendPacket(socket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, userPacketData);
@@ -99,10 +96,7 @@ const locationNotification = async (socket, payload) => {
     }
 
     // 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
-    locationSyncManager.moveUnits(userId, userGameData);
-
-    // 서버에 저장한 동기화 위치값 제거
-    locationSyncManager.deleteSyncPositions(userId);
+    locationSyncManager.moveUnits(userGameData, timestamp, syncPositions);
   } catch (err) {
     handleErr(socket, err);
   }
