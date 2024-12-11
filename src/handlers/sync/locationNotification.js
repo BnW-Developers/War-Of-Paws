@@ -6,7 +6,6 @@ import { sendPacket } from '../../utils/packet/packetManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import adjustPos from '../../utils/location/adjustPos.js';
 import isValidPos from '../../utils/location/isValidPos.js';
-import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import formatCoords from '../../utils/formatter/formatCoords.js';
 import logger from '../../utils/log/logger.js';
 import {
@@ -88,8 +87,6 @@ const locationNotification = async (socket, payload) => {
     // 동기화 위치값을 서버에 저장
     locationSyncManager.addSyncPositions(userId, timestamp, syncPositions);
 
-    await locationSyncManager.lock.acquire();
-
     // 패킷 작성 및 전송
     const { userPacketData, opponentPacketData } =
       locationSyncManager.createLocationSyncPacket(userId);
@@ -108,12 +105,6 @@ const locationNotification = async (socket, payload) => {
     locationSyncManager.deleteSyncPositions(userId);
   } catch (err) {
     handleErr(socket, err);
-  } finally {
-    const gameSession = gameSessionManager.getGameSessionBySocket(socket);
-    if (gameSession) {
-      const locationSyncManager = gameSession.getLocationSyncManager();
-      locationSyncManager.lock.release();
-    }
   }
 };
 

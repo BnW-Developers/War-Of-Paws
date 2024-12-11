@@ -1,5 +1,3 @@
-import { Mutex } from 'async-mutex';
-
 class LocationSyncManager {
   constructor(userId, opponentId) {
     // 동기화에 사용될 위치값 초기화
@@ -7,8 +5,6 @@ class LocationSyncManager {
       [userId, []],
       [opponentId, []],
     ]);
-
-    this.lock = new Mutex();
   }
 
   /**
