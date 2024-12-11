@@ -20,7 +20,7 @@ export const onError = (socket) => (err) => {
     });
 
     const user = userSessionManager.getUserBySocket(socket);
-    if (user && errCount >= 10) {
+    if (user && errCount <= 10) {
       const userId = user.getUserId();
       logger.error(`${userId} - Socket Error:, ${err?.message}`);
     } else {
