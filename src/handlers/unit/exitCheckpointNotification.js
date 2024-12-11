@@ -3,7 +3,7 @@ import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 
-const enterCheckpointNotification = (socket, payload) => {
+const exitCheckpointNotification = (socket, payload) => {
   const { unitId } = payload;
 
   try {
@@ -26,4 +26,4 @@ const enterCheckpointNotification = (socket, payload) => {
   }
 };
 
-export default enterCheckpointNotification;
+export default exitCheckpointNotification;
