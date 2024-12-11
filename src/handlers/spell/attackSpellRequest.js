@@ -15,7 +15,8 @@ import isWithinRange from '../../utils/spell/isWithinRange.js';
  */
 const attackSpellRequest = (socket, payload) => {
   try {
-    const { center, timestamp, unitIds } = payload;
+    const { center, unitIds } = payload;
+    const timestamp = Date.now();
 
     // 검증: 세션 정보
     const { gameSession, user, userGameData, opponentGameData, opponentSocket } =
