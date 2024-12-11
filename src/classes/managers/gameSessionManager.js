@@ -1,5 +1,4 @@
 import { recordGame } from '../../mysql/game/game.db.js';
-import redisClient from '../../redis/redisClient.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/logger.js';
 import { uuid } from '../../utils/util/uuid.js';
@@ -18,32 +17,6 @@ class GameSessionManager {
 
     // 게임 세션 목록 초기화
     this.gameSessions = new Map();
-
-    this.initSubscriber();
-  }
-
-  initSubscriber() {
-    const subscriber = redisClient.duplicate();
-
-    subscriber.subscribe('game:cancel', 'game:end');
-
-    subscriber.on('message', async (channel, message) => {
-      try {
-        const data = JSON.parse(message);
-
-        switch (channel) {
-          case 'game:cancel':
-            this.handleGameCancel(data);
-            break;
-          case 'game:end':
-            await this.handleGameEnd(data);
-            break;
-        }
-      } catch (err) {
-        err.message = 'subscriber on message error: ' + err.message;
-        handleErr(null, err);
-      }
-    });
   }
 
   addGameSession() {

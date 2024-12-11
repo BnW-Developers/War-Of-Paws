@@ -1,6 +1,6 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
-  ATTACK_RANGE_ERROR_MARGIN,
+  RANGE_ERROR_MARGIN,
   INITIAL_UNIT_ROTATION,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
@@ -328,7 +328,7 @@ class Unit {
    */
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
-    const attackRange = this.getAttackRange() * ATTACK_RANGE_ERROR_MARGIN;
+    const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
     console.log('distance between units:', distance);
     console.log('attackUnit attack range(error margin version)', attackRange);
     return distance > attackRange;

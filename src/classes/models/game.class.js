@@ -4,7 +4,6 @@ import {
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -56,7 +55,6 @@ class Game {
 
       const playerGameData = new PlayerGameData(user);
       this.players.set(user.userId, playerGameData);
-      user.setCurrentGameId(this.gameId);
 
       // 유저들의 gameStartRequest를 기다림
       if (this.players.size >= MAX_PLAYERS) {
@@ -160,15 +158,6 @@ class Game {
 
       // 혹시나 실행됐던 매니저들 삭제
       this.endGameProcess();
-
-      // 게임 세션 제거 요청 (redis의 pub)
-      redisClient.publish(
-        'game:cancel',
-        JSON.stringify({
-          gameId: this.gameId,
-          type: 'cancel',
-        }),
-      );
     } catch (err) {
       err.message = 'cancelGame error: ' + err.message;
       handleErr(null, err);
@@ -223,18 +212,6 @@ class Game {
           });
         }
       }
-
-      // 게임 세션 제거 요청 (redis의 pub)
-      redisClient.publish(
-        'game:end',
-        JSON.stringify({
-          gameId: this.gameId,
-          catUserId,
-          dogUserId,
-          winTeam,
-          type: 'end',
-        }),
-      );
     } catch (err) {
       err.message = 'endGame error: ' + err.message;
       handleErr(null, err);
@@ -277,18 +254,6 @@ class Game {
           });
         }
       }
-
-      // 게임 세션 제거 요청 (redis의 pub)
-      redisClient.publish(
-        'game:end',
-        JSON.stringify({
-          gameId: this.gameId,
-          catUserId,
-          dogUserId,
-          winTeam,
-          type: 'end_by_disconnect',
-        }),
-      );
     } catch (err) {
       err.message = 'endGameByDisconnect error: ' + err.message;
       handleErr(null, err);
