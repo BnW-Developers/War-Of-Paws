@@ -1,3 +1,5 @@
+import PlayerGameData from '../../classes/models/playerGameData.class.js';
+import Unit from '../../classes/models/unit.class.js';
 import { UNIT_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
@@ -8,12 +10,9 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
 
 /**
- * 클라이언트로부터 힐 요청을 처리하고, 회복된 체력을 응답으로 전송합니다
- * @param {Object} socket - 힐 요청을 보낸 플레이어의 소켓 객체
- * @param {string} payload.unitId - 힐을 시도하는 유닛의 ID
- * @param {number} payload.timestamp - 힐 요청이 발생한 타임스탬프
- * @param {string} payload.targetId - 힐을 받을 대상 유닛의 ID
- * @param {number} payload.healAmount - 회복할 체력량
+ * 클라이언트로부터 힐 요청을 처리하고, 회복된 체력을 응답으로 전송
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32, timestamp: int64, targetId: int32, healAmount: int32 }} payload
  */
 const healUnitRequest = (socket, payload) => {
   try {
@@ -24,8 +23,8 @@ const healUnitRequest = (socket, payload) => {
 
     const targetUnit = getTargetUnit(userGameData, targetId);
 
-    const healAmount = calculateHealAmount(healerUnit, targetUnit, timestamp, initialHealAmount);
-    const afterHealHp = applyHealing(healerUnit, targetUnit, healAmount, timestamp);
+    const healAmount = calculateHealAmount(healerUnit, targetUnit, initialHealAmount);
+    const afterHealHp = applyHealing(healerUnit, targetUnit, healAmount);
 
     sendPacket(socket, PACKET_TYPE.HEAL_UNIT_RESPONSE, {
       unitId: targetId,
@@ -44,9 +43,9 @@ const healUnitRequest = (socket, payload) => {
 
 /**
  * 힐러 유닛 검증
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {string} unitId - 힐을 시도하는 유닛의 ID
- * @returns {Object} - 검증된 힐러 유닛
+ * @param {PlayerGameData} userGameData
+ * @param {int32} unitId
+ * @returns {Unit}
  */
 const validateHealerUnit = (userGameData, unitId) => {
   const healerUnit = userGameData.getUnit(unitId);
@@ -62,9 +61,9 @@ const validateHealerUnit = (userGameData, unitId) => {
 
 /**
  * 대상 유닛을 가져오고 검증
- * @param {Object} userGameData - 사용자 게임 데이터
- * @param {string} targetId - 대상 유닛의 ID
- * @returns {Object} - 대상 유닛
+ * @param {PlayerGameData} userGameData
+ * @param {int32} targetId
+ * @returns {Unit}
  */
 const getTargetUnit = (userGameData, targetId) => {
   const targetUnit = userGameData.getUnit(targetId);
@@ -76,14 +75,13 @@ const getTargetUnit = (userGameData, targetId) => {
 
 /**
  * 힐 양 계산
- * @param {Object} healerUnit - 힐을 시도하는 유닛
- * @param {Object} targetUnit - 힐을 받을 대상 유닛
- * @param {number} timestamp - 힐 요청이 발생한 타임스탬프
- * @param {number} initialHealAmount - 회복할 체력량
- * @returns {number} - 최종적으로 적용할 힐 양
+ * @param {Unit} healerUnit
+ * @param {Unit} targetUnit
+ * @param {int32} initialHealAmount
+ * @returns {int32}
  */
-const calculateHealAmount = (healerUnit, targetUnit, timestamp, initialHealAmount) => {
-  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(timestamp)) {
+const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount) => {
+  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(Date.now())) {
     return 0;
   }
   return initialHealAmount;
@@ -91,15 +89,14 @@ const calculateHealAmount = (healerUnit, targetUnit, timestamp, initialHealAmoun
 
 /**
  * 힐 적용
- * @param {Object} healerUnit - 힐을 시도하는 유닛
- * @param {Object} targetUnit - 힐을 받을 대상 유닛
- * @param {number} healAmount - 적용할 힐 양
- * @param {number} timestamp - 힐 요청이 발생한 타임스탬프
- * @returns {number} - 힐 후 대상 유닛의 체력
+ * @param {Unit} healerUnit
+ * @param {Unit} targetUnit
+ * @param {int32} healAmount
+ * @returns {int32}
  */
-const applyHealing = (healerUnit, targetUnit, healAmount, timestamp) => {
+const applyHealing = (healerUnit, targetUnit, healAmount) => {
   const afterHealHp = targetUnit.applyHeal(healAmount);
-  healerUnit.resetLastSkillTime(timestamp); // 스킬 사용 시간 초기화
+  healerUnit.resetLastSkillTime(Date.now()); // 스킬 사용 시간 초기화
   return afterHealHp;
 };
 
