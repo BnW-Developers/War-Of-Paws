@@ -82,18 +82,15 @@ const locationNotification = async (socket, payload) => {
       unit.move(position, rotation, timestamp);
 
       // 최종 위치를 패킷 데이터에 추가
-      // 1. User 패킷 작성: 위치가 보정된 경우에만 전송
+      // 1. User 패킷: 위치가 보정된 유닛만 추가
       if (modified) {
         userPacketData.unitPositions.push({ unitId, position, rotation });
       }
-      // 2. Opponent 패킷 작성: 전부 전송
+      // 2. Opponent 패킷: 모든 유닛 추가
       opponentPacketData.unitPositions.push({ unitId, position, rotation });
     }
 
-    // 패킷 작성 및 전송
-    // const { userPacketData, opponentPacketData } =
-    //   locationSyncManager.createLocationSyncPacket(syncPositions);
-
+    // 패킷 전송
     if (userPacketData.unitPositions.length > 0) {
       sendPacket(socket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, userPacketData);
     }
