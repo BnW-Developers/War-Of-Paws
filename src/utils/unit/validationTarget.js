@@ -1,4 +1,4 @@
-import logger from '../logger.js';
+import logger from '../log/logger.js';
 
 const validateTarget = (sourceUnit, targetUnit) => {
   // 시전 유닛이 존재하지 않는 경우

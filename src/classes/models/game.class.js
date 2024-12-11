@@ -5,7 +5,7 @@ import {
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import CheckPointManager from '../managers/CheckPointManager.class.js';
 import LocationSyncManager from '../managers/locationSyncManager.js';

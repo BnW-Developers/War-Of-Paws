@@ -6,7 +6,7 @@ import {
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
-import logger from '../../utils/logger.js';
+import logger from '../../utils/log/logger.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
