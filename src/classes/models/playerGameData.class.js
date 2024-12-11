@@ -120,10 +120,17 @@ class PlayerGameData {
   }
 
   checkEliteCard(assetId) {
+    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+
+    if (unitData.eliteId === undefined) {
+      return false;
+    }
+
     if (this.cards.get(assetId) >= 3) {
       return true;
     }
-    return null;
+
+    return false;
   }
 
   addEliteCard(assetId) {
