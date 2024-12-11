@@ -8,6 +8,7 @@ import adjustPos from '../../utils/location/adjustPos.js';
 import isValidPos from '../../utils/location/isValidPos.js';
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import formatCoords from '../../utils/formatter/formatCoords.js';
+import logger from '../../utils/logger.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -61,8 +62,8 @@ const locationNotification = async (socket, payload) => {
       if (!isValidPos(unit, position, timestamp)) {
         adjustedPos = adjustPos(unit, timestamp);
         modified = true;
-        console.log(
-          `adjusting position: ${formatCoords(position, 2)}->${formatCoords(adjustedPos, 2)}`,
+        logger.info(
+          `유닛 ${unitId} 위치 보정: ${formatCoords(position, 2)}->${formatCoords(adjustedPos, 2)}`,
         );
       }
 
