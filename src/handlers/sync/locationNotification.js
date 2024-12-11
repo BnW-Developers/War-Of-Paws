@@ -79,6 +79,9 @@ const locationNotification = async (socket, payload) => {
           );
       }
 
+      // 서버 내 유닛 인스턴스를 새로운 위치로 업데이트
+      unit.move(position, rotation, timestamp);
+
       // 보정한 위치를 동기화 위치 배열에 추가
       const syncPosition = { unitId, position: adjustedPos, rotation, modified };
       syncPositions.push(syncPosition);
@@ -94,9 +97,6 @@ const locationNotification = async (socket, payload) => {
     if (opponentPacketData.unitPositions.length > 0) {
       sendPacket(opponentSocket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, opponentPacketData);
     }
-
-    // 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
-    locationSyncManager.moveUnits(userGameData, timestamp, syncPositions);
   } catch (err) {
     handleErr(socket, err);
   }

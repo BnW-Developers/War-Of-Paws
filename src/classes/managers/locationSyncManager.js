@@ -33,20 +33,6 @@ class LocationSyncManager {
 
     return { userPacketData, opponentPacketData };
   }
-
-  /**
-   * 서버 내 유닛 객체들의 위치값 및 목적지 업데이트
-   * @param {PlayerGameData} userGameData
-   * @param {int64} timestamp
-   * @param {{unitId: int32, position: {x: float, z: float}, rotation: {y: float}, modified: boolean}[]} unitPositions
-   */
-  moveUnits(userGameData, timestamp, unitPositions) {
-    for (const unitPosition of unitPositions) {
-      const { unitId, position, rotation } = unitPosition;
-      const unit = userGameData.getUnit(unitId);
-      unit.move(position, rotation, timestamp);
-    }
-  }
 }
 
 export default LocationSyncManager;
