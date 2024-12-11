@@ -7,6 +7,7 @@ import {
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/log/logger.js';
+import { LOG_ENABLED_UPDATE_DESTINATION } from '../../utils/log/logSwitch.js';
 
 class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
@@ -211,6 +212,11 @@ class Unit {
     if (this.destinationIndex < this.path.length - 1) {
       const corners = getMapCorners(this.species, this.direction);
       this.destinationArea = corners[this.destinationIndex - 1];
+
+      if (LOG_ENABLED_UPDATE_DESTINATION)
+        logger.info(
+          `유닛 ${this.unitId}가 ${this.destinationIndex - 1}번째 모퉁이를 돌아 다음 목적지로 이동합니다.`,
+        );
     } else {
       this.destinationArea = null;
     }

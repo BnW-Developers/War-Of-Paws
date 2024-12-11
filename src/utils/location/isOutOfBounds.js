@@ -1,6 +1,7 @@
 import { getMapBounds } from '../assets/getAssets.js';
 import chalk from 'chalk';
 import formatCoords from '../formatter/formatCoords.js';
+import { LOG_ENABLED_OUT_OF_BOUNDS } from '../log/logSwitch.js';
 
 /**
  * 지정한 위치가 맵에서 벗어난 위치인지 확인하고 결과를 반환
@@ -21,7 +22,9 @@ const isOutOfBounds = (pos) => {
     pos.x > outerBound[2].x || // 동쪽으로 벗어남
     pos.z < outerBound[2].z // 남쪽으로 벗어남
   ) {
-    console.log(chalk.magentaBright('바깥쪽 경계 이탈:', formatCoords(pos, 2)));
+    if (LOG_ENABLED_OUT_OF_BOUNDS)
+      console.log(chalk.magentaBright('바깥쪽 경계 이탈:', formatCoords(pos, 2)));
+
     return true;
   }
 
@@ -32,7 +35,9 @@ const isOutOfBounds = (pos) => {
     pos.x < innerBound[2].x && // 동쪽으로 벗어남
     pos.z > innerBound[2].z // 남쪽으로 벗어남
   ) {
-    console.log(chalk.blueBright('안쪽 경계 이탈:', formatCoords(pos, 2)));
+    if (LOG_ENABLED_OUT_OF_BOUNDS)
+      console.log(chalk.blueBright('안쪽 경계 이탈:', formatCoords(pos, 2)));
+
     return true;
   }
   return false;

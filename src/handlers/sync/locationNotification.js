@@ -9,6 +9,10 @@ import isValidPos from '../../utils/location/isValidPos.js';
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import formatCoords from '../../utils/formatter/formatCoords.js';
 import logger from '../../utils/log/logger.js';
+import {
+  LOG_ENABLED_ADJUST_POS,
+  LOG_ENABLED_LOCATION_SYNC_PAYLOAD,
+} from '../../utils/log/logSwitch.js';
 
 /**
  * **위치 동기화 핸들러**
@@ -42,6 +46,13 @@ const locationNotification = async (socket, payload) => {
     // 해당 클라이언트가 보유한 유닛들의 위치 + 동기화 시점
     const { unitPositions, timestamp } = payload;
 
+    if (LOG_ENABLED_LOCATION_SYNC_PAYLOAD)
+      console.log(
+        `위치 동기화 payload:\n` +
+          `    unitPositions: ${JSON.stringify(unitPositions, null, 4)}` +
+          `    timestamp: ${JSON.stringify(timestamp)}`,
+      );
+
     // 동기화할 위치값
     const syncPositions = [];
 
@@ -62,9 +73,11 @@ const locationNotification = async (socket, payload) => {
       if (!isValidPos(unit, position, timestamp)) {
         adjustedPos = adjustPos(unit, timestamp);
         modified = true;
-        logger.info(
-          `유닛 ${unitId} 위치 보정: ${formatCoords(position, 2)}->${formatCoords(adjustedPos, 2)}`,
-        );
+
+        if (LOG_ENABLED_ADJUST_POS)
+          logger.info(
+            `유닛 ${unitId} 위치 보정: ${formatCoords(position, 2)}->${formatCoords(adjustedPos, 2)}`,
+          );
       }
 
       // 보정한 위치를 동기화 위치 배열에 추가
