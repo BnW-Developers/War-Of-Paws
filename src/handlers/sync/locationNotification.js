@@ -38,9 +38,7 @@ import {
  */
 const locationNotification = async (socket, payload) => {
   try {
-    const { gameSession, userGameData, opponentSocket } = checkSessionInfo(socket);
-
-    const locationSyncManager = gameSession.getLocationSyncManager();
+    const { userGameData, opponentSocket } = checkSessionInfo(socket);
 
     // 해당 클라이언트가 보유한 유닛들의 위치 + 동기화 시점
     const { unitPositions, timestamp } = payload;
@@ -52,8 +50,9 @@ const locationNotification = async (socket, payload) => {
           `    timestamp: ${JSON.stringify(timestamp)}`,
       );
 
-    // 동기화할 위치값
-    const syncPositions = [];
+    // 전송할 패킷 데이터 초기화
+    const userPacketData = { unitPositions: [] };
+    const opponentPacketData = { unitPositions: [] };
 
     // 각 유닛의 동기화 위치값을 계산
     for (const unitPosition of unitPositions) {
@@ -82,14 +81,18 @@ const locationNotification = async (socket, payload) => {
       // 서버 내 유닛 인스턴스를 새로운 위치로 업데이트
       unit.move(position, rotation, timestamp);
 
-      // 보정한 위치를 동기화 위치 배열에 추가
-      const syncPosition = { unitId, position: adjustedPos, rotation, modified };
-      syncPositions.push(syncPosition);
+      // 최종 위치를 패킷 데이터에 추가
+      // 1. User 패킷 작성: 위치가 보정된 경우에만 전송
+      if (modified) {
+        userPacketData.unitPositions.push({ unitId, position, rotation });
+      }
+      // 2. Opponent 패킷 작성: 전부 전송
+      opponentPacketData.unitPositions.push({ unitId, position, rotation });
     }
 
     // 패킷 작성 및 전송
-    const { userPacketData, opponentPacketData } =
-      locationSyncManager.createLocationSyncPacket(syncPositions);
+    // const { userPacketData, opponentPacketData } =
+    //   locationSyncManager.createLocationSyncPacket(syncPositions);
 
     if (userPacketData.unitPositions.length > 0) {
       sendPacket(socket, PACKET_TYPE.LOCATION_SYNC_NOTIFICATION, userPacketData);
