@@ -20,6 +20,7 @@ import {
  */
 const locationNotification = async (socket, payload) => {
   try {
+    // 세션 정보 검증
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
 
     // 해당 클라이언트가 보유한 유닛들의 위치 + 동기화 시점
