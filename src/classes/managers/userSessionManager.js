@@ -17,6 +17,7 @@ class UserSessionManager {
   addUser(socket, userId) {
     const user = new User(socket, userId);
     this.userSessions.set(userId, user);
+    return user;
   }
 
   // userId에 해당하는 유저 세션 삭제하고 성공 여부 반환

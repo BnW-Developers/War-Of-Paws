@@ -4,7 +4,6 @@ import { loadHandlers } from './loadHandlers.js';
 import { loadProtos } from './loadProto.js';
 import pools from './../mysql/createPool.js';
 import { loadGameAssets } from './loadAssets.js';
-import { loadBanList } from './loadBanList.js';
 import { notificationStatus } from '../utils/server/notiStatus.js';
 
 export const initServer = async () => {
@@ -12,7 +11,6 @@ export const initServer = async () => {
   try {
     await testAllConnections(pools);
     notification = setInterval(notificationStatus, 5000);
-    await loadBanList();
     await loadGameAssets();
     await loadProtos();
     await loadHandlers();

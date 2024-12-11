@@ -1,6 +1,5 @@
 import PacketManager from '../../classes/managers/packetManager.js';
 import { createPacket } from '../response/createPacket.js';
-import { addBanList } from '../util/blockIp.js';
 
 const packetManager = new PacketManager();
 
@@ -12,10 +11,6 @@ export const sendPacket = (socket, type, payload = {}) => {
 
 export const recvPacket = (socket, packet) => {
   if (!socket || !packet) {
-    socket.illegalCount++;
-    if (socket.illegalCount >= 5) {
-      addBanList(socket);
-    }
     throw new Error('receivePacket 인자값 확인하세요.');
   }
   packetManager.enQueueRecv(socket, packet);
