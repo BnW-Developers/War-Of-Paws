@@ -53,7 +53,6 @@ message C2SMatchCancelRequest {
 }
 
 message C2SGameStartRequest {
-  int64 timestamp = 1;
 }
 
 message S2CGameStartNotification {
@@ -74,8 +73,7 @@ message S2CAddEnemyBuildingNotification {
 
 message C2SSpawnUnitRequest {
   int32 assetId = 1;
-  int64 timestamp = 2;
-  bool toTop = 3;
+  bool toTop = 2;
 }
 
 message S2CSpawnUnitResponse {
@@ -92,8 +90,7 @@ message S2CSpawnEnemyUnitNotification {
 
 message C2SAttackUnitRequest {
   int32 unitId = 1;
-  int64 timestamp = 2;
-  repeated int32 opponentUnitIds = 3;
+  repeated int32 opponentUnitIds = 2;
 }
 
 message S2CAttackUnitResponse {
@@ -172,9 +169,8 @@ message S2CMineralSyncNotification {
 
 message C2SHealUnitRequest {
   int32 unitId = 1;
-  int64 timestamp = 2;
-  int32 targetId = 3;
-  int32 healAmount = 4;
+  int32 targetId = 2;
+  int32 healAmount = 3;
 }
 
 message S2CHealUnitResponse {
@@ -189,10 +185,9 @@ message S2CEnemyHealUnitNotification {
 
 message C2SBuffUnitRequest {
   int32 unitId = 1;
-  int64 timestamp = 2;
-  repeated int32 targetIds = 3;
-  int32 buffAmount = 4;
-  int32 buffDuration = 5;
+  repeated int32 targetIds = 2;
+  int32 buffAmount = 3;
+  int32 buffDuration = 4;
 }
 
 message S2CBuffUnitResponse {
@@ -232,8 +227,7 @@ message S2CEliteCardNotification {
  
 message C2SAttackSpellRequest {
   Position center = 1;
-  int64 timestamp = 2;
-  repeated int32 unitIds = 3;
+  repeated int32 unitIds = 2;
 }
 
 message S2CAttackSpellResponse {
@@ -246,8 +240,7 @@ message S2CEnemyAttackSpellNotification {
 
 message C2SHealSpellRequest {
   Position center = 1;
-  int64 timestamp = 2;
-  repeated int32 unitIds = 3;
+  repeated int32 unitIds = 2;
 }
 
 message S2CHealSpellResponse {
@@ -260,8 +253,7 @@ message S2CEnemyHealSpellNotification {
 
 message C2SBuffSpellRequest {
   Position center = 1;
-  int64 timestamp = 2;
-  repeated int32 unitIds = 3;
+  repeated int32 unitIds = 2;
 }
 
 message S2CBuffSpellResponse {
@@ -278,8 +270,7 @@ message S2CEnemyBuffSpellNotification {
 
 message C2SStunSpellRequest {
   Position center = 1;
-  int64 timestamp = 2;
-  repeated int32 unitIds = 3;
+  repeated int32 unitIds = 2;
 }
 
 message S2CStunSpellResponse {
