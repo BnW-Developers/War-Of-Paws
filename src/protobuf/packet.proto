@@ -205,6 +205,68 @@ message S2CEnemyUnitAnimationNotification {
   int32 animationId = 2;
 }
 
+message C2SAttackSpellRequest {
+  Position center = 1;
+  int64 timestamp = 2;
+  repeated int32 unitIds = 3;
+}
+
+message S2CAttackSpellResponse {
+  repeated UnitInfo unitInfos = 1;
+}
+
+message S2CEnemyAttackSpellNotification {
+  repeated UnitInfo unitInfos = 1;
+}
+
+message C2SHealSpellRequest {
+  Position center = 1;
+  int64 timestamp = 2;
+  repeated int32 unitIds = 3;
+}
+
+message S2CHealSpellResponse {
+  repeated UnitInfo unitInfos = 1;
+}
+
+message S2CEnemyHealSpellNotification {
+  repeated UnitInfo unitInfos = 1;
+}
+
+message C2SBuffSpellRequest {
+  Position center = 1;
+  int64 timestamp = 2;
+  repeated int32 unitIds = 3;
+}
+
+message S2CBuffSpellResponse {
+  repeated int32 unitIds = 1;
+  int32 buffAmount = 2;
+  int32 buffDuration = 3;
+}
+
+message S2CEnemyBuffSpellNotification {
+  repeated int32 unitIds = 1;
+  int32 buffAmount = 2;
+  int32 buffDuration = 3;
+}
+
+message C2SStunSpellRequest {
+  Position center = 1;
+  int64 timestamp = 2;
+  repeated int32 unitIds = 3;
+}
+
+message S2CStunSpellResponse {
+  repeated int32 unitIds = 1;
+  int32 stunDuration = 3;
+}
+
+message S2CEnemyStunSpellNotification {
+  repeated int32 unitIds = 1;
+  int32 stunDuration = 3;
+}
+
 
 /*
   최상위 GamePacket 메시지
@@ -278,6 +340,26 @@ message GamePacket {
     // 애니메이션 관련
     C2SUnitAnimationNotification unitAnimationNotification = 37;
     S2CEnemyUnitAnimationNotification enemyUnitAnimationNotification = 38;
+
+    // 공격 스펠
+    C2SAttackSpellRequest attackSpellRequest = 45;
+    S2CAttackSpellResponse attackSpellResponse = 46;
+    S2CEnemyAttackSpellNotification enemyAttackSpellNotification = 47;
+
+    // 힐 스펠
+    C2SHealSpellRequest healSpellRequest = 48;
+    S2CHealSpellResponse healSpellResponse = 49;
+    S2CEnemyHealSpellNotification enemyHealSpellNotification = 50;
+
+    // 버프 스펠
+    C2SBuffSpellRequest buffSpellRequest = 51;
+    S2CBuffSpellResponse buffSpellResponse = 52;
+    S2CEnemyBuffSpellNotification enemyBuffSpellNotification = 53;
+    
+    // 스턴 스펠
+    C2SStunSpellRequest stunSpellRequest = 54;
+    S2CStunSpellResponse stunSpellResponse = 55;
+    S2CEnemyStunSpellNotification enemyStunSpellNotification = 56;
   }
 }
 

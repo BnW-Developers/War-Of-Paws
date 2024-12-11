@@ -1,8 +1,8 @@
 import {
   INITIAL_MINERAL_RATE,
   MINERAL_SYNC_INTERVAL,
-  OCCUR_ONE_CHECKPOINT_MINERAL_RATE,
-  OCCUR_TWO_CHECKPOINT_MINERAL_RATE,
+  OCCUPY_ONE_CHECKPOINT_MINERAL_RATE,
+  OCCUPY_TWO_CHECKPOINT_MINERAL_RATE,
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -19,8 +19,8 @@ class MineralSyncManager {
 
       const mineralRateMap = {
         0: INITIAL_MINERAL_RATE,
-        1: OCCUR_ONE_CHECKPOINT_MINERAL_RATE,
-        2: OCCUR_TWO_CHECKPOINT_MINERAL_RATE,
+        1: OCCUPY_ONE_CHECKPOINT_MINERAL_RATE,
+        2: OCCUPY_TWO_CHECKPOINT_MINERAL_RATE,
       };
 
       // 점령된 거점 수에 해당하는 미네랄 레이트 가져오기
