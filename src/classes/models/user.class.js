@@ -30,8 +30,8 @@ class User {
     return this.currentSpecies;
   }
 
-  setCurrentSpecies(speices) {
-    this.currentSpecies = speices;
+  setCurrentSpecies(species) {
+    this.currentSpecies = species;
   }
 }
 

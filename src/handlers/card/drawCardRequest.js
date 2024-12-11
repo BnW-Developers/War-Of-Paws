@@ -28,10 +28,12 @@ const drawCardRequest = (socket, payload) => {
   try {
     const { buttonType } = payload;
 
-    const { userGameData } = checkSessionInfo(socket);
+    const { user, userGameData } = checkSessionInfo(socket);
+
+    const species = user.getCurrentSpecies();
 
     // 소지 카드 제한 확인
-    if (userGameData.getCardCount() >= MAX_CARDS_COUNT) {
+    if (userGameData.getCardCount() > MAX_CARDS_COUNT) {
       throw new CustomErr(ERR_CODES.MAX_CARDS_REACHED, 'Maximum cards limit reached');
     }
 
@@ -53,7 +55,7 @@ const drawCardRequest = (socket, payload) => {
     const tier = selectTier(button.probabilities);
 
     // 해당 등급의 유닛 ID 가져오기
-    const randomUnitAssetId = selectRandomUnitAssetIdByTier(tier);
+    const randomUnitAssetId = selectRandomUnitAssetIdByTier(species, tier);
 
     logger.info(`Selected tier: ${tier}, Selected unit ID: ${randomUnitAssetId}`);
 
@@ -97,12 +99,15 @@ const selectTier = (probabilities) => {
   }
 };
 
-const selectRandomUnitAssetIdByTier = (tier) => {
+const selectRandomUnitAssetIdByTier = (species, tier) => {
   // 모든 유닛 데이터를 가져오기
   const allUnits = getGameAsset(ASSET_TYPE.UNIT).data;
 
+  // 특정 종의 유닛 필터링
+  const unitsBySpecies = allUnits.filter((unit) => unit.species === species);
+
   // 특정 티어의 유닛 필터링
-  const unitsByTier = allUnits.filter((unit) => unit.tier === tier);
+  const unitsByTier = unitsBySpecies.filter((unit) => unit.tier === tier);
 
   // 필터링된 유닛에서 랜덤으로 하나 선택
   const randomIndex = Math.floor(Math.random() * unitsByTier.length); // 1티어는 0~2, 2티어는 0~1, 3티어는 0
