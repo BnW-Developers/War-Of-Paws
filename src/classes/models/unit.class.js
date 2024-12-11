@@ -9,6 +9,12 @@ import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/logger.js';
 
 class Unit {
+  /**
+   * @param {int32} unitId
+   * @param {JSON} unitData
+   * @param {string} direction
+   * @param {int32} spawnTime
+   */
   constructor(unitId, unitData, direction, spawnTime) {
     // ID 및 종족 관련
     this.unitId = unitId;
@@ -47,31 +53,57 @@ class Unit {
     this.lastTimestamp = spawnTime;
   }
 
+  /**
+   * 유닛 ID 반환
+   * @returns {int32}
+   */
   getUnitId() {
     return this.unitId;
   }
 
+  /**
+   * 유닛 종족 반환
+   * @returns {string}
+   */
   getSpecies() {
     return this.species;
   }
 
+  /**
+   * 유닛 타입 반환
+   * @returns {string} "noraml" / "buffer" / "healer"
+   */
   getType() {
     return this.type;
   }
 
+  /**
+   * 현재 체력 반환
+   * @returns {int32}
+   */
   getHp() {
-    return this.hp;
+    return Math.floor(this.hp);
   }
 
-  // 사망 여부 확인 메서드
+  /**
+   * 유닛이 사망했는지 확인
+   * @returns {boolean}
+   */
   isDead() {
     return this.deadFlag;
   }
 
+  /**
+   * 유닛을 사망 상태로 설정
+   */
   markAsDead() {
     this.deadFlag = true;
   }
 
+  /**
+   * 유닛이 버프 상태인지 확인
+   * @returns {boolean}
+   */
   isBuffed() {
     if (this.buffFlag) {
       logger.info(`Target ${this.unitId} is already buffed`);
@@ -80,18 +112,35 @@ class Unit {
     return false;
   }
 
+  /**
+   * 유닛 속도 반환
+   * @returns {float}
+   */
   getSpeed() {
     return this.speed;
   }
 
+  /**
+   * 유닛 공격력 반환
+   * @returns {int32}
+   */
   getAttackPower() {
     return this.attackPower;
   }
 
+  /**
+   * 유닛 공격 사거리 반환
+   * @returns {float}
+   */
   getAttackRange() {
     return this.attackRange;
   }
 
+  /**
+   * 유닛이 공격 가능한지 확인
+   * @param {int64} timestamp
+   * @returns {boolean}
+   */
   isAttackAvailable(timestamp) {
     const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
     const requiredTime = this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
@@ -99,9 +148,7 @@ class Unit {
     // 쿨타임이 안된다면 로그 출력 & false 반환
     if (elapsed < requiredTime) {
       logger.info(
-        `Attack not available: Unit ID ${this.unitId}, ` +
-          `Current Cooldown: ${this.currentCooldown}, ` +
-          `Remaining time: ${requiredTime - elapsed}`,
+        `Attack not available: Unit ID ${this.unitId}, Current Cooldown: ${this.currentCooldown}, Remaining time: ${requiredTime - elapsed}`,
       );
       return false;
     }
@@ -109,23 +156,33 @@ class Unit {
     return true;
   }
 
+  /**
+   * 마지막 공격 시간을 초기화
+   */
   resetLastAttackTime(timestamp) {
     this.lastAttackTime = timestamp;
   }
 
+  /**
+   * 마지막 스킬 사용 시간을 초기화
+   * @param {int64} timestamp
+   */
   resetLastSkillTime(timestamp) {
     this.lastSkillTime = timestamp;
   }
 
+  /**
+   * 유닛이 스킬을 사용할 수 있는지 확인
+   * @param {int64} timestamp
+   * @returns {boolean}
+   */
   isSkillAvailable(timestamp) {
     const elapsed = timestamp - this.lastSkillTime; // 경과 시간 계산
     const requiredTime = this.skillCooldown - SKILL_COOLDOWN_ERROR_MARGIN; // 스킬 쿨다운 기준 계산
 
     if (elapsed < requiredTime) {
       logger.info(
-        `Skill not available: Unit ID ${this.unitId}, ` +
-          `Skill Cooldown: ${this.skillCooldown}, ` +
-          `Remaining time: ${requiredTime - elapsed}`,
+        `Skill not available: Unit ID ${this.unitId}, Skill Cooldown: ${this.skillCooldown}, Remaining time: ${requiredTime - elapsed}`,
       );
       return false;
     }
@@ -133,23 +190,39 @@ class Unit {
     return true;
   }
 
-  // 체력 감소 메서드
+  /**
+   * 유닛의 체력을 감소
+   * @param {int32} damage
+   * @returns {float}
+   */
   applyDamage(damage) {
     this.hp = Math.max(0, this.hp - damage); // 체력은 0 이하로 감소하지 않음
-    return this.hp;
+    return Math.floor(this.hp);
   }
 
-  applyHeal(healAmount) {
-    // 최대 체력을 초과하지 않도록 체력을 회복
+  /**
+   * 유닛의 체력을 회복
+   * @param {int32} healPercentage - 회복할 체력의 비율(0~100)
+   * @returns {int32} - 회복 후 유닛의 현재 체력
+   */
+  applyHeal(healPercentage) {
+    const healAmount = Math.floor(this.maxHp * (healPercentage / 100));
+
+    // 현재 체력에 회복량을 더하고 최대 체력을 초과하지 않도록 설정
     this.hp = Math.min(this.hp + healAmount, this.maxHp);
 
-    // 현재 체력을 반환
     return this.hp;
   }
 
+  /**
+   * 유닛에 버프를 적용
+   * @param {int32} buffAmount
+   * @param {int32} duration
+   */
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
     this.buffFlag = true;
+
     // 일정 시간 후 버프 해제
     setTimeout(() => {
       this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
@@ -157,15 +230,26 @@ class Unit {
     }, duration);
   }
 
-  // 체크포인트 유닛 위치 파악용 메서드
+  /**
+   * 체크포인트 유닛 위치 파악용 메서드
+   * @returns {string}
+   */
   getDirection() {
     return this.direction;
   }
 
+  /**
+   * 유닛 위치 반환
+   * @returns {{ x: float, z: float }}
+   */
   getPosition() {
     return this.position;
   }
 
+  /**
+   * 유닛 회전값 반환
+   * @returns {{ y: int32 }} 0 or 180
+   */
   getRotation() {
     return this.rotation;
   }
@@ -179,8 +263,8 @@ class Unit {
   }
 
   /**
-   * 유닛이 목적지에 도착했는지 확인 후 결과를 반환
-   * @returns boolean
+   * 유닛이 목적지에 도달했는지 확인
+   * @returns {boolean}
    */
   arrivedAtDestination() {
     const pos = this.getPosition();
