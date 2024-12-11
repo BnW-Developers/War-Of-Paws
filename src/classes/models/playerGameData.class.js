@@ -10,7 +10,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/logger.js';
 import Unit from './unit.class.js';
-import { SPELL_TYPE } from '../../constants/assets'; // eslint-disable-line
+import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
 
 // 유저의 게임 데이터를 담는 클래스
 class PlayerGameData {
