@@ -1,4 +1,4 @@
-import { ASSET_TYPE } from '../../constants/assets.js';
+import { ASSET_TYPE, SPELL_TYPE } from '../../constants/assets.js';
 import { gameAssets } from '../../init/loadAssets.js';
 import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
@@ -6,7 +6,7 @@ import { SPECIES, DIRECTION } from '../../constants/assets.js';
 
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
- * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
+ * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, spells: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const getAllGameAssets = () => {
   return gameAssets;
@@ -20,7 +20,7 @@ export const getAllGameAssets = () => {
  * @returns {{name: string, version: string, data: {}}}} JSON화된 게임에셋
  */
 export const getGameAsset = (assetType) => {
-  const { animations, buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, spells, units } = getAllGameAssets();
 
   switch (assetType) {
     case ASSET_TYPE.ANIMATION:
@@ -31,6 +31,8 @@ export const getGameAsset = (assetType) => {
       return maps;
     case ASSET_TYPE.PATH:
       return paths;
+    case ASSET_TYPE.SPELL:
+      return spells;
     case ASSET_TYPE.UNIT:
       return units;
     default:
@@ -51,7 +53,7 @@ export const getGameAsset = (assetType) => {
  * @returns {JSON} 해당 id의 데이터 ( 예시: `{ id: 2003, DisplayName: "불 테리어", ... }` )
  */
 export const getGameAssetById = (assetType, id) => {
-  const { animations, buildings, maps, paths, units } = getAllGameAssets();
+  const { animations, buildings, maps, paths, spells, units } = getAllGameAssets();
 
   let data = null;
   switch (assetType) {
@@ -66,6 +68,9 @@ export const getGameAssetById = (assetType, id) => {
       break;
     case ASSET_TYPE.PATH:
       data = paths.data.find((path) => path.id === id);
+      break;
+    case ASSET_TYPE.SPELL:
+      data = spells.data.find((spell) => spell.id === id);
       break;
     case ASSET_TYPE.UNIT:
       data = units.data.find((unit) => unit.id === id);
@@ -159,4 +164,61 @@ export const getMapBounds = () => {
     outerBound: mapData.outerBound,
     innerBound: mapData.innerBound,
   };
+};
+
+/**
+ * 특정 스펠의 데이터를 반환
+ *
+ * 호출 예시: `const spellData = getSpell(SPELL_TYPE.HEAL);`
+ * @param {SPELL_TYPE} spellType 조회할 스펠 종류
+ * @returns {JSON} 스펠 데이터 ( 예시: `{ id: 7002, DisplayName: "힐 스펠", ... }` )
+ */
+export const getSpell = (spellType) => {
+  // 검증: 파라미터 유효성
+  if (!Object.values(SPELL_TYPE).includes(spellType)) {
+    throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 스펠입니다:', spellType);
+  }
+
+  return getGameAssetById(ASSET_TYPE.SPELL, spellType);
+};
+
+/**
+ * 유저 스펠 데이터를 초기화
+ * @returns { Map<SPELL_TYPE, { damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
+ */
+export const initializeSpells = () => {
+  const spellData = new Map();
+
+  const attackSpell = getSpell(SPELL_TYPE.ATTACK);
+  {
+    const { damage, range, cd, cost } = attackSpell;
+    spellData.set(SPELL_TYPE.ATTACK, { damage, range, cost, cooldown: cd, lastSpellTime: 0 });
+  }
+
+  const healSpell = getSpell(SPELL_TYPE.HEAL);
+  {
+    const { healAmount, range, cd, cost } = healSpell;
+    spellData.set(SPELL_TYPE.HEAL, { healAmount, range, cost, cooldown: cd, lastSpellTime: 0 });
+  }
+
+  const buffSpell = getSpell(SPELL_TYPE.BUFF);
+  {
+    const { atkUp, range, duration, cd, cost } = buffSpell;
+    spellData.set(SPELL_TYPE.BUFF, {
+      atkUp,
+      range,
+      duration,
+      cost,
+      cooldown: cd,
+      lastSpellTime: 0,
+    });
+  }
+
+  const stunSpell = getSpell(SPELL_TYPE.STUN);
+  {
+    const { range, duration, cd, cost } = stunSpell;
+    spellData.set(SPELL_TYPE.STUN, { range, duration, cost, cooldown: cd, lastSpellTime: 0 });
+  }
+
+  return spellData;
 };

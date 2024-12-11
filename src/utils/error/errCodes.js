@@ -39,6 +39,10 @@ export const ERR_CODES = {
   // Attack 관련 에러
   UNIT_NOT_FOUND: 10700, // 공격하려는 유닛을 찾을 수 없음
   OPPONENT_NOT_FOUND: 10701, // 상대 유닛을 찾을 수 없음
+  FRIENDLY_FIRE: 10702, // 아군 오인사격
+  TREASON: 10703, // 적에게 힐 또는 버프를 시도함
+
+  // Heal & Buff 관련 에러
 
   // Occupation 관련 에러
   CHECKPOINT_NOT_FOUND: 10800, // 체크포인트를 찾을 수 없음

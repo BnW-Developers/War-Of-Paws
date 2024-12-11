@@ -37,18 +37,19 @@ export let gameAssets = {};
  * 전체 게임에셋을 불러오는 함수
  *
  * 게임 시작시 실행
- * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, units: {}}} JSON화된 모든 게임에셋
+ * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, spells: {}, units: {}}} JSON화된 모든 게임에셋
  */
 export const loadGameAssets = async () => {
-  const [animations, buildings, maps, paths, units] = await Promise.all([
+  const [animations, buildings, maps, paths, spells, units] = await Promise.all([
     readFileAsync('animation.json'),
     readFileAsync('building.json'),
     readFileAsync('map.json'),
     readFileAsync('path.json'),
+    readFileAsync('spell.json'),
     readFileAsync('unit.json'),
   ]);
 
-  gameAssets = { animations, buildings, maps, paths, units };
+  gameAssets = { animations, buildings, maps, paths, spells, units };
   logger.info(`GameAsset Initialized : ${Object.keys(gameAssets).length}`);
   return gameAssets;
 };
