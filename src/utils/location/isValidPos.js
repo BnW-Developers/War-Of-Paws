@@ -1,7 +1,6 @@
 import isOnWrongSide from './isOnWrongSide.js';
 import isOutOfBounds from './isOutOfBounds.js';
 import isTooFast from './isTooFast.js';
-import chalk from 'chalk';
 import formatCoords from '../formatter/formatCoords.js';
 import { LOG_ENABLED_WRONG_SIDE } from '../log/logSwitch.js';
 
@@ -25,8 +24,7 @@ const isValidPos = (unit, pos, timestamp) => {
 
   // 잘못된 공격로 (반대편)에 있는지 확인
   if (isOnWrongSide(unit, pos)) {
-    if (LOG_ENABLED_WRONG_SIDE)
-      console.log(chalk.cyanBright('지정된 공격로 이탈:', formatCoords(pos, 2)));
+    if (LOG_ENABLED_WRONG_SIDE) console.log('지정된 공격로 이탈:', formatCoords(pos, 2));
     return false;
   }
 

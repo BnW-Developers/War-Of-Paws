@@ -1,6 +1,5 @@
 import { SPEED_MARGIN_OF_ERROR } from '../../constants/game.constants.js';
 import calcSpd from './calcSpd.js';
-import chalk from 'chalk';
 import round from '../math/round.js';
 import { LOG_ENABLED_TOO_FAST } from '../log/logSwitch.js';
 
@@ -22,9 +21,7 @@ const isTooFast = (unit, endPos, endTime) => {
   if (actualSpeed > maxSpeed * SPEED_MARGIN_OF_ERROR) {
     if (LOG_ENABLED_TOO_FAST)
       console.log(
-        chalk.greenBright(
-          `유닛이 너무 빠릅니다!  유닛속도: ${round(maxSpeed * SPEED_MARGIN_OF_ERROR, 2)} 실제속도: ${round(actualSpeed, 2)}`,
-        ),
+        `유닛이 너무 빠릅니다!  유닛속도: ${round(maxSpeed * SPEED_MARGIN_OF_ERROR, 2)} 실제속도: ${round(actualSpeed, 2)}`,
       );
 
     return true;
