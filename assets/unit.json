@@ -27,7 +27,8 @@
       "cd": 500,
       "spd": 2,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "eliteId": "elite"
     },
     {
       "id": 2002,
@@ -54,7 +55,8 @@
       "cd": 500,
       "spd": 2,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "eliteId": "elite"
     },
     {
       "id": 2003,
@@ -81,7 +83,8 @@
       "cd": 500,
       "spd": 4,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "eliteId": "elite"
     },
     {
       "id": 2004,
@@ -108,7 +111,8 @@
       "cd": 1000,
       "spd": 2,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "eliteId": "elite"
     },
     {
       "id": 2005,
@@ -135,7 +139,8 @@
       "cd": 500,
       "spd": 3,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "eliteId": "elite"
     },
     {
       "id": 2006,
@@ -168,7 +173,8 @@
       "tier": 2,
       "skillCd": 3000,
       "buffAmount": 2,
-      "buffDuration": 3000
+      "buffDuration": 3000,
+      "eliteId": "elite"
     },
     {
       "id": 2007,
@@ -195,7 +201,8 @@
       "cd": 500,
       "spd": 1,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "eliteId": "elite"
     },
     {
       "id": 2008,
@@ -222,7 +229,8 @@
       "cd": 500,
       "spd": 4,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "eliteId": "elite"
     },
     {
       "id": 2009,
@@ -249,7 +257,8 @@
       "cd": 0.333,
       "spd": 1,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "eliteId": "elite"
     },
     {
       "id": 2010,
@@ -280,7 +289,8 @@
       "type": "healer",
       "tier": 2,
       "skillCd": 5000,
-      "healAmount": 100
+      "healAmount": 100,
+      "eliteId": "elite"
     },
     {
       "id": 2011,
@@ -307,7 +317,8 @@
       "cd": 500,
       "spd": 2,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "eliteId": "elite"
     },
     {
       "id": 2012,
@@ -334,7 +345,8 @@
       "cd": 0,
       "spd": 0.5,
       "type": "normal",
-      "tier": 2
+      "tier": 2,
+      "eliteId": "elite"
     }
   ]
 }
