@@ -81,5 +81,8 @@ export const ERR_CODES = {
 
   // 카드 관련
   INVALID_BUTTON_TYPE: 11500,
-  MAX_CARDS_REACHED: 115001,
+  MAX_CARDS_REACHED: 15001,
+
+  // 유닛 업그레이드 관련
+  INVALID_UPGRADE_TYPE: 16001,
 };
