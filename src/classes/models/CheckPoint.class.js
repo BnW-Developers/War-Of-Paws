@@ -133,10 +133,10 @@ class CheckPoint {
   }
 
   // 중복 코드로 인한 메서드화
-  sendOccupationPacket(packetType, payload, target = false) {
+  sendOccupationPacket(packetType, payload, target = null) {
     // payload false 인 상황이면 payloadB를 사용한다는 뜻으로 target 지정이 필요
     try {
-      if (!payload && !target) throw new Error('payload or target is required');
+      if (!payload && target === null) throw new Error('payload or target is required');
       for (let i = 0; i < 2; i++) {
         const payloadA = { isTop: this.isTop };
         const payloadB = {
