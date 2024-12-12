@@ -1,7 +1,7 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
-  RANGE_ERROR_MARGIN,
   INITIAL_UNIT_ROTATION,
+  RANGE_ERROR_MARGIN,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
@@ -19,12 +19,14 @@ class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
     // ID 및 종족 관련
     this.unitId = unitId;
+    this.assetId = unitData.id;
     this.species = unitData.species || 'unknown';
     this.type = unitData.type || 'normal';
     this.tier = unitData.tier || 1;
     this.eliteId = unitData.eliteId || 'elite';
 
     // 능력치 관련
+    this.level = 1;
     this.maxHp = unitData.maxHp || 100;
     this.hp = unitData.maxHp || 100;
     this.attackPower = unitData.atk ?? 10;
@@ -223,7 +225,7 @@ class Unit {
    */
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
-    
+
     this.buffed = true;
 
     // 일정 시간 후 버프 해제
