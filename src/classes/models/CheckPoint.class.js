@@ -102,6 +102,15 @@ class CheckPoint {
 
     // 점령 타이머 초기화 패킷 전송
     this.sendOccupationPacket(PACKET_TYPE.OCCUPATION_TIMER_RESET_NOTIFICATION, true);
+
+    // 초기화 이후 상태 갱신
+    const team0Units = this.getUsersCount(0); // 팀 0의 유닛 수
+    const team1Units = this.getUsersCount(1); // 팀 1의 유닛 수
+
+    // 유닛 상태에 따라 점령 재시도 확인
+    if (team0Units || team1Units) {
+      this.checkStatus(team0Units > team1Units ? 0 : 1);
+    }
   }
 
   pauseOccupation() {
