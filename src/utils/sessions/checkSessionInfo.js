@@ -1,13 +1,15 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import userSessionManager from '../../classes/managers/userSessionManager.js';
+import Game from '../../classes/models/game.class.js'; // eslint-disable-line
+import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
+import User from '../../classes/models/user.class.js'; // eslint-disable-line
 import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
-import { handleErr } from '../error/handlerErr.js';
 
 /**
  * 유저&게임세션 관련 정보들을 검증 및 조회
  * @param {net.Socket} socket
- * @returns {{gameSession: Game, gameId: number, user: User, userId: string, userGameData: PlayerGameData, opponent: User, opponentId: string, opponentGameData: PlayerGameData, opponentSocket: net.Socket}}
+ * @returns {{gameSession: Game, gameId: int32, user: User, userId: string, userGameData: PlayerGameData, opponent: User, opponentId: string, opponentGameData: PlayerGameData, opponentSocket: net.Socket}}
  */
 const checkSessionInfo = (socket) => {
   try {
