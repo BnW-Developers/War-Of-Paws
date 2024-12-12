@@ -79,7 +79,6 @@ class CheckPoint {
       this.resumeOccupation();
     } else if (!myUnits) {
       this.clearOccupation();
-      this.#status = this.currentStatus;
     }
   }
 

@@ -48,7 +48,6 @@ class CheckPointManager {
   }
 
   getCheckPointState(unitId) {
-    if (!this.isExistUnit(unitId))
       throw new CustomErr(
         ERR_CODES.NOT_FOUND_UNIT_IN_CHECKPOINT,
         '체크포인트를 거친 유닛이 아닙니다.',
