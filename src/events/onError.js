@@ -5,6 +5,7 @@ import { ERR_CODES } from '../utils/error/errCodes.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 import { sendPacket } from '../utils/packet/packetManager.js';
 import logger from '../utils/log/logger.js';
+import redisClient from '../redis/redisClient.js';
 
 let errCount = 0;
 
@@ -33,6 +34,11 @@ export const onError = (socket) => (err) => {
       }
       // 유저세션 삭제
       userSessionManager.removeUser(user.getUserId());
+
+      const sessionKey = `user:session:${user.getUserId()}`;
+
+      // isLoggedIn 필드만 false로 업데이트
+      redisClient.hset(sessionKey, 'isLoggedIn', false);
 
       // 소켓 종료 확인
       if (!socket.destroyed) {

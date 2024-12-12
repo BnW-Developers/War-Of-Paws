@@ -1,6 +1,7 @@
 import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import userSessionManager from '../../classes/managers/userSessionManager.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import redisClient from '../../redis/redisClient.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
@@ -30,6 +31,11 @@ const authRequest = (socket, payload) => {
 
     //패킷 전송
     sendPacket(socket, PACKET_TYPE.AUTH_RESPONSE);
+
+    const sessionKey = `user:session:${userId}`;
+
+    // isLoggedIn 필드만 false로 업데이트
+    redisClient.hset(sessionKey, 'isLoggedIn', true);
   } catch (err) {
     handleErr(socket, err);
   }

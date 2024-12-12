@@ -1,5 +1,6 @@
 import gameSessionManager from '../classes/managers/gameSessionManager.js';
 import userSessionManager from '../classes/managers/userSessionManager.js';
+import redisClient from '../redis/redisClient.js';
 import { handleErr } from '../utils/error/handlerErr.js';
 
 export const onEnd = (socket) => () => {
@@ -16,6 +17,11 @@ export const onEnd = (socket) => () => {
         }
       }
       userSessionManager.removeUser(user.getUserId());
+
+      const sessionKey = `user:session:${user.getUserId()}`;
+
+      // isLoggedIn 필드만 false로 업데이트
+      redisClient.hset(sessionKey, 'isLoggedIn', false);
     }
   } catch (err) {
     handleErr(null, err);
