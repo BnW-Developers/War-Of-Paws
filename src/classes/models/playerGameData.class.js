@@ -1,17 +1,18 @@
 import { ASSET_TYPE, DIRECTION, SPELL_TYPE_REVERSED } from '../../constants/assets.js';
 import {
+  ATK_INCREMENT_PER_LEVEL,
+  HP_INCREMENT_PER_LEVEL,
   INITIAL_BASE_HP,
   INITIAL_MINERAL,
   INITIAL_MINERAL_RATE,
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
-import Game from './game.class.js';
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/log/logger.js';
+import Game from './game.class.js';
 import Unit from './unit.class.js';
-import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
@@ -28,6 +29,7 @@ class PlayerGameData {
     this.buildings = [];
     this.units = new Map();
     this.cards = new Map(); // 8칸짜리 인벤토리 assetId(key) - 수량(value)
+    this.upgrades = new Map(); // 업그레이드 상태 관리 (assetId - { type: "hp", level: 1 })
 
     this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
@@ -50,13 +52,92 @@ class PlayerGameData {
     // TODO: 카드 관련 로직
 
     const unitId = gameSession.generateUnitId();
-    const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
+    // 원본 JSON 데이터를 복사하여 사용
+    const copiedUnitData = { ...getGameAssetById(ASSET_TYPE.UNIT, assetId) };
     const direction = toTop ? DIRECTION.UP : DIRECTION.DOWN;
 
-    const unit = new Unit(unitId, unitData, direction, spawnTime);
+    // 업그레이드 상태 적용
+    const upgradeState = this.getUpgradeState(assetId);
+
+    const { type, level } = upgradeState;
+
+    // 타입에 따라 스탯 상승
+    if (type === 'hp') {
+      copiedUnitData.maxHp += HP_INCREMENT_PER_LEVEL * level;
+      copiedUnitData.hp = copiedUnitData.maxHp;
+    } else if (type === 'atk') {
+      copiedUnitData.atk += ATK_INCREMENT_PER_LEVEL * level;
+    }
+
+    // 엘리트 유닛이면 공격력 / 체력 3배
+    if (copiedUnitData.eliteId === 'elite') {
+      copiedUnitData.atk *= 3;
+      copiedUnitData.maxHp *= 3;
+      copiedUnitData.hp = copiedUnitData.maxHp;
+    }
+
+    const unit = new Unit(unitId, copiedUnitData, direction, spawnTime);
 
     this.units.set(unitId, unit);
     return unitId;
+  }
+
+  /**
+   * 유닛의 업그레이드 상태 반환
+   * @param {int32} assetId
+   * @returns {{ type: string, level: int32 }}
+   */
+  getUpgradeState(assetId) {
+    return this.upgrades.get(assetId);
+  }
+
+  /**
+   * 업그레이드 수행
+   * @param {int32} assetId normal assetId만 받음 (2천번대)
+   * @param {string} upgradeType - hp 또는 atk
+   * @returns {int32} level
+   */
+  applyUpgradeLevel(assetId, upgradeType) {
+    let upgradeState = this.upgrades.get(assetId);
+
+    // 업그레이드가 안되어 있다면
+    if (!upgradeState) {
+      // 업그레이드 세팅
+      upgradeState = { type: upgradeType, level: 1 };
+      this.upgrades.set(assetId, upgradeState);
+    } else {
+      upgradeState.level += 1;
+    }
+
+    // 레벨을 업그레이드 했다면 스탯도 업데이트
+    this.applyUpgradeUnits(assetId);
+
+    return upgradeState.level;
+  }
+
+  /**
+   * 필드에 존재하는 유닛들에 업그레이드된 스탯을 반영
+   * @param {int32} assetId - 업그레이드 대상 유닛의 assetId
+   */
+  applyUpgradeUnits(assetId) {
+    const upgradeState = this.upgrades.get(assetId);
+
+    const { type, level } = upgradeState;
+
+    this.units.forEach((unit) => {
+      // unit이 존재하지 않으면 건너뜀
+      if (!unit) return;
+
+      if (unit.id === assetId) {
+        // 필드에 있는 유닛들은 최대 체력만 적용? 일단 그렇게
+        if (type === 'hp') {
+          unit.maxHp += HP_INCREMENT_PER_LEVEL * level;
+        } else if (type === 'atk') {
+          const atkIncrement = ATK_INCREMENT_PER_LEVEL * level;
+          unit.attackPower += atkIncrement;
+        }
+      }
+    });
   }
 
   /**
