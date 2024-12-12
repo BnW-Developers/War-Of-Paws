@@ -35,3 +35,10 @@ export const RANGE_ERROR_MARGIN = 1.05; // 5%
 // 속도 허용 오차
 export const SPEED_MARGIN_OF_ERROR = 1.05; // 5%
 
+// 유닛 업그레이드
+export const HP_INCREMENT_PER_LEVEL = 50;
+export const ATK_INCREMENT_PER_LEVEL = 15;
+export const UPGRADE_COSTS = Object.freeze({
+  atk: 15,
+  hp: 50,
+});
