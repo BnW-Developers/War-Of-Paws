@@ -22,6 +22,7 @@ export const onEnd = (socket) => () => {
 
       // isLoggedIn 필드만 false로 업데이트
       redisClient.hset(sessionKey, 'isLoggedIn', false);
+      redisClient.expire(sessionKey, 300);
     }
   } catch (err) {
     handleErr(null, err);

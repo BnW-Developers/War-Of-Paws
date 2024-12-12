@@ -36,6 +36,7 @@ const authRequest = (socket, payload) => {
 
     // isLoggedIn 필드만 false로 업데이트
     redisClient.hset(sessionKey, 'isLoggedIn', true);
+    redisClient.expire(sessionKey, 3600);
   } catch (err) {
     handleErr(socket, err);
   }
