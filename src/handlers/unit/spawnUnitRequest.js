@@ -13,14 +13,15 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 /**
  * 클라이언트로부터 유닛 생성 요청을 처리하고, 생성된 유닛 정보를 응답으로 전송
  * @param {net.Socket} socket
- * @param {{ assetId: int32, timestamp: int32, toTop: boolean }} payload
+ * @param {{ assetId: Int32Array, toTop: boolean }} payload
  */
 const spawnUnitRequest = (socket, payload) => {
   try {
-    const { assetId, timestamp, toTop } = payload;
+    const { assetId, toTop } = payload;
+    const timestamp = Date.now();
 
     const { gameSession, userGameData, opponentSocket } = checkSessionInfo(socket);
-    logger.info(`spawn unit request id: ${assetId} toTop: ${toTop || false} time: ${Date.now()}`);
+    logger.info(`spawn unit request id: ${assetId} toTop: ${toTop || false} time: ${timestamp}`);
 
     const { unitId, resultMineral } = processUnitSpawn(
       userGameData,
@@ -54,9 +55,10 @@ const spawnUnitRequest = (socket, payload) => {
  * @param {Game} gameSession
  * @param {int32} assetId
  * @param {boolean} toTop
+ * @param {int64} timestamp
  * @returns {{ unitId: number, resultMineral: number }} // 생성된 유닛 id와 남은 골드
  */
-const processUnitSpawn = (userGameData, gameSession, assetId, toTop) => {
+const processUnitSpawn = (userGameData, gameSession, assetId, toTop, timestamp) => {
   const unitCost = getUnitCost(assetId);
 
   if (userGameData.getMineral() < unitCost) {
@@ -64,7 +66,7 @@ const processUnitSpawn = (userGameData, gameSession, assetId, toTop) => {
   }
 
   const resultMineral = userGameData.spendMineral(unitCost);
-  const unitId = userGameData.addUnit(gameSession, assetId, toTop || false, Date.now());
+  const unitId = userGameData.addUnit(gameSession, assetId, toTop || false, timestamp);
 
   return { unitId, resultMineral };
 };
