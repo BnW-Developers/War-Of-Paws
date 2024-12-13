@@ -43,8 +43,8 @@ const attackSpellRequest = (socket, payload) => {
       );
 
     // 전송할 패킷 데이터
-    const opponentUnitInfos = [];
-    const deathNotifications = [];
+    const opponentUnitInfos = { unitInfos: [] };
+    const deathNotifications = { unitIds: [] };
 
     // 스펠 데이터 조회
     const { damage, range } = userGameData.getSpellData(SPELL_TYPE.ATTACK);
@@ -81,30 +81,20 @@ const attackSpellRequest = (socket, payload) => {
           processDeath(targetUnit, opponentGameData, unitId, gameSession, deathNotifications);
         }
 
-        // 공격당한 유닛 정보 추가
-        opponentUnitInfos.push({
-          unitId,
-          unitHp: resultHp, // HP는 음수가 될 수 없도록 처리
-        });
+        // 피격 유닛 정보 패킷에 추가
+        opponentUnitInfos.unitInfos.push({ unitId, unitHp: resultHp });
       }
     }
 
     // 응답 패킷 전송
-    sendPacket(socket, PACKET_TYPE.ATTACK_SPELL_RESPONSE, {
-      unitInfos: opponentUnitInfos,
-    });
-
+    sendPacket(socket, PACKET_TYPE.ATTACK_SPELL_RESPONSE, opponentUnitInfos);
     // 상대방 알림 패킷 전송
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_SPELL_NOTIFICATION, {
-      unitInfos: opponentUnitInfos,
-    });
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_SPELL_NOTIFICATION, opponentUnitInfos);
 
     // 사망 패킷 전송
-    if (notifications.length > 0) {
-      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: notifications });
-      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-        unitIds: notifications,
-      });
+    if (deathNotifications.unitIds.length > 0) {
+      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, deathNotifications);
+      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, deathNotifications);
     }
   } catch (error) {
     handleErr(socket, error);
@@ -131,7 +121,7 @@ const processDeath = (unit, gameData, gameSession, notifications) => {
   // 서버 내 유닛 데이터 삭제
   gameData.removeUnit(unitId);
   // 패킷에 사망한 유닛ID 추가
-  notifications.unitIds.push(unitId);
+  notifications.unitIds.push({ unitId });
 };
 
 export default attackSpellRequest;
