@@ -83,7 +83,7 @@ const getTargetUnit = (userGameData, targetId) => {
  * @returns {int32}
  */
 const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount, timestamp) => {
-  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(timestamp)) {
+  if (!validateTarget(healerUnit, targetUnit, 'heal') || !healerUnit.isSkillAvailable(timestamp)) {
     return 0;
   }
   return initialHealAmount;

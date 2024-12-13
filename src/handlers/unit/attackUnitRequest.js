@@ -126,7 +126,7 @@ const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSessio
     for (const opponentUnitId of opponentUnitIds) {
       const targetUnit = opponentGameData.getUnit(opponentUnitId);
 
-      if (!validateTarget(attackUnit, targetUnit)) continue;
+      if (!validateTarget(attackUnit, targetUnit, 'attack')) continue;
 
       const resultHp = targetUnit.applyDamage(attackUnit.getAttackPower());
 

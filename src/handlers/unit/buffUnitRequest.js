@@ -101,7 +101,7 @@ const applyBuffToTargets = (
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
 
-      if (!validateTarget(bufferUnit, targetUnit) || targetUnit.isBuffed()) continue;
+      if (!validateTarget(bufferUnit, targetUnit, 'buff') || targetUnit.isBuffed()) continue;
 
       targetUnit.applyBuff(buffAmount, buffDuration);
       affectedUnits.push(targetId);
