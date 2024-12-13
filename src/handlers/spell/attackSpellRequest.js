@@ -7,6 +7,10 @@ import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import isWithinRange from '../../utils/spell/isWithinRange.js';
+import {
+  LOG_ENABLED_SPELL_REQUEST,
+  LOG_ENABLED_SPELL_OUT_OF_RANGE,
+} from '../../utils/log/logSwitch';
 
 /**
  * 공격 스펠 핸들러
@@ -24,7 +28,10 @@ const attackSpellRequest = (socket, payload) => {
 
     // 로그 출력 및 저장
     const species = user.getCurrentSpecies();
-    logger.info(`${species} 플레이어가 공격 스펠 요청\n    대상 유닛: ${JSON.stringify(unitIds)}`);
+    if (LOG_ENABLED_SPELL_REQUEST)
+      logger.info(
+        `${species} 플레이어가 공격 스펠 요청\n    대상 유닛: ${JSON.stringify(unitIds)}`,
+      );
 
     // 전송할 패킷 데이터
     const opponentUnitInfos = [];
@@ -54,7 +61,8 @@ const attackSpellRequest = (socket, payload) => {
         const unitPosition = unit.getPosition();
         const withinRange = isWithinRange(center.position, unitPosition, range);
         if (!withinRange) {
-          logger.info(`유닛 ${unitId}에 대한 공격 스펠 실패: 사정거리 초과`);
+          if (LOG_ENABLED_SPELL_OUT_OF_RANGE)
+            logger.info(`유닛 ${unitId}에 대한 공격 스펠 실패: 사정거리 초과`);
           continue;
         }
 
