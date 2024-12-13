@@ -93,19 +93,15 @@ const selectRandomUnitAssetIdByTier = (species, tier) => {
   // 모든 유닛 데이터를 가져오기
   const allUnits = getGameAsset(ASSET_TYPE.UNIT).data;
 
-  const filteredUnits = [];
-  for (const unit of allUnits) {
-    if (unit.species === species && unit.tier === tier) {
-      filteredUnits.push(unit);
-    }
-  }
+  // 특정 종의 유닛 필터링
+  const unitsBySpecies = allUnits.filter((unit) => unit.species === species);
 
-  // 필터링된 결과가 없으면 null 반환
-  if (filteredUnits.length === 0) return null;
+  // 특정 티어의 유닛 필터링
+  const unitsByTier = unitsBySpecies.filter((unit) => unit.tier === tier);
 
-  // 필터링된 유닛 중 랜덤으로 하나 선택
-  const randomIndex = Math.floor(Math.random() * filteredUnits.length);
-  return filteredUnits[randomIndex].id;
+  // 필터링된 유닛에서 랜덤으로 하나 선택
+  const randomIndex = Math.floor(Math.random() * unitsByTier.length); // 1티어는 0~2, 2티어는 0~1, 3티어는 0
+  return unitsByTier[randomIndex].id;
 };
 
 export default drawCardRequest;
