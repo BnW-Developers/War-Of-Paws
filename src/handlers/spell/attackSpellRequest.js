@@ -49,8 +49,8 @@ const attackSpellRequest = (socket, payload) => {
       // 대상 유닛 처리
       for (const unitId of unitIds) {
         // 검증: 피아식별
-        const unit = opponentGameData.getUnit(unitId);
-        if (!unit) {
+        const targetUnit = opponentGameData.getUnit(unitId);
+        if (!targetUnit) {
           throw new CustomErr(
             ERR_CODES.FRIENDLY_FIRE,
             '공격 대상이 아군이거나 유닛이 존재하지 않습니다.',
@@ -58,18 +58,18 @@ const attackSpellRequest = (socket, payload) => {
         }
 
         // 검증: 스펠 사정거리
-        if (!isWithinRange(center.position, unit.getPosition(), range)) {
+        if (!isWithinRange(center.position, targetUnit.getPosition(), range)) {
           if (LOG_ENABLED_SPELL_OUT_OF_RANGE)
             logger.info(`유닛 ${unitId}에 대한 공격 스펠 실패: 사정거리 초과`);
           continue;
         }
 
         // 데미지 적용
-        const resultHp = unit.applyDamage(damage);
+        const resultHp = targetUnit.applyDamage(damage);
 
         // 유닛 사망처리
-        if (unit.getHp() <= 0) {
-          processingDeath(unit, opponentGameData, unitId, gameSession, deathNotifications);
+        if (targetUnit.getHp() <= 0) {
+          processingDeath(targetUnit, opponentGameData, unitId, gameSession, deathNotifications);
         }
 
         // 공격당한 유닛 정보 추가
