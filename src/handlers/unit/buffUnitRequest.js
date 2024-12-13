@@ -1,5 +1,5 @@
-import PlayerGameData from '../../classes/models/playerGameData.class.js';
-import Unit from '../../classes/models/unit.class.js';
+import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
+import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { UNIT_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
@@ -101,7 +101,7 @@ const applyBuffToTargets = (
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
 
-      if (!validateTarget(bufferUnit, targetUnit) || targetUnit.isBuffed()) continue;
+      if (!validateTarget(bufferUnit, targetUnit, 'buff') || targetUnit.isBuffed()) continue;
 
       targetUnit.applyBuff(buffAmount, buffDuration);
       affectedUnits.push(targetId);
