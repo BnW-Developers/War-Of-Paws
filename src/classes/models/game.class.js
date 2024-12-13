@@ -175,7 +175,9 @@ class Game {
       const [player0, player1] = players;
       this.winTeam = this.determineWinTeam(player0, player1);
 
+
       this.finalizeGameResult(players);
+
     } catch (err) {
       err.message = 'endGame error: ' + err.message;
       handleErr(null, err);
@@ -186,7 +188,7 @@ class Game {
     const p0BaseHp = player0Data.getBaseHp();
     const p1BaseHp = player1Data.getBaseHp();
 
-    if (!p0BaseHp || !p1BaseHp)
+    if (p0BaseHp === null || p1BaseHp === null )
       throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 데이터 정보 오류');
 
     if (p0BaseHp > p1BaseHp) return player0Id;

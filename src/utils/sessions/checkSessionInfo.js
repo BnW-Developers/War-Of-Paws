@@ -31,7 +31,7 @@ const checkSessionInfo = (socket) => {
     }
 
     // 검증: 유저의 인게임 데이터가 존재하는가?
-    const userGameData = gameSession.getPlayerGameData(userId);
+    const userGameData = gameSession.getPlayerGameDataByUserId(userId);
     if (!userGameData) {
       throw new CustomErr(
         ERR_CODES.PLAYER_GAME_DATA_NOT_FOUND,
@@ -47,7 +47,7 @@ const checkSessionInfo = (socket) => {
     }
 
     // 검증: 상대방 유저의 인게임 데이터가 존재하는가?
-    const opponentGameData = gameSession.getPlayerGameData(opponentId);
+    const opponentGameData = gameSession.getPlayerGameDataByUserId(opponentId);
     if (!opponentGameData) {
       throw new CustomErr(
         ERR_CODES.OPPONENT_GAME_DATA_NOT_FOUND,
