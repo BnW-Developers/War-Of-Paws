@@ -110,7 +110,7 @@ const attackSpellRequest = (socket, payload) => {
   }
 };
 
-const processDeath = (unit, gameData, unitId, session, notifications) => {
+const processDeath = (unit, gameData, session, notifications) => {
   if (unit.isDead()) {
     logger.info(`Unit ${unitId} is already dead.`);
     return false;
@@ -118,6 +118,7 @@ const processDeath = (unit, gameData, unitId, session, notifications) => {
 
   unit.markAsDead(); // 플래그 설정
   const checkPointManager = session.getCheckPointManager();
+  const unitId = unit.getUnitId();
   if (checkPointManager.isExistUnit(unitId)) {
     checkPointManager.removeUnit(unitId);
   }
