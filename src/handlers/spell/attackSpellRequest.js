@@ -99,7 +99,12 @@ const attackSpellRequest = (socket, payload) => {
     });
 
     // 사망 패킷 전송
-    sendDeathNotifications(socket, opponentSocket, deathNotifications);
+    if (notifications.length > 0) {
+      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: notifications });
+      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
+        unitIds: notifications,
+      });
+    }
   } catch (error) {
     handleErr(socket, error);
   }
@@ -123,13 +128,5 @@ const processingDeath = (unit, gameData, unitId, session, notifications) => {
   return true;
 };
 
-const sendDeathNotifications = (socket, opponentSocket, notifications) => {
-  if (notifications.length > 0) {
-    sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, { unitIds: notifications });
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-      unitIds: notifications,
-    });
-  }
-};
 
 export default attackSpellRequest;
