@@ -126,7 +126,6 @@ const processDeath = (unit, gameData, gameSession, notifications) => {
 
   gameData.removeUnit(unitId); // 데이터 삭제
   notifications.push(unitId); // 사망 알림
-  logger.info(`Unit ${unitId} death processing is done.`);
 };
 
 
