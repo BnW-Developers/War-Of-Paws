@@ -175,7 +175,7 @@ class Game {
       const p0BaseHp = player0[1].getBaseHp();
       const p1BaseHp = player1[1].getBaseHp();
 
-      if (!p0BaseHp || !p1BaseHp)
+      if (p0BaseHp === null || p1BaseHp === null)
         throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 데이터 정보 오류');
 
       // 성채 체력 비교하여 승리 팀 결정
