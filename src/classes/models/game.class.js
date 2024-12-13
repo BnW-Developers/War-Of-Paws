@@ -4,6 +4,7 @@ import {
   MAX_PLAYERS,
 } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import { recordGame } from '../../mysql/game/game.db.js';
 import CustomErr from '../../utils/error/customErr.js';
 import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
@@ -25,6 +26,7 @@ class Game {
     this.checkPointManager = null;
     this.mineralSyncManager = new MineralSyncManager();
     this.unitIdCounter = 1;
+    this.winTeam = null;
   }
 
   getGameId() {
@@ -148,7 +150,7 @@ class Game {
       }
 
       // 혹시나 실행됐던 매니저들 삭제
-      this.endGameProcess();
+      this.cleanupGameResources();
 
       // 게임세션 삭제
       gameSessionManager.removeGameSession(this.gameId);
@@ -163,7 +165,7 @@ class Game {
     this.inProgress = false;
 
     try {
-      this.endGameProcess();
+      this.cleanupGameResources();
 
       const players = Array.from(this.players.entries()); // Map을 배열로 변환
 
@@ -171,43 +173,54 @@ class Game {
         throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 상태 오류');
 
       const [player0, player1] = players;
-      // 성채 체력 습득
-      const p0BaseHp = player0[1].getBaseHp();
-      const p1BaseHp = player1[1].getBaseHp();
+      this.winTeam = this.determineWinTeam(player0, player1);
 
-      if (p0BaseHp === null || p1BaseHp === null)
-        throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 데이터 정보 오류');
 
-      // 성채 체력 비교하여 승리 팀 결정
-      const winTeam = p0BaseHp > p1BaseHp ? player0[0] : player1[0];
+      this.finalizeGameResult(players);
 
-      // 유저들에게 게임 종료 알림 전송
-      for (const [userId, userData] of players) {
-        sendPacket(userData.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
-          isWin: winTeam === userId,
-        });
-      }
-
-      // 게임세션 삭제
-      gameSessionManager.removeGameSession(this.gameId);
     } catch (err) {
       err.message = 'endGame error: ' + err.message;
       handleErr(null, err);
     }
   }
 
-  endGameByDisconnect(userId) {
+  determineWinTeam([player0Id, player0Data], [player1Id, player1Data]) {
+    const p0BaseHp = player0Data.getBaseHp();
+    const p1BaseHp = player1Data.getBaseHp();
+
+    if (p0BaseHp === null || p1BaseHp === null )
+      throw new CustomErr(ERR_CODES.INVALID_GAME_STATE, '게임 세션 데이터 정보 오류');
+
+    if (p0BaseHp > p1BaseHp) return player0Id;
+    if (p0BaseHp < p1BaseHp) return player1Id;
+    return 'DRAW';
+  }
+
+  async endGameByDisconnect(userId) {
     if (!this.inProgress) return;
     this.inProgress = false;
+
     try {
-      this.endGameProcess();
+      this.cleanupGameResources();
 
       const player = this.getOpponentGameDataByUserId(userId);
-      if (!player) throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '상대방을 찾을 수 없습니다.');
+      if (!player) {
+        throw new CustomErr(ERR_CODES.USER_NOT_FOUND, '상대방을 찾을 수 없습니다.');
+      }
 
+      this.winTeam = player.getUserId();
+
+      // 상대방에게만 승리 패킷 전송
       sendPacket(player.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
         isWin: true,
       });
+
+      // 게임 기록만 남기고 보상 제외
+      await recordGame(
+        Array.from(this.players.keys())[0],
+        Array.from(this.players.keys())[1],
+        this.winTeam,
+      );
     } catch (err) {
       err.message = 'endGameByDisconnect error: ' + err.message;
       handleErr(null, err);
@@ -218,7 +231,7 @@ class Game {
   }
 
   // 실행됐던 인터벌, 매니저 등 삭제
-  endGameProcess() {
+  cleanupGameResources() {
     // 체크포인트 인터벌 중지
     const checkPointManager = this.getCheckPointManager();
     if (checkPointManager) {
@@ -228,6 +241,29 @@ class Game {
 
     // 미네랄 싱크 인터벌 중지
     this.mineralSyncManager.stopSyncLoop();
+  }
+
+  async finalizeGameResult(players) {
+    try {
+      for (const [userId, userData] of players) {
+        const isWin = this.winTeam === userId;
+
+        // 유저에게 줄 보상이 생긴다면 여기에서..?
+
+        // 패킷 전송
+        sendPacket(userData.getSocket(), PACKET_TYPE.GAME_OVER_NOTIFICATION, {
+          isWin,
+        });
+      }
+
+      await recordGame(players[0][0], players[1][0], this.winTeam);
+    } catch (err) {
+      err.message = 'finalizeGameResult error: ' + err.message;
+      handleErr(null, err);
+    } finally {
+      // 게임세션 삭제
+      gameSessionManager.removeGameSession(this.gameId);
+    }
   }
 
   // userId로 게임 세션에서 유저 검색

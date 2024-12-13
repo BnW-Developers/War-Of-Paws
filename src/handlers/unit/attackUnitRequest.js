@@ -13,11 +13,12 @@ import validateTarget from '../../utils/unit/validationTarget.js';
 /**
  * 클라이언트로부터 공격 요청을 처리하고, 공격 로직을 수행한 뒤 결과를 응답으로 전송
  * @param {net.Socket} socket
- * @param {{ unitId: int32, timestamp: int64, opponentUnitIds: Array<int32> }} payload
+ * @param {{ unitId: int32, opponentUnitIds: Array<int32> }} payload
  */
 const attackUnitRequest = (socket, payload) => {
   try {
     const { unitId, opponentUnitIds } = payload;
+    const timestamp = Date.now();
 
     const { userGameData, opponentGameData, opponentSocket, gameSession } =
       checkSessionInfo(socket);
@@ -29,9 +30,10 @@ const attackUnitRequest = (socket, payload) => {
       opponentUnitIds,
       opponentGameData,
       gameSession,
+      timestamp,
     );
 
-    attackUnit.resetLastAttackTime(Date.now());
+    attackUnit.resetLastAttackTime(timestamp);
 
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       unitInfos: opponentUnitInfos,
@@ -113,13 +115,14 @@ const sendDeathNotifications = (socket, opponentSocket, deathNotifications) => {
  * @param {Array<int32>} opponentUnitIds
  * @param {PlayerGameData} opponentGameData
  * @param {Game} gameSession
+ * @param {int64} timestamp
  * @returns {{ opponentUnitInfos: Array<{ unitId: number, unitHp: number }>, deathNotifications: Array<int32> }}
  */
-const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSession) => {
+const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSession, timestamp) => {
   const opponentUnitInfos = [];
   const deathNotifications = [];
 
-  if (attackUnit.isAttackAvailable(Date.now())) {
+  if (attackUnit.isAttackAvailable(timestamp)) {
     for (const opponentUnitId of opponentUnitIds) {
       const targetUnit = opponentGameData.getUnit(opponentUnitId);
 
@@ -129,8 +132,8 @@ const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSessio
 
       if (targetUnit.getHp() <= 0) {
         processingDeath(
-          targetUnit,
           opponentGameData,
+          targetUnit,
           opponentUnitId,
           gameSession,
           deathNotifications,

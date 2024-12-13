@@ -12,19 +12,20 @@ import validateTarget from '../../utils/unit/validationTarget.js';
 /**
  * 클라이언트로부터 힐 요청을 처리하고, 회복된 체력을 응답으로 전송
  * @param {net.Socket} socket
- * @param {{ unitId: int32, timestamp: int64, targetId: int32, healAmount: int32 }} payload
+ * @param {{ unitId: int32, targetId: int32, healAmount: int32 }} payload
  */
 const healUnitRequest = (socket, payload) => {
   try {
-    const { unitId, timestamp, targetId, healAmount: initialHealAmount } = payload;
+    const { unitId, targetId, healAmount: initialHealAmount } = payload;
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
+    const timestamp = Date.now();
 
     const healerUnit = validateHealerUnit(userGameData, unitId);
 
     const targetUnit = getTargetUnit(userGameData, targetId);
 
-    const healAmount = calculateHealAmount(healerUnit, targetUnit, initialHealAmount);
-    const afterHealHp = applyHealing(healerUnit, targetUnit, healAmount);
+    const healAmount = calculateHealAmount(healerUnit, targetUnit, initialHealAmount, timestamp);
+    const afterHealHp = applyHealing(healerUnit, targetUnit, healAmount, timestamp);
 
     sendPacket(socket, PACKET_TYPE.HEAL_UNIT_RESPONSE, {
       unitId: targetId,
@@ -78,10 +79,11 @@ const getTargetUnit = (userGameData, targetId) => {
  * @param {Unit} healerUnit
  * @param {Unit} targetUnit
  * @param {int32} initialHealAmount
+ * @param {int64} timestamp
  * @returns {int32}
  */
-const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount) => {
-  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(Date.now())) {
+const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount, timestamp) => {
+  if (!validateTarget(healerUnit, targetUnit) || !healerUnit.isSkillAvailable(timestamp)) {
     return 0;
   }
   return initialHealAmount;
@@ -92,11 +94,12 @@ const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount) => {
  * @param {Unit} healerUnit
  * @param {Unit} targetUnit
  * @param {int32} healAmount
+ * @param {int64} timestamp
  * @returns {int32}
  */
-const applyHealing = (healerUnit, targetUnit, healAmount) => {
+const applyHealing = (healerUnit, targetUnit, healAmount, timestamp) => {
   const afterHealHp = targetUnit.applyHeal(healAmount);
-  healerUnit.resetLastSkillTime(Date.now()); // 스킬 사용 시간 초기화
+  healerUnit.resetLastSkillTime(timestamp); // 스킬 사용 시간 초기화
   return afterHealHp;
 };
 
