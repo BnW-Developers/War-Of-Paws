@@ -204,12 +204,10 @@ class Unit {
 
   /**
    * 유닛의 체력을 회복
-   * @param {int32} healPercentage - 회복할 체력의 비율(0~100)
+   * @param {int32} healAmount - 회복할 고정 체력량
    * @returns {int32} - 회복 후 유닛의 현재 체력
    */
-  applyHeal(healPercentage) {
-    const healAmount = Math.floor(this.maxHp * (healPercentage / 100));
-
+  applyHeal(healAmount) {
     // 현재 체력에 회복량을 더하고 최대 체력을 초과하지 않도록 설정
     this.hp = Math.min(this.hp + healAmount, this.maxHp);
 
