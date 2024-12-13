@@ -112,21 +112,26 @@ const attackSpellRequest = (socket, payload) => {
 };
 
 const processDeath = (unit, gameData, gameSession, notifications) => {
+  // 검증: 중복 사망처리
   if (unit.isDead()) {
     if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`이미 사망한 유닛입니다: ${unitId}`);
     return;
   }
 
-  unit.markAsDead(); // 플래그 설정
+  // 사망 플래그 설정
+  unit.markAsDead();
+
+  // 점령지 현황 업데이트
   const checkPointManager = gameSession.getCheckPointManager();
   const unitId = unit.getUnitId();
   if (checkPointManager.isExistUnit(unitId)) {
     checkPointManager.removeUnit(unitId);
   }
 
-  gameData.removeUnit(unitId); // 데이터 삭제
-  notifications.push(unitId); // 사망 알림
+  // 서버 내 유닛 데이터 삭제
+  gameData.removeUnit(unitId);
+  // 패킷에 사망한 유닛ID 추가
+  notifications.unitIds.push(unitId);
 };
-
 
 export default attackSpellRequest;
