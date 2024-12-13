@@ -11,6 +11,7 @@ import {
   LOG_ENABLED_SPELL_REQUEST,
   LOG_ENABLED_SPELL_OUT_OF_RANGE,
   LOG_ENABLED_SPELL_PAYLOAD,
+  LOG_ENABLED_UNIT_ALREADY_DEAD,
 } from '../../utils/log/logSwitch';
 
 /**
@@ -112,7 +113,7 @@ const attackSpellRequest = (socket, payload) => {
 
 const processDeath = (unit, gameData, session, notifications) => {
   if (unit.isDead()) {
-    logger.info(`Unit ${unitId} is already dead.`);
+    if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`이미 사망한 유닛입니다: ${unitId}`);
     return false;
   }
 

@@ -10,3 +10,6 @@ export const LOG_ENABLED_UPDATE_DESTINATION = false;
 export const LOG_ENABLED_SPELL_REQUEST = false;
 export const LOG_ENABLED_SPELL_PAYLOAD = false;
 export const LOG_ENABLED_SPELL_OUT_OF_RANGE = false;
+
+// 유닛 사망
+export const LOG_ENABLED_UNIT_ALREADY_DEAD = false;
