@@ -58,9 +58,7 @@ const attackSpellRequest = (socket, payload) => {
         }
 
         // 검증: 스펠 사정거리
-        const unitPosition = unit.getPosition();
-        const withinRange = isWithinRange(center.position, unitPosition, range);
-        if (!withinRange) {
+        if (!isWithinRange(center.position, unit.getPosition(), range)) {
           if (LOG_ENABLED_SPELL_OUT_OF_RANGE)
             logger.info(`유닛 ${unitId}에 대한 공격 스펠 실패: 사정거리 초과`);
           continue;
