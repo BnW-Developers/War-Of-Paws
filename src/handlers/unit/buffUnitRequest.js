@@ -12,18 +12,18 @@ import validateTarget from '../../utils/unit/validationTarget.js';
 /**
  * 클라이언트로부터 버프 요청을 처리하고, 대상 유닛에 버프를 적용한 뒤 응답을 전송
  * @param {net.socket} socket
- * @param {{ unitId: int32, timestamp: int64, targetIds: Array<int32>, buffAmount: int32, buffDuration: int32 }} payload
+ * @param {{ unitId: int32, targetIds: Array<int32>, buffAmount: int32, buffDuration: int32 }} payload
  */
 const buffUnitRequest = (socket, payload) => {
   try {
     const {
       unitId,
-      timestamp,
       targetIds,
       buffAmount: initialBuffAmount,
       buffDuration: initialBuffDuration,
     } = payload;
 
+    const timestamp = Date.now();
     let buffAmount = initialBuffAmount;
     let buffDuration = initialBuffDuration;
 
@@ -37,9 +37,10 @@ const buffUnitRequest = (socket, payload) => {
       userGameData,
       buffAmount,
       buffDuration,
+      timestamp,
     );
 
-    bufferUnit.resetLastSkillTime(Date.now());
+    bufferUnit.resetLastSkillTime(timestamp);
 
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,
@@ -83,12 +84,20 @@ const getValidatedBufferUnit = (userGameData, unitId) => {
  * @param {PlayerGameData} userGameData
  * @param {int32} buffAmount
  * @param {int32} buffDuration
+ * @param {int64} timestamp
  * @returns {Array<int32>} // 버프 받은 유닛 배열
  */
-const applyBuffToTargets = (bufferUnit, targetIds, userGameData, buffAmount, buffDuration) => {
+const applyBuffToTargets = (
+  bufferUnit,
+  targetIds,
+  userGameData,
+  buffAmount,
+  buffDuration,
+  timestamp,
+) => {
   const affectedUnits = [];
 
-  if (bufferUnit.isSkillAvailable(Date.now())) {
+  if (bufferUnit.isSkillAvailable(timestamp)) {
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
 
