@@ -1,5 +1,5 @@
-import Game from '../../classes/models/game.class.js';
-import PlayerGameData from '../../classes/models/playerGameData.class.js';
+import Game from '../../classes/models/game.class.js'; // eslint-disable-line
+import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
 import { ASSET_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';

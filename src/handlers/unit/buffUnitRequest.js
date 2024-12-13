@@ -1,5 +1,5 @@
-import PlayerGameData from '../../classes/models/playerGameData.class.js';
-import Unit from '../../classes/models/unit.class.js';
+import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
+import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { UNIT_TYPE } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
