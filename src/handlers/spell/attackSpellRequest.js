@@ -114,7 +114,7 @@ const attackSpellRequest = (socket, payload) => {
 const processDeath = (unit, gameData, session, notifications) => {
   if (unit.isDead()) {
     if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`이미 사망한 유닛입니다: ${unitId}`);
-    return false;
+    return;
   }
 
   unit.markAsDead(); // 플래그 설정
@@ -127,7 +127,6 @@ const processDeath = (unit, gameData, session, notifications) => {
   gameData.removeUnit(unitId); // 데이터 삭제
   notifications.push(unitId); // 사망 알림
   logger.info(`Unit ${unitId} death processing is done.`);
-  return true;
 };
 
 
