@@ -15,6 +15,9 @@ import {
   HOST,
   PEPPER,
   PORT,
+  REDIS_HOST,
+  REDIS_PASSWORD,
+  REDIS_PORT,
   SALT,
   SECRET_KEY,
 } from '../constants/env.js';
@@ -55,6 +58,11 @@ export const config = {
       password: DB2_PASSWORD,
       host: DB2_HOST,
       port: DB2_PORT,
+    },
+    redis: {
+      host: REDIS_HOST,
+      password: REDIS_PASSWORD,
+      port: REDIS_PORT,
     },
   },
   auth: {
