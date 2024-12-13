@@ -10,6 +10,7 @@ import isWithinRange from '../../utils/spell/isWithinRange.js';
 import {
   LOG_ENABLED_SPELL_REQUEST,
   LOG_ENABLED_SPELL_OUT_OF_RANGE,
+  LOG_ENABLED_SPELL_PAYLOAD,
 } from '../../utils/log/logSwitch';
 
 /**
@@ -31,6 +32,13 @@ const attackSpellRequest = (socket, payload) => {
     if (LOG_ENABLED_SPELL_REQUEST)
       logger.info(
         `${species} 플레이어가 공격 스펠 요청\n    대상 유닛: ${JSON.stringify(unitIds)}`,
+      );
+
+    if (LOG_ENABLED_SPELL_PAYLOAD)
+      console.log(
+        `공격 스펠 payload:\n` +
+          `    center: ${JSON.stringify(center, null, 4)}` +
+          `    unitIds: ${JSON.stringify(unitIds, null, 4)}`,
       );
 
     // 전송할 패킷 데이터
