@@ -129,8 +129,8 @@ const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSessio
 
       if (targetUnit.getHp() <= 0) {
         processingDeath(
-          targetUnit,
           opponentGameData,
+          targetUnit,
           opponentUnitId,
           gameSession,
           deathNotifications,

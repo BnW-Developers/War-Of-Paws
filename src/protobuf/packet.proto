@@ -156,7 +156,6 @@ message C2SGameEndNotification {
 
 message C2SLocationNotification {
   repeated UnitPosition unitPositions = 1;
-  int64 timestamp = 2;
 }
 
 message S2CLocationSyncNotification {
