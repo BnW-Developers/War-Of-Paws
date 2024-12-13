@@ -332,12 +332,16 @@ class Unit {
   /**
    * 목표 유닛이 사거리 밖에 있는지 확인
    * @param {Unit} targetUnit 대상 유닛
-   * @returns {boolean} 사거리 밖 여부
+   * @returns {{outOfRange: boolean, distance: float, attackRange: float}} 사거리 확인 결과
    */
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
-    return distance > attackRange;
+    return {
+      outOfRange: distance > attackRange,
+      distance,
+      attackRange,
+    };
   }
 }
 
