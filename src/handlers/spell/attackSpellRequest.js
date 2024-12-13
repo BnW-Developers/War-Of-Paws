@@ -77,7 +77,7 @@ const attackSpellRequest = (socket, payload) => {
 
         // 유닛 사망처리
         if (targetUnit.getHp() <= 0) {
-          processingDeath(targetUnit, opponentGameData, unitId, gameSession, deathNotifications);
+          processDeath(targetUnit, opponentGameData, unitId, gameSession, deathNotifications);
         }
 
         // 공격당한 유닛 정보 추가
@@ -110,7 +110,7 @@ const attackSpellRequest = (socket, payload) => {
   }
 };
 
-const processingDeath = (unit, gameData, unitId, session, notifications) => {
+const processDeath = (unit, gameData, unitId, session, notifications) => {
   if (unit.isDead()) {
     logger.info(`Unit ${unitId} is already dead.`);
     return false;
