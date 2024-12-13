@@ -8,4 +8,5 @@ export const LOG_ENABLED_UPDATE_DESTINATION = false;
 
 // 플레이어 스펠
 export const LOG_ENABLED_SPELL_REQUEST = false;
+export const LOG_ENABLED_SPELL_PAYLOAD = false;
 export const LOG_ENABLED_SPELL_OUT_OF_RANGE = false;
