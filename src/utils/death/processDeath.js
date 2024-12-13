@@ -32,7 +32,7 @@ const processDeath = (unit, gameSession, gameData, packetData) => {
   gameData.removeUnit(unitId);
 
   // 패킷에 사망한 유닛ID 추가
-  packetData.unitIds.push({ unitId });
+  packetData.unitIds.push(unitId);
 };
 
 export default processDeath;
