@@ -1,7 +1,7 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
-  RANGE_ERROR_MARGIN,
   INITIAL_UNIT_ROTATION,
+  RANGE_ERROR_MARGIN,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
@@ -223,7 +223,7 @@ class Unit {
    */
   applyBuff(buffAmount, duration) {
     this.currentCooldown /= buffAmount; // 쿨타임 감소
-    
+
     this.buffed = true;
 
     // 일정 시간 후 버프 해제
@@ -337,8 +337,6 @@ class Unit {
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
-    console.log('distance between units:', distance);
-    console.log('attackUnit attack range(error margin version)', attackRange);
     return distance > attackRange;
   }
 }
