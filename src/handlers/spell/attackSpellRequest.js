@@ -69,7 +69,7 @@ const attackSpellRequest = (socket, payload) => {
 
         // 유닛 사망처리
         if (unit.getHp() <= 0) {
-          processingDeath(unit, opponentGameData, unit, gameSession, deathNotifications);
+          processingDeath(unit, opponentGameData, unitId, gameSession, deathNotifications);
         }
 
         // 공격당한 유닛 정보 추가
