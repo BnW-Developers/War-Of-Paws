@@ -9,13 +9,15 @@
       "Description": "기본 유닛",
       "cost": 20,
       "maxHp": 100,
-      "atk": 20,
-      "atkRange": 1.5,
+      "atk": 10,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
       "spd": 2,
       "type": "normal",
       "tier": 1,
-      "eliteId": 3001
+      "eliteId": 3001,
+      "scale": 1.0
     },
     {
       "id": 3001,
@@ -23,12 +25,14 @@
       "DisplayName": "엘리트 비글",
       "Description": "비글 유닛의 강화 버전",
       "maxHp": 300,
-      "atk": 60,
-      "atkRange": 1.5,
+      "atk": 30,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
       "spd": 2,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "scale": 2.0
     },
     {
       "id": 2002,
@@ -37,13 +41,15 @@
       "Description": "빠른 정찰 유닛",
       "cost": 40,
       "maxHp": 120,
-      "atk": 20,
-      "atkRange": 1.5,
+      "atk": 10,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
-      "spd": 2,
+      "spd": 4,
       "type": "normal",
       "tier": 1,
-      "eliteId": 3002
+      "eliteId": 3002,
+      "scale": 1.0
     },
     {
       "id": 3002,
@@ -51,12 +57,14 @@
       "DisplayName": "엘리트 보더 콜리",
       "Description": "보더 콜리 유닛의 강화 버전",
       "maxHp": 360,
-      "atk": 60,
-      "atkRange": 1.5,
+      "atk": 30,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
-      "spd": 2,
+      "spd": 4,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "scale": 2.0
     },
     {
       "id": 2003,
@@ -66,12 +74,14 @@
       "cost": 50,
       "maxHp": 80,
       "atk": 40,
-      "atkRange": 1.8,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
       "spd": 4,
       "type": "normal",
-      "tier": 1,
-      "eliteId": 3003
+      "tier": 2,
+      "eliteId": 3003,
+      "scale": 1.25
     },
     {
       "id": 3003,
@@ -80,11 +90,13 @@
       "Description": "불 테리어 유닛의 강화 버전",
       "maxHp": 240,
       "atk": 120,
-      "atkRange": 1.8,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
       "spd": 4,
       "type": "normal",
-      "tier": 1
+      "tier": 2,
+      "scale": 2.0
     },
     {
       "id": 2004,
@@ -93,13 +105,15 @@
       "Description": "느린 공격속도, 매우 아픈 공격",
       "cost": 70,
       "maxHp": 150,
-      "atk": 80,
+      "atk": 40,
       "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 3000,
       "spd": 2,
       "type": "normal",
       "tier": 3,
-      "eliteId": 3004
+      "eliteId": 3004,
+      "scale": 1.5
     },
     {
       "id": 3004,
@@ -107,12 +121,14 @@
       "DisplayName": "엘리트 저먼 셰퍼드",
       "Description": "저먼 셰퍼드 유닛의 강화 버전",
       "maxHp": 450,
-      "atk": 240,
+      "atk": 120,
       "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1000,
       "spd": 2,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "scale": 2.0
     },
     {
       "id": 2005,
@@ -121,13 +137,15 @@
       "Description": "강아지 중에 제일 좋은 유닛",
       "cost": 100,
       "maxHp": 250,
-      "atk": 70,
+      "atk": 30,
       "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
       "spd": 3,
       "type": "normal",
       "tier": 3,
-      "eliteId": 3005
+      "eliteId": 3005,
+      "scale": 1.5
     },
     {
       "id": 3005,
@@ -135,12 +153,14 @@
       "DisplayName": "엘리트 도베르만",
       "Description": "도베르만 유닛의 강화 버전",
       "maxHp": 750,
-      "atk": 210,
+      "atk": 90,
       "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
       "spd": 3,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "scale": 2.0
     },
     {
       "id": 2006,
@@ -150,15 +170,17 @@
       "cost": 80,
       "maxHp": 100,
       "atk": 0,
-      "atkRange": 3.0,
-      "cd": 0,
+      "atkRange": 5.0,
+      "searchingRange": 6.0,
+      "cd": 1000000,
       "spd": 2,
       "type": "buffer",
       "tier": 2,
       "eliteId": 3006,
       "skillCd": 3000,
       "buffAmount": 2,
-      "buffDuration": 3000
+      "buffDuration": 3000,
+      "scale": 1.25
     },
     {
       "id": 3006,
@@ -167,14 +189,16 @@
       "Description": "세인트 버나드 유닛의 강화 버전",
       "maxHp": 300,
       "atk": 0,
-      "atkRange": 3.0,
-      "cd": 0,
+      "atkRange": 5.0,
+      "searchingRange": 6.0,
+      "cd": 1000000,
       "spd": 2,
       "type": "buffer",
       "tier": 2,
       "skillCd": 3000,
       "buffAmount": 2,
-      "buffDuration": 3000
+      "buffDuration": 3000,
+      "scale": 2.0
     },
     {
       "id": 2007,
@@ -184,12 +208,14 @@
       "cost": 50,
       "maxHp": 150,
       "atk": 25,
-      "atkRange": 1.5,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
       "spd": 1,
       "type": "normal",
       "tier": 1,
-      "eliteId": 3007
+      "eliteId": 3007,
+      "scale": 1.0
     },
     {
       "id": 3007,
@@ -198,11 +224,13 @@
       "Description": "재패니즈 밥테일 유닛의 강화 버전",
       "maxHp": 450,
       "atk": 75,
-      "atkRange": 1.5,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
       "spd": 1,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "scale": 2.0
     },
     {
       "id": 2008,
@@ -212,12 +240,14 @@
       "cost": 80,
       "maxHp": 160,
       "atk": 25,
-      "atkRange": 1.5,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1500,
       "spd": 4,
       "type": "normal",
       "tier": 1,
-      "eliteId": 3008
+      "eliteId": 3008,
+      "scale": 1.0
     },
     {
       "id": 3008,
@@ -226,11 +256,13 @@
       "Description": "태비 유닛의 강화 버전",
       "maxHp": 480,
       "atk": 75,
-      "atkRange": 1.5,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 500,
       "spd": 4,
       "type": "normal",
-      "tier": 1
+      "tier": 1,
+      "scale": 2.0
     },
     {
       "id": 2009,
@@ -240,12 +272,14 @@
       "cost": 120,
       "maxHp": 120,
       "atk": 30,
-      "atkRange": 1.8,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 1000,
       "spd": 2,
       "type": "normal",
       "tier": 3,
-      "eliteId": 3009
+      "eliteId": 3009,
+      "scale": 1.5
     },
     {
       "id": 3009,
@@ -254,11 +288,13 @@
       "Description": "페르시안 유닛의 강화 버전",
       "maxHp": 360,
       "atk": 90,
-      "atkRange": 1.8,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
       "cd": 0.333,
       "spd": 1,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "scale": 2.0
     },
     {
       "id": 2010,
@@ -268,14 +304,16 @@
       "cost": 140,
       "maxHp": 100,
       "atk": 0,
-      "atkRange": 2.5,
-      "cd": 0,
+      "atkRange": 5.0,
+      "searchingRange": 6.0,
+      "cd": 1000000,
       "spd": 2,
       "type": "healer",
       "tier": 2,
       "eliteId": 3010,
       "skillCd": 5000,
-      "healAmount": 50
+      "healAmount": 70,
+      "scale": 1.25
     },
     {
       "id": 3010,
@@ -284,13 +322,15 @@
       "Description": "러시안 블루 유닛의 강화 버전",
       "maxHp": 300,
       "atk": 0,
-      "atkRange": 2.5,
-      "cd": 0,
+      "atkRange": 5.0,
+      "searchingRange": 6.0,
+      "cd": 1000000,
       "spd": 2,
       "type": "healer",
       "tier": 2,
       "skillCd": 5000,
-      "healAmount": 100
+      "healAmount": 100,
+      "scale": 2.0
     },
     {
       "id": 2011,
@@ -300,12 +340,14 @@
       "cost": 180,
       "maxHp": 150,
       "atk": 25,
-      "atkRange": 2.5,
+      "atkRange": 4.0,
+      "searchingRange": 5.0,
       "cd": 1500,
       "spd": 4,
       "type": "normal",
       "tier": 3,
-      "eliteId": 3011
+      "eliteId": 3011,
+      "scale": 1.5
     },
     {
       "id": 3011,
@@ -314,11 +356,13 @@
       "Description": "샴 유닛의 강화 버전",
       "maxHp": 450,
       "atk": 75,
-      "atkRange": 2.5,
+      "atkRange": 4.0,
+      "searchingRange": 5.0,
       "cd": 500,
       "spd": 2,
       "type": "normal",
-      "tier": 3
+      "tier": 3,
+      "scale": 2.0
     },
     {
       "id": 2012,
@@ -326,27 +370,31 @@
       "DisplayName": "스핑크스",
       "Description": "체력 높은 탱커",
       "cost": 160,
-      "maxHp": 300,
-      "atk": 0,
-      "atkRange": 1.2,
-      "cd": 0,
+      "maxHp": 350,
+      "atk": 5,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
+      "cd": 1000,
       "spd": 1,
       "type": "normal",
       "tier": 2,
-      "eliteId": 3012
+      "eliteId": 3012,
+      "scale": 1.25
     },
     {
       "id": 3012,
       "species": "cat",
       "DisplayName": "엘리트 스핑크스",
       "Description": "스핑크스 유닛의 강화 버전",
-      "maxHp": 900,
-      "atk": 0,
-      "atkRange": 1.2,
-      "cd": 0,
-      "spd": 0.5,
+      "maxHp": 1050,
+      "atk": 15,
+      "atkRange": 2.0,
+      "searchingRange": 3.0,
+      "cd": 1000,
+      "spd": 1,
       "type": "normal",
-      "tier": 2
+      "tier": 2,
+      "scale": 2.0
     }
   ]
 }
