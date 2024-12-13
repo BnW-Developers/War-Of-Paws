@@ -43,8 +43,8 @@ const attackSpellRequest = (socket, payload) => {
       );
 
     // 전송할 패킷 데이터
-    const opponentUnitInfos = { unitInfos: [] };
-    const deathNotifications = { unitIds: [] };
+    const attackSpellPacketData = { unitInfos: [] };
+    const unitDeathPacketData = { unitIds: [] };
 
     // 스펠 데이터 조회
     const { damage, range } = userGameData.getSpellData(SPELL_TYPE.ATTACK);
@@ -78,30 +78,30 @@ const attackSpellRequest = (socket, payload) => {
 
         // 유닛 사망처리
         if (targetUnit.getHp() <= 0) {
-          processDeath(targetUnit, opponentGameData, unitId, gameSession, deathNotifications);
+          processDeath(targetUnit, opponentGameData, unitId, gameSession, unitDeathPacketData);
         }
 
         // 피격 유닛 정보 패킷에 추가
-        opponentUnitInfos.unitInfos.push({ unitId, unitHp: resultHp });
+        attackSpellPacketData.unitInfos.push({ unitId, unitHp: resultHp });
       }
     }
 
     // 응답 패킷 전송
-    sendPacket(socket, PACKET_TYPE.ATTACK_SPELL_RESPONSE, opponentUnitInfos);
+    sendPacket(socket, PACKET_TYPE.ATTACK_SPELL_RESPONSE, attackSpellPacketData);
     // 상대방 알림 패킷 전송
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_SPELL_NOTIFICATION, opponentUnitInfos);
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_SPELL_NOTIFICATION, attackSpellPacketData);
 
     // 사망 패킷 전송
-    if (deathNotifications.unitIds.length > 0) {
-      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, deathNotifications);
-      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, deathNotifications);
+    if (unitDeathPacketData.unitIds.length > 0) {
+      sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, unitDeathPacketData);
+      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, unitDeathPacketData);
     }
   } catch (error) {
     handleErr(socket, error);
   }
 };
 
-const processDeath = (unit, gameData, gameSession, notifications) => {
+const processDeath = (unit, gameData, gameSession, packetData) => {
   // 검증: 중복 사망처리
   if (unit.isDead()) {
     if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`이미 사망한 유닛입니다: ${unitId}`);
@@ -121,7 +121,7 @@ const processDeath = (unit, gameData, gameSession, notifications) => {
   // 서버 내 유닛 데이터 삭제
   gameData.removeUnit(unitId);
   // 패킷에 사망한 유닛ID 추가
-  notifications.unitIds.push({ unitId });
+  packetData.unitIds.push({ unitId });
 };
 
 export default attackSpellRequest;
