@@ -24,7 +24,7 @@
       "id": 7003,
       "DisplayName": "버프 스펠",
       "Description": "",
-      "atkUp": 10,
+      "buffAmount": 10,
       "range": 1.5,
       "duration": 10000,
       "cd": 30000,
