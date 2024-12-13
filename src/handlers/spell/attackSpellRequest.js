@@ -44,7 +44,7 @@ const attackSpellRequest = (socket, payload) => {
     const spellAvailable = userGameData.isSpellAvailable(SPELL_TYPE.ATTACK, timestamp);
     if (spellAvailable) {
       // 스펠 쿨타임 초기화
-      userGameData.resetLastSpellTime(timestamp);
+      userGameData.resetLastSpellTime(SPELL_TYPE.ATTACK, timestamp);
 
       // 대상 유닛 처리
       for (const unitId of unitIds) {
