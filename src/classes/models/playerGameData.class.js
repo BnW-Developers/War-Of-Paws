@@ -239,10 +239,11 @@ class PlayerGameData {
 
     // 쿨타임이 안된다면 로그 출력 & false 반환
     if (elapsed < requiredTime) {
-      logger.info(
-        `아직 ${SPELL_TYPE_REVERSED[spellType]} 스펠을 사용할 수 없습니다` +
-          ` (남은 시간: ${requiredTime - elapsed}ms)`,
-      );
+      if (LOG_ENABLED_SPELL_COOLDOWN)
+        logger.info(
+          `아직 ${SPELL_TYPE_REVERSED[spellType]} 스펠을 사용할 수 없습니다` +
+            ` (남은 시간: ${requiredTime - elapsed}ms)`,
+        );
       return false;
     }
 
