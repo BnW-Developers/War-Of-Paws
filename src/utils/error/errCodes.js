@@ -86,4 +86,5 @@ export const ERR_CODES = {
 
   // 스펠 관련
   SPELL_INSUFFICIENT_FUNDS: 11600, // 자금 부족
+  SPELL_ON_COOLDOWN: 11601, // 쿨타임 대기중
 };

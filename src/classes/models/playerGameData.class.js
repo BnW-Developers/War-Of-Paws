@@ -12,7 +12,6 @@ import Unit from './unit.class.js';
 import { SPELL_TYPE } from '../../constants/assets.js';
 import isWithinRange from '../../utils/spell/isWithinRange.js';
 import initializeSpellPacketData from '../../utils/spell/spellPacket.js';
-import { LOG_ENABLED_SPELL_COOLDOWN } from '../../utils/log/logSwitch.js';
 import identifyTarget from '../../utils/unit/identifyTarget.js';
 import applySpell from '../../utils/spell/applySpell.js';
 import CustomErr from '../../utils/error/customErr.js';
@@ -232,9 +231,8 @@ class PlayerGameData {
    * 스펠 쿨타임 대기중인지 확인
    * @param {SPELL_TYPE} spellType 사용할 스펠타입
    * @param {int64} timestamp 스펠 시전시간
-   * @returns {boolean}
    */
-  isSpellAvailable(spellType, timestamp) {
+  checkSpellCooldown(spellType, timestamp) {
     // 검증: 스펠 타입
     const spell = this.spells.get(spellType);
     if (!spell) {
@@ -246,15 +244,12 @@ class PlayerGameData {
 
     // 쿨타임이 안된다면 로그 출력 & false 반환
     if (elapsed < requiredTime) {
-      if (LOG_ENABLED_SPELL_COOLDOWN)
-        logger.info(
-          `아직 ${SPELL_TYPE_REVERSED[spellType]} 스펠을 사용할 수 없습니다` +
-            ` (남은 시간: ${requiredTime - elapsed}ms)`,
-        );
-      return false;
+      throw new CustomErr(
+        ERR_CODES.SPELL_ON_COOLDOWN,
+        `아직 ${SPELL_TYPE_REVERSED[spellType]} 스펠을 사용할 수 없습니다` +
+          ` (남은 시간: ${requiredTime - elapsed}ms)`,
+      );
     }
-
-    return true;
   }
 
   /**
@@ -315,10 +310,7 @@ class PlayerGameData {
     const packetData = initializeSpellPacketData(spellType);
 
     // 검증: 스펠 쿨타임
-    const spellAvailable = this.isSpellAvailable(spellType, timestamp);
-    if (!spellAvailable) {
-      return;
-    }
+    this.checkSpellCooldown(spellType, timestamp);
 
     // 스펠 쿨타임 초기화
     this.resetLastSpellTime(spellType, timestamp);
