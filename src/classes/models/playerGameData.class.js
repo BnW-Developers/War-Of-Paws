@@ -304,7 +304,7 @@ class PlayerGameData {
       spellType === SPELL_TYPE.ATTACK || spellType === SPELL_TYPE.STUN ? true : false;
 
     // 스펠 데이터 조회
-    const spellData = this.getSpellData(spellType);
+    const spell = this.getSpellData(spellType);
 
     // 전송할 패킷 데이터
     const packetData = initializeSpellPacketData(spellType);
@@ -316,7 +316,7 @@ class PlayerGameData {
     this.resetLastSpellTime(spellType, timestamp);
 
     // 검증: 소모할 자원
-    const spellCost = spellData.cost;
+    const spellCost = spell.cost;
     if (this.getMineral() < spellCost) {
       throw new CustomErr(
         ERR_CODES.SPELL_INSUFFICIENT_FUNDS,
@@ -333,8 +333,8 @@ class PlayerGameData {
       const targetUnit = identifyTarget(unitId, isOffensive, sessionInfo);
 
       // 검증: 스펠 사정거리
-      if (isWithinRange(targetUnit, centerPos, spellData.range, spellType)) {
-        applySpell(targetUnit, spellType, spellData, packetData, sessionInfo);
+      if (isWithinRange(targetUnit, centerPos, spell.range, spellType)) {
+        applySpell(targetUnit, spellType, spell, packetData, sessionInfo);
       }
     }
 
