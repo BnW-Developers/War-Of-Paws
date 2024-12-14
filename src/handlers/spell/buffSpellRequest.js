@@ -4,11 +4,7 @@ import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/log/logger.js';
-import {
-  LOG_ENABLED_SPELL_OUT_OF_RANGE,
-  LOG_ENABLED_SPELL_PAYLOAD,
-  LOG_ENABLED_SPELL_REQUEST,
-} from '../../utils/log/logSwitch.js';
+import { LOG_ENABLED_SPELL_PAYLOAD, LOG_ENABLED_SPELL_REQUEST } from '../../utils/log/logSwitch.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import isWithinRange from '../../utils/spell/isWithinRange.js';
@@ -68,17 +64,13 @@ const buffSpellRequest = (socket, payload) => {
         }
 
         // 검증: 스펠 사정거리
-        if (!isWithinRange(center.position, targetUnit.getPosition(), range)) {
-          if (LOG_ENABLED_SPELL_OUT_OF_RANGE)
-            logger.info(`유닛 ${unitId}에 대한 버프 스펠 실패: 사정거리 초과`);
-          continue;
+        if (isWithinRange(targetUnit, center.position, range, SPELL_TYPE.BUFF)) {
+          // 버프 적용
+          targetUnit.applyBuff(buffAmount);
+
+          // 버프받은 유닛 정보 패킷에 추가
+          packetData.unitIds.push(unitId);
         }
-
-        // 버프 적용
-        targetUnit.applyBuff(buffAmount);
-
-        // 버프받은 유닛 정보 패킷에 추가
-        packetData.unitIds.push(unitId);
       }
 
       // 응답 패킷 전송
