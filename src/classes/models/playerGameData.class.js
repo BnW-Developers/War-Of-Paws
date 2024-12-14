@@ -7,8 +7,6 @@ import {
 } from '../../constants/game.constants.js';
 import Game from './game.class.js'; // eslint-disable-line
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/log/logger.js';
 import Unit from './unit.class.js';
 import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
@@ -233,7 +231,7 @@ class PlayerGameData {
     // 검증: 스펠 타입
     const spell = this.spells.get(spellType);
     if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
+      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
     }
 
     const elapsed = timestamp - spell.lastSpellTime; // 경과 시간 계산
@@ -259,7 +257,7 @@ class PlayerGameData {
   resetLastSpellTime(spellType, timestamp) {
     const spell = this.spells.get(spellType);
     if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
+      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
     }
 
     spell.lastSpellTime = timestamp;
@@ -275,7 +273,7 @@ class PlayerGameData {
   getSpellData(spellType) {
     const spell = this.spells.get(spellType);
     if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
+      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
     }
 
     return spell;
