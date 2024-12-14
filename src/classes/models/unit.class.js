@@ -75,7 +75,7 @@ class Unit {
 
   /**
    * 유닛 타입 반환
-   * @returns {string} "noraml" / "buffer" / "healer"
+   * @returns {string} "normal" / "buffer" / "healer"
    */
   getType() {
     return this.type;
