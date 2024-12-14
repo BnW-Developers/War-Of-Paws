@@ -233,11 +233,7 @@ class PlayerGameData {
    * @param {int64} timestamp 스펠 시전시간
    */
   checkSpellCooldown(spellType, timestamp) {
-    // 검증: 스펠 타입
-    const spell = this.spells.get(spellType);
-    if (!spell) {
-      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
-    }
+    const spell = this.getSpellData(spellType);
 
     const elapsed = timestamp - spell.lastSpellTime; // 경과 시간 계산
     const requiredTime = spell.cooldown - SPELL_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
@@ -258,11 +254,7 @@ class PlayerGameData {
    * @param {int64} timestamp 스펠 시전시간
    */
   resetLastSpellTime(spellType, timestamp) {
-    const spell = this.spells.get(spellType);
-    if (!spell) {
-      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
-    }
-
+    const spell = this.getSpellData(spellType);
     spell.lastSpellTime = timestamp;
   }
 
