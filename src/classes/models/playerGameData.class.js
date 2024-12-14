@@ -326,7 +326,7 @@ class PlayerGameData {
 
       // 검증: 스펠 사정거리
       if (isWithinRange(targetUnit, centerPos, spell.range, spellType)) {
-        applySpell(targetUnit, spellType, spell, packetData, sessionInfo);
+        applySpell(targetUnit, spell, packetData, sessionInfo);
       }
     }
 
