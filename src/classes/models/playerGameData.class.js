@@ -37,7 +37,7 @@ class PlayerGameData {
     this.capturedCheckPoints = [];
 
     /**
-     * @type { Map<SPELL_TYPE, { damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
+     * @type { Map<SPELL_TYPE, { type: SPELL_TYPE, damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
      */
     this.spells = initializeSpells();
   }
@@ -263,7 +263,7 @@ class PlayerGameData {
    *
    * 호출 예시: `const { buffAmount, range, duration, cost } = userGameData.getSpellData(SPELL_DATA.BUFF);`
    * @param {SPELL_TYPE} spellType 사용할 스펠타입
-   * @returns {{ damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }} 스펠 데이터
+   * @returns {{ type: SPELL_TYPE, damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }} 스펠 데이터
    */
   getSpellData(spellType) {
     const spell = this.spells.get(spellType);
