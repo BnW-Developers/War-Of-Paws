@@ -2,7 +2,6 @@ import gameSessionManager from '../../classes/managers/gameSessionManager.js';
 import userSessionManager from '../../classes/managers/userSessionManager.js';
 import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
-import { handleErr } from '../error/handlerErr.js';
 
 /**
  * 유저&게임세션 관련 정보들을 검증 및 조회

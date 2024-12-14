@@ -5,7 +5,7 @@ import {
   INITIAL_MINERAL_RATE,
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
-import Game from './game.class.js';
+import Game from './game.class.js'; // eslint-disable-line
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
