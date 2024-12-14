@@ -77,6 +77,9 @@ const attackSpellRequest = (socket, payload) => {
         }
       }
     }
+    // 자원 동기화 패킷 전송
+    const mineralSyncPacket = { mineral: userGameData.getMineral() };
+    sendPacket(socket, PACKET_TYPE.MINERAL_SYNC_NOTIFICATION, mineralSyncPacket);
 
     // 응답 패킷 전송
     sendPacket(socket, PACKET_TYPE.ATTACK_SPELL_RESPONSE, attackSpellPacketData);

@@ -83,4 +83,7 @@ export const ERR_CODES = {
   // 카드 관련
   INVALID_BUTTON_TYPE: 11500,
   MAX_CARDS_REACHED: 115001,
+
+  // 스펠 관련
+  SPELL_INSUFFICIENT_FUNDS: 11600, // 자금 부족
 };

@@ -15,6 +15,8 @@ import initializeSpellPacketData from '../../utils/spell/spellPacket.js';
 import { LOG_ENABLED_SPELL_COOLDOWN } from '../../utils/log/logSwitch.js';
 import identifyTarget from '../../utils/unit/identifyTarget.js';
 import applySpell from '../../utils/spell/applySpell.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
@@ -320,6 +322,19 @@ class PlayerGameData {
 
     // 스펠 쿨타임 초기화
     this.resetLastSpellTime(spellType, timestamp);
+
+    // 검증: 소모할 자원
+    const { userGameData } = sessionInfo;
+    const spellCost = spellData.cost;
+    if (userGameData.getMineral() < spellCost) {
+      throw new CustomErr(
+        ERR_CODES.SPELL_INSUFFICIENT_FUNDS,
+        '스펠을 사용하기 위한 자원이 부족합니다',
+      );
+    }
+
+    // 자원 소모
+    userGameData.spendMineral(spellCost);
 
     // 대상 유닛 처리
     for (const unitId of unitIds) {
