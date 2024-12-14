@@ -9,7 +9,12 @@ import Game from './game.class.js'; // eslint-disable-line
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import logger from '../../utils/log/logger.js';
 import Unit from './unit.class.js';
-import { SPELL_TYPE } from '../../constants/assets.js'; // eslint-disable-line
+import { SPELL_TYPE } from '../../constants/assets.js';
+import isWithinRange from '../../utils/spell/isWithinRange.js';
+import initializeSpellPacketData from '../../utils/spell/spellPacket.js';
+import { LOG_ENABLED_SPELL_COOLDOWN } from '../../utils/log/logSwitch.js';
+import identifyTarget from '../../utils/unit/identifyTarget.js';
+import applySpell from '../../utils/spell/applySpell.js';
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
@@ -278,6 +283,57 @@ class PlayerGameData {
     }
 
     return spell;
+  }
+
+  /**
+   * 스펠을 사용하고 결과 패킷 데이터 반환
+   *
+   * 호출 예시:
+   * - `const sessionInfo = { gameSession, userGameData, opponentGameData };`
+   * - 공격 스펠:
+   *   - `const { spellPacketData, unitDeathPacketData } = userGameData.castSpell(SPELL_TYPE.ATTACK, centerPos, unitIds, timestamp, sessionInfo);`
+   * - 버프 스펠:
+   *   - `const { spellPacketData } = userGameData.castSpell(SPELL_TYPE.BUFF, centerPos, unitIds, timestamp, sessionInfo);`
+   * @param {SPELL_TYPE} spellType 스펠 타입
+   * @param {{ x: float, z: float }} centerPos 스펠시전 위치
+   * @param {int32[]} unitIds 타겟 유닛ID
+   * @param {int64} timestamp 타임스탬프
+   * @param {{ gameSession: Game, userGameData: PlayerGameData, opponentGameData: PlayerGameData }} sessionInfo 세션 정보
+   * @returns {{ spellPacketData: {}, unitDeathPacketData?: {} }} 결과 패킷 데이터
+   */
+  castSpell(spellType, centerPos, unitIds, timestamp, sessionInfo) {
+    // 스펠 대상 (true: 적 대상 / false: 아군 대상 )
+    const isOffensive =
+      spellType === SPELL_TYPE.ATTACK || spellType === SPELL_TYPE.STUN ? true : false;
+
+    // 스펠 데이터 조회
+    const spellData = this.getSpellData(spellType);
+
+    // 전송할 패킷 데이터
+    const packetData = initializeSpellPacketData(spellType);
+
+    // 검증: 스펠 쿨타임
+    const spellAvailable = this.isSpellAvailable(spellType, timestamp);
+    if (!spellAvailable) {
+      return;
+    }
+
+    // 스펠 쿨타임 초기화
+    this.resetLastSpellTime(spellType, timestamp);
+
+    // 대상 유닛 처리
+    for (const unitId of unitIds) {
+      // 검증: 피아식별
+      const targetUnit = identifyTarget(unitId, isOffensive, sessionInfo);
+
+      // 검증: 스펠 사정거리
+      if (isWithinRange(targetUnit, centerPos, spellData.range, spellType)) {
+        applySpell(targetUnit, spellType, spellData, packetData, sessionInfo);
+      }
+    }
+
+    // 결과 패킷 데이터 반환
+    return packetData;
   }
 
   getBaseHp() {
