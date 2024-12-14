@@ -30,7 +30,10 @@ class Unit {
     this.attackPower = unitData.atk ?? 10;
     this.attackRange = unitData.atkRange ?? 1.5;
     this.speed = unitData.spd || 2;
+
+    // 상태 관련
     this.buffed = false;
+    this.stunned = false;
     this.dead = false;
 
     // 쿨타임 관련
@@ -229,6 +232,18 @@ class Unit {
     setTimeout(() => {
       this.cooldown = baseCooldown; // 원래 쿨타임 복구
       this.buffed = false;
+    }, duration);
+  }
+
+  applyStun(duration) {
+    const baseSpeed = this.speed;
+    this.speed = 0;
+    this.stunned = true;
+
+    // 일정 시간 후 스턴 해제
+    setTimeout(() => {
+      this.speed = baseSpeed;
+      this.stunned = false;
     }, duration);
   }
 
