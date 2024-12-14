@@ -4,7 +4,7 @@ import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
-import { LOG_ENABLED_SPELL_REQUEST, LOG_ENABLED_SPELL_PAYLOAD } from '../../utils/log/logSwitch';
+import { LOG_ENABLED_SPELL_REQUEST, LOG_ENABLED_SPELL_PAYLOAD } from '../../utils/log/logSwitch.js';
 
 /**
  * 공격 스펠 핸들러
