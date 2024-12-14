@@ -35,7 +35,6 @@ class Unit {
 
     // 쿨타임 관련
     this.cooldown = unitData.cd ?? 1000;
-    this.currentCooldown = unitData.cd ?? 1000;
     this.cost = unitData.cost ?? 0;
     this.skillCooldown = unitData.skillCd ?? 5000;
     this.lastAttackTime = 0;
@@ -145,12 +144,12 @@ class Unit {
    */
   isAttackAvailable(timestamp) {
     const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
-    const requiredTime = this.currentCooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
+    const requiredTime = this.cooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
     // 쿨타임이 안된다면 로그 출력 & false 반환
     if (elapsed < requiredTime) {
       logger.info(
-        `Attack not available: Unit ID ${this.unitId}, Current Cooldown: ${this.currentCooldown}, Remaining time: ${requiredTime - elapsed}`,
+        `Attack not available: Unit ID ${this.unitId}, Cooldown: ${this.cooldown}, Remaining time: ${requiredTime - elapsed}`,
       );
       return false;
     }
@@ -222,13 +221,13 @@ class Unit {
    * @param {int32} duration
    */
   applyBuff(buffAmount, duration) {
-    this.currentCooldown /= buffAmount; // 쿨타임 감소
-    
+    const baseCooldown = this.cooldown;
+    this.cooldown /= buffAmount; // 쿨타임 감소
     this.buffed = true;
 
     // 일정 시간 후 버프 해제
     setTimeout(() => {
-      this.currentCooldown = this.cooldown; // 원래 쿨타임 복구
+      this.cooldown = baseCooldown; // 원래 쿨타임 복구
       this.buffed = false;
     }, duration);
   }
