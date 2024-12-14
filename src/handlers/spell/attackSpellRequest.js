@@ -38,12 +38,12 @@ const attackSpellRequest = (socket, payload) => {
           `    unitIds: ${JSON.stringify(unitIds, null, 4)}`,
       );
 
+    // 스펠 데이터 조회
+    const { damage, range } = userGameData.getSpellData(SPELL_TYPE.ATTACK);
+
     // 전송할 패킷 데이터
     const attackSpellPacketData = { unitInfos: [] };
     const unitDeathPacketData = { unitIds: [] };
-
-    // 스펠 데이터 조회
-    const { damage, range } = userGameData.getSpellData(SPELL_TYPE.ATTACK);
 
     // 검증: 스펠 쿨타임
     const spellAvailable = userGameData.isSpellAvailable(SPELL_TYPE.ATTACK, timestamp);
