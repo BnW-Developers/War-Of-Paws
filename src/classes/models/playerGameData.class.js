@@ -316,9 +316,8 @@ class PlayerGameData {
     this.resetLastSpellTime(spellType, timestamp);
 
     // 검증: 소모할 자원
-    const { userGameData } = sessionInfo;
     const spellCost = spellData.cost;
-    if (userGameData.getMineral() < spellCost) {
+    if (this.getMineral() < spellCost) {
       throw new CustomErr(
         ERR_CODES.SPELL_INSUFFICIENT_FUNDS,
         '스펠을 사용하기 위한 자원이 부족합니다',
@@ -326,7 +325,7 @@ class PlayerGameData {
     }
 
     // 자원 소모
-    userGameData.spendMineral(spellCost);
+    this.spendMineral(spellCost);
 
     // 대상 유닛 처리
     for (const unitId of unitIds) {
