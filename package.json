@@ -12,13 +12,15 @@
     "ls1": "node ./src/test/locationSync/client1.js",
     "ls2": "node ./src/test/locationSync/client2.js",
     "ls3": "node ./src/test/locationSync/client3.js",
-    "ls4": "node ./src/test/locationSync/client4.js"
+    "ls4": "node ./src/test/locationSync/client4.js",
+    "dummy-test": "nodemon ./src/test/dummyTest.js"
   },
   "keywords": [],
   "author": "BnW-Developers",
   "license": "ISC",
   "dependencies": {
     "async-mutex": "^0.5.0",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
