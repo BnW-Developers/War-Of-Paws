@@ -1,6 +1,6 @@
 import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
 import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
-import { UNIT_TYPE } from '../../constants/assets.js';
+import { UNIT_CLASS } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -69,8 +69,8 @@ const getValidatedBufferUnit = (userGameData, unitId) => {
   if (!bufferUnit) {
     throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Buffer unit not found');
   }
-  if (bufferUnit.getType() !== UNIT_TYPE.BUFFER) {
-    throw new CustomErr(ERR_CODES.UNIT_TYPE_MISMATCH, 'Unit is not a buffer type');
+  if (bufferUnit.getClass() !== UNIT_CLASS.BUFFER) {
+    throw new CustomErr(ERR_CODES.UNIT_CLASS_MISMATCH, 'Unit is not a buffer class');
   }
   return bufferUnit;
 };

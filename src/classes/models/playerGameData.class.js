@@ -1,4 +1,10 @@
-import { ASSET_TYPE, DIRECTION, SPELL_TYPE_REVERSED } from '../../constants/assets.js';
+import {
+  ASSET_TYPE,
+  DIRECTION,
+  SPELL_TYPE,
+  SPELL_TYPE_REVERSED,
+  UNIT_TYPE,
+} from '../../constants/assets.js';
 import {
   INITIAL_BASE_HP,
   INITIAL_MINERAL,
@@ -6,17 +12,15 @@ import {
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/log/logger.js';
-import Game from './game.class.js'; // eslint-disable-line
-import Unit from './unit.class.js';
-import { SPELL_TYPE } from '../../constants/assets.js';
+import applySpell from '../../utils/spell/applySpell.js';
 import isWithinRange from '../../utils/spell/isWithinRange.js';
 import initializeSpellPacketData from '../../utils/spell/spellPacket.js';
 import identifyTarget from '../../utils/unit/identifyTarget.js';
-import applySpell from '../../utils/spell/applySpell.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
-
+import Game from './game.class.js'; // eslint-disable-line
+import Unit from './unit.class.js';
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
@@ -33,6 +37,7 @@ class PlayerGameData {
     this.buildings = [];
     this.units = new Map();
     this.cards = new Map(); // 8칸짜리 인벤토리 assetId(key) - 수량(value)
+    this.totalCardCount = 0;
 
     this.baseHp = INITIAL_BASE_HP;
     this.capturedCheckPoints = [];
@@ -173,14 +178,11 @@ class PlayerGameData {
   addCard(assetId) {
     const currentCount = this.cards.get(assetId) || 0;
     this.cards.set(assetId, currentCount + 1);
+    this.totalCardCount++;
   }
 
   getCardCount() {
-    let totalCount = 0;
-    for (const count of this.cards.values()) {
-      totalCount += count;
-    }
-    return totalCount;
+    return this.totalCardCount;
   }
 
   removeCard(assetId, count = 1) {
@@ -196,12 +198,15 @@ class PlayerGameData {
     } else {
       this.cards.set(assetId, currentCount - count);
     }
+
+    this.totalCardCount -= count;
   }
 
-  checkEliteCard(assetId) {
+  isMergeableCard(assetId) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
 
-    if (unitData.eliteId === 'elite') {
+    // 엘리트카드는 합치기 불가
+    if (unitData.type === UNIT_TYPE.ELITE) {
       return false;
     }
 

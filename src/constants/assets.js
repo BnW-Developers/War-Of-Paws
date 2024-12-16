@@ -28,8 +28,13 @@ export const SPELL_TYPE_REVERSED = Object.fromEntries(
   Object.entries(SPELL_TYPE).map(([key, value]) => [value, key]),
 );
 
-export const UNIT_TYPE = Object.freeze({
-  NORMAL: 'normal',
+export const UNIT_CLASS = Object.freeze({
+  FIGHTER: 'fighter',
   HEALER: 'healer',
   BUFFER: 'buffer',
+});
+
+export const UNIT_TYPE = Object.freeze({
+  NORMAL: 'normal',
+  ELITE: 'elite',
 });

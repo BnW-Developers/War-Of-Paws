@@ -19,17 +19,18 @@ class Unit {
   constructor(unitId, unitData, direction, spawnTime) {
     // ID 및 종족 관련
     this.unitId = unitId;
-    this.species = unitData.species || 'unknown';
-    this.type = unitData.type || 'normal';
-    this.tier = unitData.tier || 1;
-    this.eliteId = unitData.eliteId || 'elite';
+    this.species = unitData.species;
+    this.type = unitData.type;
+    this.class = unitData.class;
+    this.tier = unitData.tier;
+    this.eliteId = unitData.eliteId;
 
     // 능력치 관련
-    this.maxHp = unitData.maxHp || 100;
-    this.hp = unitData.maxHp || 100;
-    this.attackPower = unitData.atk ?? 10;
-    this.attackRange = unitData.atkRange ?? 1.5;
-    this.speed = unitData.spd || 2;
+    this.maxHp = unitData.maxHp;
+    this.hp = unitData.maxHp;
+    this.attackPower = unitData.atk;
+    this.attackRange = unitData.atkRange;
+    this.speed = unitData.spd;
 
     // 상태 관련
     this.buffed = false;
@@ -37,9 +38,9 @@ class Unit {
     this.dead = false;
 
     // 쿨타임 관련
-    this.cooldown = unitData.cd ?? 1000;
-    this.cost = unitData.cost ?? 0;
-    this.skillCooldown = unitData.skillCd ?? 5000;
+    this.cooldown = unitData.cd;
+    this.cost = unitData.cost;
+    this.skillCooldown = unitData.skillCd;
     this.lastAttackTime = 0;
     this.lastSkillTime = 0;
 
@@ -54,7 +55,7 @@ class Unit {
     this.destinationIndex = 1;
     this.destinationPoint = this.path[this.destinationIndex];
     this.destinationArea = getMapCorners(this.species, this.direction)[0];
-    this.lastTimestamp = spawnTime || Date.now();
+    this.lastTimestamp = spawnTime;
   }
 
   /**
@@ -79,6 +80,10 @@ class Unit {
    */
   getType() {
     return this.type;
+  }
+
+  getClass() {
+    return this.class;
   }
 
   /**

@@ -44,6 +44,7 @@ export const ERR_CODES = {
   TREASON: 10703, // 적에게 힐 또는 버프를 시도함
 
   // Heal & Buff 관련 에러
+  UNIT_CLASS_MISMATCH: 10704, // 유닛 클래스가 일치하지 않음
 
   // Occupation 관련 에러
   CHECKPOINT_NOT_FOUND: 10800, // 체크포인트를 찾을 수 없음
