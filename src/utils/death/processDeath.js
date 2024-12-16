@@ -7,11 +7,13 @@ import { LOG_ENABLED_UNIT_ALREADY_DEAD } from '../log/logSwitch.js';
 /**
  * 유닛 사망처리에 필요한 공정을 진행
  * @param {Unit} unit
- * @param {Game} gameSession
- * @param {PlayerGameData} gameData
- * @param {{unitIds: {unitId: int32}[]}} packetData
+ * @param {{unitIds: {unitId: int32}[]}} unitDeathPacketData
+ * @param {{ gameSession: Game, opponentGameData: PlayerGameData }} sessionInfo
  */
-const processDeath = (unit, gameSession, gameData, packetData) => {
+const processDeath = (unit, unitDeathPacketData, sessionInfo) => {
+  // 세션 정보
+  const { gameSession, opponentGameData } = sessionInfo;
+
   // 검증: 중복 사망처리
   if (unit.isDead()) {
     if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`Unit ${unitId} is already dead.`);
@@ -29,10 +31,10 @@ const processDeath = (unit, gameSession, gameData, packetData) => {
   }
 
   // 서버 내 유닛 데이터 삭제
-  gameData.removeUnit(unitId);
+  opponentGameData.removeUnit(unitId);
 
   // 패킷에 사망한 유닛ID 추가
-  packetData.unitIds.push(unitId);
+  unitDeathPacketData.unitIds.push(unitId);
 };
 
 export default processDeath;

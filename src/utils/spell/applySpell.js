@@ -12,9 +12,6 @@ import processDeath from '../death/processDeath.js';
  * @param {{ gameSession: Game, opponentGameData: PlayerGameData }} sessionInfo
  */
 const applySpell = (targetUnit, spell, packetData, sessionInfo) => {
-  // 세션 정보
-  const { gameSession, opponentGameData } = sessionInfo;
-
   const unitId = targetUnit.getUnitId();
 
   const spellType = spell.type;
@@ -25,7 +22,7 @@ const applySpell = (targetUnit, spell, packetData, sessionInfo) => {
 
       // 유닛 사망처리
       if (targetUnit.getHp() <= 0) {
-        processDeath(targetUnit, gameSession, opponentGameData, packetData.unitDeathPacketData);
+        processDeath(targetUnit, packetData.unitDeathPacketData, sessionInfo);
       }
 
       // 피격 유닛 정보 패킷에 추가
