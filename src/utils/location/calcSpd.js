@@ -20,7 +20,7 @@ const calcSpd = (pos1, pos2, timeTaken) => {
 
   // 검증: 걸린 시간이 0보다 큰가?
   if (timeTaken <= 0) {
-    throw CustomErr(ERR_CODES.INVALID_TIME, '잘못된 시간입니다: timeTaken', timeTaken);
+    throw new CustomErr(ERR_CODES.INVALID_TIME, '잘못된 시간입니다: timeTaken', timeTaken);
   }
 
   // √((x1-x2)^2 + (z1-z2)^2)
