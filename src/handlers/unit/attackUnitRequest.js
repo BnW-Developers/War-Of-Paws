@@ -33,8 +33,6 @@ const attackUnitRequest = (socket, payload) => {
       timestamp,
     );
 
-    attackUnit.resetLastAttackTime(timestamp);
-
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       unitInfos: opponentUnitInfos,
     });
@@ -123,6 +121,8 @@ const processAttack = (attackUnit, opponentUnitIds, opponentGameData, gameSessio
   const deathNotifications = [];
 
   if (attackUnit.isAttackAvailable(timestamp)) {
+    attackUnit.resetLastAttackTime(timestamp);
+
     for (const opponentUnitId of opponentUnitIds) {
       const targetUnit = opponentGameData.getUnit(opponentUnitId);
 

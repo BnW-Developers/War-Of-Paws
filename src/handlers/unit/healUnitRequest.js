@@ -98,8 +98,8 @@ const calculateHealAmount = (healerUnit, targetUnit, initialHealAmount, timestam
  * @returns {int32}
  */
 const applyHealing = (healerUnit, targetUnit, healAmount, timestamp) => {
-  const afterHealHp = targetUnit.applyHeal(healAmount);
   healerUnit.resetLastSkillTime(timestamp); // 스킬 사용 시간 초기화
+  const afterHealHp = targetUnit.applyHeal(healAmount);
   return afterHealHp;
 };
 
