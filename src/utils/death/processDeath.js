@@ -16,7 +16,7 @@ const processDeath = (unit, unitDeathPacketData, sessionInfo) => {
 
   // 검증: 중복 사망처리
   if (unit.isDead()) {
-    if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`Unit ${unitId} is already dead.`);
+    if (LOG_ENABLED_UNIT_ALREADY_DEAD) logger.info(`이미 사망한 유닛입니다: ${unitId}`);
     return;
   }
   const unitId = unit.getUnitId();
