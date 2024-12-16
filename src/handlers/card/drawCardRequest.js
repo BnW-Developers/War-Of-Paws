@@ -1,4 +1,4 @@
-import { ASSET_TYPE } from '../../constants/assets.js';
+import { ASSET_TYPE, UNIT_TYPE } from '../../constants/assets.js';
 import { BUTTON_CONFIG, MAX_CARDS_COUNT } from '../../constants/game.constants.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getGameAsset } from '../../utils/assets/getAssets.js';
@@ -61,7 +61,7 @@ const drawCardRequest = (socket, payload) => {
     });
 
     // 엘리트 카드 발동 여부 체크 -> 엘리트 카드가 3장일 경우
-    if (userGameData.checkEliteCard(randomUnitAssetId)) {
+    if (userGameData.isMergeableCard(randomUnitAssetId)) {
       // 엘리트 카드 생성 및 노티피케이션 전송
       const eliteUnitId = userGameData.addEliteCard(randomUnitAssetId);
       logger.info(`Elite Card created successfully! id:${eliteUnitId}}`);
@@ -93,8 +93,11 @@ const selectRandomUnitAssetIdByTier = (species, tier) => {
   // 모든 유닛 데이터를 가져오기
   const allUnits = getGameAsset(ASSET_TYPE.UNIT).data;
 
+  // 노말 유닛 필터링
+  const normalUnits = allUnits.filter((unit) => unit.type === UNIT_TYPE.NORMAL);
+
   // 특정 종의 유닛 필터링
-  const unitsBySpecies = allUnits.filter((unit) => unit.species === species);
+  const unitsBySpecies = normalUnits.filter((unit) => unit.species === species);
 
   // 특정 티어의 유닛 필터링
   const unitsByTier = unitsBySpecies.filter((unit) => unit.tier === tier);

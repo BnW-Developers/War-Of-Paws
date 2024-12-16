@@ -1,4 +1,10 @@
-import { ASSET_TYPE, DIRECTION, SPELL_TYPE, SPELL_TYPE_REVERSED } from '../../constants/assets.js';
+import {
+  ASSET_TYPE,
+  DIRECTION,
+  SPELL_TYPE,
+  SPELL_TYPE_REVERSED,
+  UNIT_TYPE,
+} from '../../constants/assets.js';
 import {
   INITIAL_BASE_HP,
   INITIAL_MINERAL,
@@ -196,10 +202,11 @@ class PlayerGameData {
     this.totalCardCount -= count;
   }
 
-  checkEliteCard(assetId) {
+  isMergeableCard(assetId) {
     const unitData = getGameAssetById(ASSET_TYPE.UNIT, assetId);
 
-    if (unitData.eliteId === 'elite') {
+    // 엘리트카드는 합치기 불가
+    if (unitData.type === UNIT_TYPE.ELITE) {
       return false;
     }
 
