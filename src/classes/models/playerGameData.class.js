@@ -6,11 +6,17 @@ import {
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import logger from '../../utils/log/logger.js';
 import Game from './game.class.js'; // eslint-disable-line
 import Unit from './unit.class.js';
+import { SPELL_TYPE } from '../../constants/assets.js';
+import isWithinRange from '../../utils/spell/isWithinRange.js';
+import initializeSpellPacketData from '../../utils/spell/spellPacket.js';
+import identifyTarget from '../../utils/unit/identifyTarget.js';
+import applySpell from '../../utils/spell/applySpell.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
+
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
@@ -32,7 +38,7 @@ class PlayerGameData {
     this.capturedCheckPoints = [];
 
     /**
-     * @type { Map<SPELL_TYPE, { damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
+     * @type { Map<SPELL_TYPE, { type: SPELL_TYPE, damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
      */
     this.spells = initializeSpells();
   }
@@ -226,28 +232,21 @@ class PlayerGameData {
    * 스펠 쿨타임 대기중인지 확인
    * @param {SPELL_TYPE} spellType 사용할 스펠타입
    * @param {int64} timestamp 스펠 시전시간
-   * @returns {boolean}
    */
-  isSpellAvailable(spellType, timestamp) {
-    // 검증: 스펠 타입
-    const spell = this.spells.get(spellType);
-    if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
-    }
+  checkSpellCooldown(spellType, timestamp) {
+    const spell = this.getSpellData(spellType);
 
     const elapsed = timestamp - spell.lastSpellTime; // 경과 시간 계산
     const requiredTime = spell.cooldown - SPELL_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
     // 쿨타임이 안된다면 로그 출력 & false 반환
     if (elapsed < requiredTime) {
-      logger.info(
+      throw new CustomErr(
+        ERR_CODES.SPELL_ON_COOLDOWN,
         `아직 ${SPELL_TYPE_REVERSED[spellType]} 스펠을 사용할 수 없습니다` +
           ` (남은 시간: ${requiredTime - elapsed}ms)`,
       );
-      return false;
     }
-
-    return true;
   }
 
   /**
@@ -256,28 +255,84 @@ class PlayerGameData {
    * @param {int64} timestamp 스펠 시전시간
    */
   resetLastSpellTime(spellType, timestamp) {
-    const spell = this.spells.get(spellType);
-    if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
-    }
-
+    const spell = this.getSpellData(spellType);
     spell.lastSpellTime = timestamp;
   }
 
   /**
    * 스펠 데이터를 반환
    *
-   * 호출 예시: `const { atkUp, range, duration, cost } = userGameData.getSpellData(SPELL_DATA.BUFF);`
+   * 호출 예시: `const { buffAmount, range, duration, cost } = userGameData.getSpellData(SPELL_DATA.BUFF);`
    * @param {SPELL_TYPE} spellType 사용할 스펠타입
-   * @returns {{ damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }} 스펠 데이터
+   * @returns {{ type: SPELL_TYPE, damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }} 스펠 데이터
    */
   getSpellData(spellType) {
     const spell = this.spells.get(spellType);
     if (!spell) {
-      throw new CustomErr(ERR_CODES.INVALID_ASSET_ID, `잘못된 스펠 타입입니다: ${spellType}`);
+      throw new Error(`잘못된 스펠 타입입니다: ${spellType}`);
     }
 
     return spell;
+  }
+
+  /**
+   * 스펠을 사용하고 결과 패킷 데이터 반환
+   *
+   * 호출 예시:
+   * - `const sessionInfo = { gameSession, userGameData, opponentGameData };`
+   * - 공격 스펠:
+   *   - `const { spellPacketData, unitDeathPacketData } = userGameData.castSpell(SPELL_TYPE.ATTACK, centerPos, unitIds, timestamp, sessionInfo);`
+   * - 버프 스펠:
+   *   - `const { spellPacketData } = userGameData.castSpell(SPELL_TYPE.BUFF, centerPos, unitIds, timestamp, sessionInfo);`
+   * @param {SPELL_TYPE} spellType 스펠 타입
+   * @param {{ x: float, z: float }} centerPos 스펠시전 위치
+   * @param {int32[]} unitIds 타겟 유닛ID
+   * @param {int64} timestamp 타임스탬프
+   * @param {{ gameSession: Game, userGameData: PlayerGameData, opponentGameData: PlayerGameData }} sessionInfo 세션 정보
+   * @returns {{ spellPacketData: {}, unitDeathPacketData?: {} }} 결과 패킷 데이터
+   */
+  castSpell(spellType, centerPos, unitIds, timestamp, sessionInfo) {
+    // 스펠 대상 (true: 적 대상 / false: 아군 대상 )
+    const isOffensive =
+      spellType === SPELL_TYPE.ATTACK || spellType === SPELL_TYPE.STUN ? true : false;
+
+    // 스펠 데이터 조회
+    const spell = this.getSpellData(spellType);
+
+    // 전송할 패킷 데이터
+    const packetData = initializeSpellPacketData(spellType);
+
+    // 검증: 스펠 쿨타임
+    this.checkSpellCooldown(spellType, timestamp);
+
+    // 스펠 쿨타임 초기화
+    this.resetLastSpellTime(spellType, timestamp);
+
+    // 검증: 소모할 자원
+    const spellCost = spell.cost;
+    if (this.getMineral() < spellCost) {
+      throw new CustomErr(
+        ERR_CODES.SPELL_INSUFFICIENT_FUNDS,
+        '스펠을 사용하기 위한 자원이 부족합니다',
+      );
+    }
+
+    // 자원 소모
+    this.spendMineral(spellCost);
+
+    // 대상 유닛 처리
+    for (const unitId of unitIds) {
+      // 검증: 피아식별
+      const targetUnit = identifyTarget(unitId, isOffensive, sessionInfo);
+
+      // 검증: 스펠 사정거리
+      if (isWithinRange(targetUnit, centerPos, spell)) {
+        applySpell(targetUnit, spell, packetData, sessionInfo);
+      }
+    }
+
+    // 결과 패킷 데이터 반환
+    return packetData;
   }
 
   getBaseHp() {

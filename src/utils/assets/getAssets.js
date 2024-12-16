@@ -173,7 +173,7 @@ export const getMapBounds = () => {
  * @param {SPELL_TYPE} spellType 조회할 스펠 종류
  * @returns {JSON} 스펠 데이터 ( 예시: `{ id: 7002, DisplayName: "힐 스펠", ... }` )
  */
-export const getSpell = (spellType) => {
+const getSpell = (spellType) => {
   // 검증: 파라미터 유효성
   if (!Object.values(SPELL_TYPE).includes(spellType)) {
     throw new CustomErr(ERR_CODES.INVALID_ASSET_TYPE, '올바르지 않은 스펠입니다:', spellType);
@@ -184,28 +184,43 @@ export const getSpell = (spellType) => {
 
 /**
  * 유저 스펠 데이터를 초기화
- * @returns { Map<SPELL_TYPE, { damage?: number, healAmount?: number, atkUp?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
+ * @returns { Map<SPELL_TYPE, { type: SPELL_TYPE, damage?: number, healAmount?: number, buffAmount?: number, duration?: number, range: number, cost: number, cooldown: number, lastSpellTime: timestamp }> } 스펠 데이터
  */
 export const initializeSpells = () => {
   const spellData = new Map();
 
   const attackSpell = getSpell(SPELL_TYPE.ATTACK);
   {
-    const { damage, range, cd, cost } = attackSpell;
-    spellData.set(SPELL_TYPE.ATTACK, { damage, range, cost, cooldown: cd, lastSpellTime: 0 });
+    const { id, damage, range, cd, cost } = attackSpell;
+    spellData.set(SPELL_TYPE.ATTACK, {
+      type: id,
+      damage,
+      range,
+      cost,
+      cooldown: cd,
+      lastSpellTime: 0,
+    });
   }
 
   const healSpell = getSpell(SPELL_TYPE.HEAL);
   {
-    const { healAmount, range, cd, cost } = healSpell;
-    spellData.set(SPELL_TYPE.HEAL, { healAmount, range, cost, cooldown: cd, lastSpellTime: 0 });
+    const { id, healAmount, range, cd, cost } = healSpell;
+    spellData.set(SPELL_TYPE.HEAL, {
+      type: id,
+      healAmount,
+      range,
+      cost,
+      cooldown: cd,
+      lastSpellTime: 0,
+    });
   }
 
   const buffSpell = getSpell(SPELL_TYPE.BUFF);
   {
-    const { atkUp, range, duration, cd, cost } = buffSpell;
+    const { id, buffAmount, range, duration, cd, cost } = buffSpell;
     spellData.set(SPELL_TYPE.BUFF, {
-      atkUp,
+      type: id,
+      buffAmount,
       range,
       duration,
       cost,
@@ -216,8 +231,15 @@ export const initializeSpells = () => {
 
   const stunSpell = getSpell(SPELL_TYPE.STUN);
   {
-    const { range, duration, cd, cost } = stunSpell;
-    spellData.set(SPELL_TYPE.STUN, { range, duration, cost, cooldown: cd, lastSpellTime: 0 });
+    const { id, range, duration, cd, cost } = stunSpell;
+    spellData.set(SPELL_TYPE.STUN, {
+      type: id,
+      range,
+      duration,
+      cost,
+      cooldown: cd,
+      lastSpellTime: 0,
+    });
   }
 
   return spellData;

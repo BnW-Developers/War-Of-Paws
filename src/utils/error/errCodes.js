@@ -8,6 +8,7 @@ export const ERR_CODES = {
   MISSING_FIELDS: 10005, // 필수 필드 누락
   INVALID_PACKET: 10006, // 잘못된 패킷
   HANDLER_NOT_FOUND: 10007, // 핸들러를 찾을 수 없음
+  NULL_FIELD: 10008, // 필드값이 NULL
 
   // Register 관련 에러
   DUPLICATE_USER_ID: 10100, // 중복된 사용자 ID
@@ -82,4 +83,8 @@ export const ERR_CODES = {
   // 카드 관련
   INVALID_BUTTON_TYPE: 11500,
   MAX_CARDS_REACHED: 115001,
+
+  // 스펠 관련
+  SPELL_INSUFFICIENT_FUNDS: 11600, // 자금 부족
+  SPELL_ON_COOLDOWN: 11601, // 쿨타임 대기중
 };

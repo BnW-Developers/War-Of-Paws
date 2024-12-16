@@ -83,6 +83,8 @@ class PacketManager {
         }
 
         const payloadName = snakeToCamel(PACKET_TYPE_REVERSED[packetType]);
+        this.nullCheckPayload(payload, payloadName);
+
         const handlers = getHandlers();
         const handler = handlers[payloadName];
 
@@ -102,6 +104,22 @@ class PacketManager {
     } finally {
       this.recvProcessing = false;
     }
+  }
+
+  nullCheckPayload(payload, payloadName) {
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value === null) {
+        if (Array.isArray(payload)) {
+          key = `array index ${key}`;
+        }
+        throw new CustomErr(
+          ERR_CODES.NULL_FIELD,
+          `${payloadName} payload has null field: [${key}]`,
+        );
+      } else if (typeof value === 'object') {
+        this.nullCheckPayload(value, payloadName);
+      }
+    });
   }
 }
 
