@@ -2,6 +2,7 @@ import logger from '../utils/log/logger.js';
 import { onData } from './onData.js';
 import { onEnd } from './onEnd.js';
 import { onError } from './onError.js';
+import { onInit } from './onInit.js';
 
 export const onConnection = (socket) => {
   try {
@@ -21,7 +22,7 @@ export const onConnection = (socket) => {
       }
     }, 10 * 1000); // 10초 타임아웃
 
-    socket.on('data', onData(socket));
+    socket.once('data', onInit(socket));
     socket.on('end', onEnd(socket));
     socket.on('error', onError(socket));
   } catch (err) {
