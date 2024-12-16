@@ -13,6 +13,7 @@ import {
   DB2_USER,
   HEALTH_SERVER_HOST,
   HOST,
+  NGINX_HELPER_HOST,
   PEPPER,
   PORT,
   REDIS_HOST,
@@ -33,6 +34,7 @@ export const config = {
     host: HOST,
     port: PORT,
     health: HEALTH_SERVER_HOST,
+    nginx: NGINX_HELPER_HOST,
     apiPort: API_SERVER_PORT,
   },
   client: {

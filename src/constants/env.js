@@ -33,3 +33,4 @@ export const API_KEY = process.env.API_KEY;
 
 /* ============================ HOST ============================ */
 export const HEALTH_SERVER_HOST = process.env.HEALTH_SERVER_HOST;
+export const NGINX_HELPER_HOST = process.env.NGINX_HELPER_HOST;
