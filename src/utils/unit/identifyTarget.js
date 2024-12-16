@@ -17,7 +17,7 @@ const identifyTarget = (unitId, isOffensive, sessionInfo) => {
   // 세션 정보
   const { userGameData, opponentGameData } = sessionInfo;
 
-  const targetUnit = isOffensive ? userGameData.getUnit(unitId) : opponentGameData.getUnit(unitId);
+  const targetUnit = isOffensive ? opponentGameData.getUnit(unitId) : userGameData.getUnit(unitId);
   if (!targetUnit) {
     if (isOffensive) {
       throw new CustomErr(
