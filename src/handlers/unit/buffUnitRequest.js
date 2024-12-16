@@ -40,8 +40,6 @@ const buffUnitRequest = (socket, payload) => {
       timestamp,
     );
 
-    bufferUnit.resetLastSkillTime(timestamp);
-
     sendPacket(socket, PACKET_TYPE.BUFF_UNIT_RESPONSE, {
       unitId,
       targetIds: affectedUnits,
@@ -98,6 +96,7 @@ const applyBuffToTargets = (
   const affectedUnits = [];
 
   if (bufferUnit.isSkillAvailable(timestamp)) {
+    bufferUnit.resetLastSkillTime(timestamp);
     for (const targetId of targetIds) {
       const targetUnit = userGameData.getUnit(targetId);
 
