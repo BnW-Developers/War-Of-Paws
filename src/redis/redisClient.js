@@ -1,10 +1,10 @@
 import Redis from 'ioredis';
-import { COMMON_CONFIG as config } from '../config/config.js';
+import { config } from '../config/config.js';
 
 const redisClient = new Redis({
-  host: config.redis.host,
-  port: config.redis.port,
-  password: config.redis.password,
+  host: config.database.redis.host,
+  port: config.database.redis.port,
+  password: config.database.redis.password,
 });
 
 redisClient.on('connect', () => console.log('Connected to Redis'));
