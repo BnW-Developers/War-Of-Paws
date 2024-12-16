@@ -82,6 +82,10 @@ class Unit {
     return this.type;
   }
 
+  getClass() {
+    return this.class;
+  }
+
   /**
    * 현재 체력 반환
    * @returns {int32}

@@ -1,6 +1,6 @@
 import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
 import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
-import { UNIT_TYPE } from '../../constants/assets.js';
+import { UNIT_CLASS } from '../../constants/assets.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
@@ -54,8 +54,8 @@ const validateHealerUnit = (userGameData, unitId) => {
     throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Healer unit not found');
   }
 
-  if (healerUnit.getType() !== UNIT_TYPE.HEALER) {
-    throw new CustomErr(ERR_CODES.UNIT_TYPE_MISMATCH, 'Unit is not a healer type');
+  if (healerUnit.getClass() !== UNIT_CLASS.HEALER) {
+    throw new CustomErr(ERR_CODES.UNIT_CLASS_MISMATCH, 'Unit is not a healer class');
   }
   return healerUnit;
 };
