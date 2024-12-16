@@ -1,7 +1,7 @@
 import {
   ATTACK_COOLDOWN_ERROR_MARGIN,
-  RANGE_ERROR_MARGIN,
   INITIAL_UNIT_ROTATION,
+  RANGE_ERROR_MARGIN,
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
@@ -206,12 +206,10 @@ class Unit {
 
   /**
    * 유닛의 체력을 회복
-   * @param {int32} healPercentage - 회복할 체력의 비율(0~100)
+   * @param {int32} healAmount - 회복할 고정 체력량
    * @returns {int32} - 회복 후 유닛의 현재 체력
    */
-  applyHeal(healPercentage) {
-    const healAmount = Math.floor(this.maxHp * (healPercentage / 100));
-
+  applyHeal(healAmount) {
     // 현재 체력에 회복량을 더하고 최대 체력을 초과하지 않도록 설정
     this.hp = Math.min(this.hp + healAmount, this.maxHp);
 
@@ -346,14 +344,16 @@ class Unit {
   /**
    * 목표 유닛이 사거리 밖에 있는지 확인
    * @param {Unit} targetUnit 대상 유닛
-   * @returns {boolean} 사거리 밖 여부
+   * @returns {{outOfRange: boolean, distance: float, attackRange: float}} 사거리 확인 결과
    */
   isTargetOutOfRange(targetUnit) {
     const distance = calcDist(this.getPosition(), targetUnit.getPosition());
     const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
-    console.log('distance between units:', distance);
-    console.log('attackUnit attack range(error margin version)', attackRange);
-    return distance > attackRange;
+    return {
+      outOfRange: distance > attackRange,
+      distance,
+      attackRange,
+    };
   }
 }
 

@@ -5,9 +5,9 @@ import {
   INITIAL_MINERAL_RATE,
   SPELL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
-import Game from './game.class.js'; // eslint-disable-line
 import { getGameAssetById, initializeSpells } from '../../utils/assets/getAssets.js';
 import logger from '../../utils/log/logger.js';
+import Game from './game.class.js'; // eslint-disable-line
 import Unit from './unit.class.js';
 import { SPELL_TYPE } from '../../constants/assets.js';
 import isWithinRange from '../../utils/spell/isWithinRange.js';
@@ -16,6 +16,7 @@ import identifyTarget from '../../utils/unit/identifyTarget.js';
 import applySpell from '../../utils/spell/applySpell.js';
 import CustomErr from '../../utils/error/customErr.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
+
 
 /**
  * 유저의 게임 데이터를 관리하는 클래스
