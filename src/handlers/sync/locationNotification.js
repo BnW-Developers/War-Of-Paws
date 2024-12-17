@@ -18,7 +18,7 @@ import {
  * @param {net.Socket} socket
  * @param {{unitPositions: {unitId: int32, position: {x: float, z: float}, rotation: {y: float}}[], timestamp: int64}} payload
  */
-const locationNotification = async (socket, payload) => {
+const locationNotification = (socket, payload) => {
   try {
     // 세션 정보 검증
     const { userGameData, opponentSocket } = checkSessionInfo(socket);
