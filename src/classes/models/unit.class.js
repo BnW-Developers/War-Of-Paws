@@ -5,6 +5,8 @@ import {
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/log/logger.js';
 import { LOG_ENABLED_UPDATE_DESTINATION } from '../../utils/log/logSwitch.js';
@@ -146,23 +148,22 @@ class Unit {
   }
 
   /**
-   * 유닛이 공격 가능한지 확인
+   * 유닛이 공격 가능한지 쿨타임 검증증
    * @param {int64} timestamp
    * @returns {boolean}
    */
-  isAttackAvailable(timestamp) {
+  checkAttackCooldown(timestamp) {
     const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
     const requiredTime = this.cooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
-    // 쿨타임이 안된다면 로그 출력 & false 반환
+    // 쿨타임이 안된다면 에러 처리
     if (elapsed < requiredTime) {
-      logger.info(
-        `Attack not available: Unit ID ${this.unitId}, Cooldown: ${this.cooldown}, Remaining time: ${requiredTime - elapsed}`,
+      throw new CustomErr(
+        ERR_CODES.ATTACK_ON_COOLDOWN,
+        `유닛 (${this.unitId})이 아직 공격할 수 없습니다` +
+          ` (남은 시간: ${requiredTime - elapsed}ms)`,
       );
-      return false;
     }
-
-    return true;
   }
 
   /**
