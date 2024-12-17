@@ -305,19 +305,24 @@ message GamePacket {
     S2CGameStartNotification gameStartNotification = 81;
 
     // 건물 구매
-    C2SPurchaseBuildingRequest purchaseBuildingRequest = 100;
-    S2CPurchaseBuildingResponse purchaseBuildingResponse = 101;
-    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 102;
+    C2SPurchaseBuildingRequest purchaseBuildingRequest = 90;
+    S2CPurchaseBuildingResponse purchaseBuildingResponse = 91;
+    S2CAddEnemyBuildingNotification addEnemyBuildingNotification = 92;
     
     // 유닛 생성
-    C2SSpawnUnitRequest spawnUnitRequest = 200;
-    S2CSpawnUnitResponse spawnUnitResponse = 201;
-    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 202;
+    C2SSpawnUnitRequest spawnUnitRequest = 100;
+    S2CSpawnUnitResponse spawnUnitResponse = 101;
+    S2CSpawnEnemyUnitNotification spawnEnemyUnitNotification = 102;
 
     // 유닛 공격
-    C2SAttackUnitRequest attackUnitRequest = 300;
-    S2CAttackUnitResponse attackUnitResponse = 301;
-    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 302;
+    C2SAttackUnitRequest attackUnitRequest = 200;
+    S2CAttackUnitResponse attackUnitResponse = 201;
+    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 202;
+
+    // 유닛 피격
+    C2SUnitAttackedRequest unitAttackedRequest = 300;
+    S2CUnitAttackedResponse unitAttackedResponse = 301;
+    S2CEnemyUnitAttackedNotification enemyUnitAttackedNotification = 302;
 
     // 유닛 사망
     S2CUnitDeathNotification unitDeathNotification = 400;
