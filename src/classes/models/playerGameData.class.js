@@ -244,7 +244,7 @@ class PlayerGameData {
     const elapsed = timestamp - spell.lastSpellTime; // 경과 시간 계산
     const requiredTime = spell.cooldown - SPELL_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
-    // 쿨타임이 안된다면 로그 출력 & false 반환
+    // 쿨타임이 안된다면 에러 처리
     if (elapsed < requiredTime) {
       throw new CustomErr(
         ERR_CODES.SPELL_ON_COOLDOWN,

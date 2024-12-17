@@ -32,6 +32,7 @@ export const UNIT_CLASS = Object.freeze({
   FIGHTER: 'fighter',
   HEALER: 'healer',
   BUFFER: 'buffer',
+  MULTI_SHOT: 'multiShot',
 });
 
 export const UNIT_TYPE = Object.freeze({

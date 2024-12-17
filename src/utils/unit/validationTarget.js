@@ -46,7 +46,7 @@ const validateTarget = (sourceUnit, targetUnit, situation) => {
   }
 
   // 너무 먼 사거리 공격 방지
-  const rangeCheck = sourceUnit.isTargetOutOfRange(targetUnit);
+  const rangeCheck = sourceUnit.isTargetOutOfRange(targetUnit.getPosition());
   if (rangeCheck.outOfRange) {
     logValidationError(situation, 'Target is out of range.', {
       sourceUnitId,

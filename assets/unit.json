@@ -364,7 +364,7 @@
       "searchingRange": 5.0,
       "cd": 1500,
       "spd": 4,
-      "class": "fighter",
+      "class": "multiShot",
       "type": "normal",
       "tier": 3,
       "eliteId": 3011,
@@ -381,7 +381,7 @@
       "searchingRange": 5.0,
       "cd": 500,
       "spd": 2,
-      "class": "fighter",
+      "class": "multiShot",
       "type": "elite",
       "tier": 3,
       "scale": 2.0
