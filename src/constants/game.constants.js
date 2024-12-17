@@ -24,6 +24,9 @@ export const BUTTON_CONFIG = Object.freeze({
   3: { cost: 80, probabilities: { 1: 0.35, 2: 0.4, 3: 0.25 } }, // 높은 등급
 });
 
+// 멀티샷
+export const MULTI_SHOT_TARGET = 3;
+
 // 쿨타임 허용 오차
 export const ATTACK_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
 export const SKILL_COOLDOWN_ERROR_MARGIN = 200; // 0.2초
