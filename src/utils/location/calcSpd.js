@@ -9,15 +9,6 @@ import { ERR_CODES } from '../error/errCodes.js';
  * @returns {float}
  */
 const calcSpd = (pos1, pos2, timeTaken) => {
-  // 검증: 좌표의 형식이 올바른가?
-  if (!pos1 || pos1.x === null || pos1.z === null) {
-    throw new Error('잘못된 좌표입니다: pos1', pos1);
-  }
-
-  if (!pos2 || pos2.x === null || pos2.z === null) {
-    throw new Error('잘못된 좌표입니다: pos1', pos2);
-  }
-
   // 검증: 걸린 시간이 0보다 큰가?
   if (timeTaken <= 0) {
     throw new CustomErr(ERR_CODES.INVALID_TIME, '잘못된 시간입니다: timeTaken', timeTaken);

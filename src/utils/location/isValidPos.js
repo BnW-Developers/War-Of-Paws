@@ -12,11 +12,6 @@ import { LOG_ENABLED_WRONG_SIDE } from '../log/logSwitch.js';
  * @return boolean
  */
 const isValidPos = (unit, pos, timestamp) => {
-  // 검증: 좌표의 형식이 올바른가?
-  if (!pos || pos.x === null || pos.z === null) {
-    throw new Error('잘못된 좌표입니다: pos', pos);
-  }
-
   // 맵 경계를 벗어났는지 확인
   if (isOutOfBounds(pos)) {
     return false;
