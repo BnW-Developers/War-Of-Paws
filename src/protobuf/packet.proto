@@ -363,10 +363,12 @@ message GamePacket {
     S2COccupationTimerResetNotification occupationTimerResetNotification = 504;
     S2COccupationSuccessNotification occupationSuccessNotification = 505;
 
-    // 성채공격
+    // 성채 공격
     C2SAttackBaseRequest attackBaseRequest = 600;
     S2CAttackBaseResponse attackBaseResponse = 601;
     S2CEnemyAttackBaseNotification enemyAttackBaseNotification = 602;
+
+    // 성채 피격
     C2SBaseAttackedRequest baseAttackedRequest = 603;
     S2CBaseAttackedResponse baseAttackedResponse = 604;
     S2CEnemyBaseAttackedNotification enemyBaseAttackedNotification = 605;
