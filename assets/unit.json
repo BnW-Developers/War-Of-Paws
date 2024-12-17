@@ -307,7 +307,7 @@
       "atk": 90,
       "atkRange": 2.0,
       "searchingRange": 3.0,
-      "cd": 0.333,
+      "cd": 333,
       "spd": 1,
       "class": "fighter",
       "type": "elite",
