@@ -155,10 +155,22 @@ message C2SAttackBaseRequest {
 }
 
 message S2CAttackBaseResponse {
+  int32 unitId = 1;
+}
+
+message S2CEnemyAttackBaseNotification {
+  int32 unitId = 1;
+}
+
+message C2SBaseAttackedRequest {
+  int32 unitId = 1;
+}
+
+message S2CBaseAttackedResponse {
   int32 baseHp = 1;
 }
 
-message S2CBaseAttackedNotification {
+message S2CEnemyBaseAttackedNotification {
   int32 baseHp = 1;
 }
 
@@ -354,7 +366,10 @@ message GamePacket {
     // 성채공격
     C2SAttackBaseRequest attackBaseRequest = 600;
     S2CAttackBaseResponse attackBaseResponse = 601;
-    S2CBaseAttackedNotification baseAttackedNotification = 602;
+    S2CEnemyAttackBaseNotification enemyAttackBaseNotification = 602;
+    C2SBaseAttackedRequest baseAttackedRequest = 603;
+    S2CBaseAttackedResponse baseAttackedResponse = 604;
+    S2CEnemyBaseAttackedNotification enemyBaseAttackedNotification = 605;
 
     // 게임 종료
     S2CGameOverNotification gameOverNotification = 700;
