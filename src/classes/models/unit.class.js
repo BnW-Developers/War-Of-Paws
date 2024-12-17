@@ -352,8 +352,8 @@ class Unit {
    * @param {Unit} targetUnit 대상 유닛
    * @returns {{outOfRange: boolean, distance: float, attackRange: float}} 사거리 확인 결과
    */
-  isTargetOutOfRange(targetUnit) {
-    const distance = calcDist(this.getPosition(), targetUnit.getPosition());
+  isTargetOutOfRange(targetPosition) {
+    const distance = calcDist(this.getPosition(), targetPosition);
     const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
     return {
       outOfRange: distance > attackRange,
