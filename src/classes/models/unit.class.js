@@ -348,6 +348,14 @@ class Unit {
   }
 
   /**
+   * 상대방 성채 위치 반환
+   * @type {{dog: {x: float, z: float}, cat: {x: float, z: float},}}
+   */
+  getOpponentBaseLocation() {
+    return this.path[this.path.length - 1];
+  }
+
+  /**
    * 목표 유닛이 사거리 밖에 있는지 확인
    * @param {Unit} targetUnit 대상 유닛
    * @returns {{outOfRange: boolean, distance: float, attackRange: float}} 사거리 확인 결과

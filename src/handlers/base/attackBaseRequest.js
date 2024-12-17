@@ -1,5 +1,4 @@
 import { PACKET_TYPE } from '../../constants/header.js';
-import { baseLocation } from '../../utils/assets/getAssets.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
@@ -11,7 +10,7 @@ const attackBaseRequest = (socket, payload) => {
     const { unitId } = payload;
     const timestamp = Date.now();
 
-    const { userGameData, opponent, opponentSocket, gameSession } = checkSessionInfo(socket);
+    const { userGameData, opponentSocket, gameSession } = checkSessionInfo(socket);
 
     const unit = userGameData.getUnit(unitId);
     if (!unit) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
@@ -21,8 +20,7 @@ const attackBaseRequest = (socket, payload) => {
 
     unit.resetLastAttackTime(timestamp);
 
-    const species = opponent.getCurrentSpecies();
-    if (unit.isTargetOutOfRange(baseLocation[species])) {
+    if (unit.isTargetOutOfRange(unit.getOpponentBaseLocation())) {
       throw new CustomErr(ERR_CODES.OUT_OF_RANGE, '대상 (성채)가 사거리 밖에 있습니다.');
     }
 

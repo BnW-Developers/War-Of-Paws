@@ -4,17 +4,6 @@ import CustomErr from '../error/customErr.js';
 import { ERR_CODES } from '../error/errCodes.js';
 import { SPECIES, DIRECTION } from '../../constants/assets.js';
 
-const pathLength = getPath(SPECIES.DOG);
-
-/**
- * 성채 위치
- * @type {{dog: {x: float, z: float}, cat: {x: float, z: float},}}
- */
-export let baseLocation = {
-  dog: getPath(SPECIES.CAT)[pathLength],
-  cat: getPath(SPECIES.DOG)[pathLength],
-};
-
 /**
  * 로드한 게임에셋 전체를 조회하는 함수
  * @returns {{animations: {}, buildings: {}, maps: {}, paths: {}, spells: {}, units: {}}} JSON화된 모든 게임에셋
