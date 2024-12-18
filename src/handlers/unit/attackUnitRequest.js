@@ -37,12 +37,12 @@ const attackUnitRequest = (socket, payload) => {
       validatedTargetUnits.push(targetUnitId);
     }
 
-    sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
+    sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,
     });
 
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_UNIT_NOTIFICATION, {
+    sendPacket(opponentSocket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,
     });

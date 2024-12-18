@@ -93,12 +93,7 @@ message C2SAttackUnitRequest {
   repeated int32 targetUnitIds = 2;
 }
 
-message S2CAttackUnitResponse {
-  int32 attackingUnitId = 1;
-  repeated int32 targetUnitIds = 2;
-}
-
-message S2CEnemyAttackUnitNotification {
+message S2CAttackUnitNotification {
   int32 attackingUnitId = 1;
   repeated int32 targetUnitIds = 2;
 }
@@ -108,11 +103,7 @@ message C2SDamageUnitRequest {
   int32 targetUnitId = 2;
 }
 
-message S2CDamageUnitResponse {
-  UnitInfo unitInfo = 1;
-}
-
-message S2CEnemyDamageUnitNotification {
+message S2CDamageUnitNotification {
   UnitInfo unitInfo = 1;
 }
 
@@ -339,13 +330,11 @@ message GamePacket {
 
     // 유닛 공격
     C2SAttackUnitRequest attackUnitRequest = 200;
-    S2CAttackUnitResponse attackUnitResponse = 201;
-    S2CEnemyUnitAttackNotification enemyAttackUnitNotification = 202;
+    S2CAttackUnitNotification attackUnitNotification = 201;
 
     // 유닛 피격
     C2SUnitAttackedRequest damageUnitRequest = 300;
-    S2CUnitAttackedResponse damageUnitResponse = 301;
-    S2CEnemyUnitAttackedNotification enemyDamageUnitNotification = 302;
+    S2CUnitAttackedNotification damageUnitNotification = 301;
 
     // 유닛 사망
     S2CUnitDeathNotification unitDeathNotification = 400;

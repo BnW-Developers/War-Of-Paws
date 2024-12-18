@@ -48,11 +48,11 @@ const damageUnitRequest = (socket, payload) => {
       unitHp: resultHp,
     };
 
-    sendPacket(opponentSocket, PACKET_TYPE.DAMAGE_UNIT_RESPONSE, {
+    sendPacket(opponentSocket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
       unitInfo,
     });
 
-    sendPacket(socket, PACKET_TYPE.ENEMY_DAMAGE_UNIT_NOTIFICATION, {
+    sendPacket(socket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
       unitInfo,
     });
   } catch (error) {
