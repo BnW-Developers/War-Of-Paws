@@ -5,8 +5,6 @@ import {
   SKILL_COOLDOWN_ERROR_MARGIN,
 } from '../../constants/game.constants.js';
 import { getMapCorners, getPath } from '../../utils/assets/getAssets.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import calcDist from '../../utils/location/calcDist.js';
 import logger from '../../utils/log/logger.js';
 import { LOG_ENABLED_UPDATE_DESTINATION } from '../../utils/log/logSwitch.js';
@@ -152,18 +150,19 @@ class Unit {
    * @param {int64} timestamp
    * @returns {boolean}
    */
-  checkAttackCooldown(timestamp) {
+  isAttackOnCooldown(timestamp) {
     const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
     const requiredTime = this.cooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
     // 쿨타임이 안된다면 에러 처리
     if (elapsed < requiredTime) {
-      throw new CustomErr(
-        ERR_CODES.ATTACK_ON_COOLDOWN,
+      logger.error(
         `유닛 (${this.unitId})이 아직 공격할 수 없습니다` +
           ` (남은 시간: ${requiredTime - elapsed}ms)`,
       );
+      return true;
     }
+    return false;
   }
 
   /**
@@ -358,16 +357,30 @@ class Unit {
   /**
    * 목표 유닛이 사거리 밖에 있는지 확인
    * @param {Unit} targetUnit 대상 유닛
-   * @returns {{outOfRange: boolean, distance: float, attackRange: float}} 사거리 확인 결과
+   * @returns {boolean} 사거리 확인 결과
    */
   isTargetOutOfRange(targetPosition) {
     const distance = calcDist(this.getPosition(), targetPosition);
     const attackRange = this.getAttackRange() * RANGE_ERROR_MARGIN;
-    return {
-      outOfRange: distance > attackRange,
-      distance,
-      attackRange,
-    };
+
+    // 유닛쪽 외부도 바꿔주기
+    if (distance > attackRange) {
+      logger.warn(
+        `Validation failed: Target is out of range.` +
+          '\n' +
+          `Details: ${JSON.stringify(
+            {
+              attackRange,
+              distance,
+            },
+            null,
+            4,
+          )}`,
+      );
+      return true;
+    }
+
+    return false;
   }
 }
 

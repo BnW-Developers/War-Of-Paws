@@ -2,10 +2,15 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
-import CustomErr from './../../utils/error/customErr.js';
-import { handleErr } from './../../utils/error/handlerErr.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { handleErr } from '../../utils/error/handlerErr.js';
 
-const baseAttackedRequest = (socket, payload) => {
+/**
+ * 성채 데미지 처리
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32}} payload
+ */
+const damageBaseRequest = (socket, payload) => {
   try {
     const { unitId } = payload;
 
@@ -18,8 +23,8 @@ const baseAttackedRequest = (socket, payload) => {
     const damage = unit.getAttackPower();
     const newBaseHp = opponentGameData.attackBase(damage);
 
-    sendPacket(socket, PACKET_TYPE.BASE_ATTACKED_RESPONSE, { baseHp: newBaseHp });
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_BASE_ATTACKED_NOTIFICATION, { baseHp: newBaseHp });
+    sendPacket(socket, PACKET_TYPE.DAMAGE_BASE_RESPONSE, { baseHp: newBaseHp });
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_DAMAGE_BASE_NOTIFICATION, { baseHp: newBaseHp });
 
     if (newBaseHp <= 0) {
       gameSession.endGame();
@@ -29,4 +34,4 @@ const baseAttackedRequest = (socket, payload) => {
   }
 };
 
-export default baseAttackedRequest;
+export default damageBaseRequest;

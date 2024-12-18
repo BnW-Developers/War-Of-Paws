@@ -55,7 +55,7 @@ const attackSpellRequest = (socket, payload) => {
     // 사망 패킷 전송
     if (unitDeathPacketData.unitIds.length > 0) {
       sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, unitDeathPacketData);
-      sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, unitDeathPacketData);
+      sendPacket(opponentSocket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, unitDeathPacketData);
     }
   } catch (error) {
     handleErr(socket, error);

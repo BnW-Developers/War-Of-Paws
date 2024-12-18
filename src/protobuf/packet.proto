@@ -90,37 +90,25 @@ message S2CSpawnEnemyUnitNotification {
 
 message C2SAttackUnitRequest {
   int32 attackingUnitId = 1;
-  repeated int32 attackedUnitIds = 2;
+  repeated int32 targetUnitIds = 2;
 }
 
-message S2CAttackUnitResponse {
+message S2CAttackUnitNotification {
   int32 attackingUnitId = 1;
-  repeated int32 attackedUnitIds = 2;
+  repeated int32 targetUnitIds = 2;
+  bool success = 3;
 }
 
-message S2CEnemyUnitAttackNotification {
+message C2SDamageUnitRequest {
   int32 attackingUnitId = 1;
-  repeated int32 attackedUnitIds = 2;
+  int32 targetUnitId = 2;
 }
 
-message C2SUnitAttackedRequest {
-  int32 attackingUnitId = 1;
-  int32 attackedUnitId = 2;
-}
-
-message S2CUnitAttackedResponse {
-  UnitInfo unitInfo = 1;
-}
-
-message S2CEnemyUnitAttackedNotification {
+message S2CDamageUnitNotification {
   UnitInfo unitInfo = 1;
 }
 
 message S2CUnitDeathNotification {
-  repeated int32 unitIds = 1;
-}
-
-message S2CEnemyUnitDeathNotification {
   repeated int32 unitIds = 1;
 }
 
@@ -156,21 +144,23 @@ message C2SAttackBaseRequest {
 
 message S2CAttackBaseResponse {
   int32 unitId = 1;
+  bool success = 2;
 }
 
 message S2CEnemyAttackBaseNotification {
   int32 unitId = 1;
+  bool success = 2;
 }
 
-message C2SBaseAttackedRequest {
+message C2SDamageBaseRequest {
   int32 unitId = 1;
 }
 
-message S2CBaseAttackedResponse {
+message S2CDamageBaseResponse {
   int32 baseHp = 1;
 }
 
-message S2CEnemyBaseAttackedNotification {
+message S2CEnemyDamageBaseNotification {
   int32 baseHp = 1;
 }
 
@@ -343,17 +333,14 @@ message GamePacket {
 
     // 유닛 공격
     C2SAttackUnitRequest attackUnitRequest = 200;
-    S2CAttackUnitResponse attackUnitResponse = 201;
-    S2CEnemyUnitAttackNotification enemyUnitAttackNotification = 202;
+    S2CAttackUnitNotification attackUnitNotification = 201;
 
     // 유닛 피격
-    C2SUnitAttackedRequest unitAttackedRequest = 300;
-    S2CUnitAttackedResponse unitAttackedResponse = 301;
-    S2CEnemyUnitAttackedNotification enemyUnitAttackedNotification = 302;
+    C2SUnitAttackedRequest damageUnitRequest = 300;
+    S2CUnitAttackedNotification damageUnitNotification = 301;
 
     // 유닛 사망
     S2CUnitDeathNotification unitDeathNotification = 400;
-    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 401;
 
     // 체크포인트 점령
     C2SEnterCheckpointNotification enterCheckpointNotification = 500;
@@ -363,15 +350,15 @@ message GamePacket {
     S2COccupationTimerResetNotification occupationTimerResetNotification = 504;
     S2COccupationSuccessNotification occupationSuccessNotification = 505;
 
-    // 성채 공격
+    // 성채 공격 검증
     C2SAttackBaseRequest attackBaseRequest = 600;
     S2CAttackBaseResponse attackBaseResponse = 601;
     S2CEnemyAttackBaseNotification enemyAttackBaseNotification = 602;
 
-    // 성채 피격
-    C2SBaseAttackedRequest baseAttackedRequest = 603;
-    S2CBaseAttackedResponse baseAttackedResponse = 604;
-    S2CEnemyBaseAttackedNotification enemyBaseAttackedNotification = 605;
+    // 성채 공격
+    C2SBaseDamagedRequest baseAttackedRequest = 603;
+    S2CBaseDamagedResponse baseAttackedResponse = 604;
+    S2CEnemyDamageBaseNotification enemyDamageBaseNotification = 605;
 
     // 게임 종료
     S2CGameOverNotification gameOverNotification = 700;
