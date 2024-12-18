@@ -20,12 +20,14 @@ const attackBaseRequest = (socket, payload) => {
     if (!unit) {
       logger.error('유닛 정보를 찾을 수 없습니다.');
       sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      unit.setAttackValidationStatus(false);
       return;
     }
 
     // 쿨타임 검증
     if (unit.isAttackOnCooldown(timestamp)) {
       sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      unit.setAttackValidationStatus(false);
       return;
     }
 
@@ -33,6 +35,7 @@ const attackBaseRequest = (socket, payload) => {
 
     if (unit.isTargetOutOfRange(unit.getOpponentBaseLocation())) {
       sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      unit.setAttackValidationStatus(false);
       return;
     }
 
@@ -41,9 +44,11 @@ const attackBaseRequest = (socket, payload) => {
     if (!checkPointManager.getCheckPointState(unitId)) {
       logger.error('체크포인트가 점령되지 않은 상태에서는 공격할 수 없습니다.');
       sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      unit.setAttackValidationStatus(false);
       return;
     }
 
+    unit.setAttackValidationStatus(true);
     sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: true });
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_BASE_NOTIFICATION, {
       unitId,
