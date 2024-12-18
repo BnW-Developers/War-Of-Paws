@@ -116,8 +116,100 @@
 ![server architecture](docs/images/서버아키텍처.png)
 
 <h2 id="key-code">📌 핵심 코드</h2>
+<details>
+ <summary>로비-매칭 서버</summary>
+ <details>
+   <summary>[로비-매칭 서버]패킷 라우팅 프로세스</summary>
+  마이크로서비스에 패킷 라우팅 로직
 
-<!-- 이게 필수라고 본다고 함.. -->
+  - 동적 마이크로서비스 라우팅
+  - 라운드 로빈 알고리즘 적용
+  - 서비스 부하 분산 처리
+
+```javascript
+static routePacket(packetRoutingMap, socket, packet) {
+  // 패킷 유효성 검사
+  if (!packet || !packet.packetType) {
+    logger.error('Invalid packet structure');
+    return false;
+  }
+
+  // 패킷 타입별 등록된 서비스 확인
+  const servicesForPacket = packetRoutingMap[packet.packetType];
+  if (!servicesForPacket || servicesForPacket.length === 0) {
+    logger.warn(`No service registered for packet type: ${packet.packetType}`);
+    return false;
+  }
+
+  // 라운드 로빈 방식으로 서비스 선택
+  const selectedService = this.selectServiceRoundRobin(servicesForPacket);
+
+  if (selectedService) {
+    try {
+      // 서버 패킷 생성 (사용자 키 포함)
+      const key = socket.userId;
+      const serverPacket = createServerPacket(packet.packetType, key, packet.payload);
+
+      // 선택된 마이크로서비스로 패킷 전달
+      selectedService.client.write(serverPacket);
+      return true;
+    } catch (error) {
+      console.error(`패킷 라우팅 오류: ${selectedService.name}`, error);
+      return false;
+    }
+  }
+
+  return false;
+}
+```
+
+</details>
+
+<details>
+  <summary>[로비-매칭 서버]사용자 연결 해제 처리</summary>
+  사용자 연결 해제 시 매칭 취소 로직 <br>
+  Redis의 Pub/Sub 기능을 이용해 로비 서버에서 모든 마이크로서비스에게 사용자의 접속 종료를 알림
+
+  - 분산 락으로 동시성 문제 방지
+  - 락의 TTL로 deadlock 방지
+
+```javascript
+// Redis Pub/Sub 구독 초기화
+  initializeSubscription() {
+    const subscriber = this.redisClient.duplicate();
+    subscriber.subscribe('user:disconnect');
+
+    subscriber.on('message', (channel, message) => {
+      // ... 에러 처리
+      this.handleUserDisconnect(eventData);
+    });
+  }
+
+async handleUserDisconnect(eventData) {
+  const { userId } = eventData;
+  const lockKey = `disconnect:matching:lock:${userId}`;
+  const lockTTL = 5000;
+  let lockValue = null;
+
+  try {
+    lockValue = await this.acquireLock(lockKey, lockTTL);
+    if (!lockValue) return;
+
+    const userSession = await this.redisClient.hgetall(`user:session:${userId}`);
+    if (userSession.isMatchmaking === 'true') {
+      await this.cancelMatchmaking(userId, userSession.currentSpecies);
+    }
+  } catch (error) {
+    logger.error(`Disconnect 처리 중 오류: ${userId}`, error);
+  } finally {
+    await this.releaseLock(lockKey, lockValue);
+  }
+}
+```
+
+  </details>
+
+</details>
 
 <h2 id="troubleshooting">🚨 트러블 슈팅</h2>
 
@@ -178,5 +270,6 @@
   - ![GitHub](https://shields.io/badge/Nginx-헬퍼서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [Nginx-헬퍼 서버](https://github.com/BnW-Developers/Nginx-Helper-Server)
   - ![GitHub](https://shields.io/badge/헬스체크-서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [헬스체크 서버](https://github.com/BnW-Developers/War-Of-Paws-Health-Server)
 
+```
 
-
+```
