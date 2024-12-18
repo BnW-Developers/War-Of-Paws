@@ -36,6 +36,7 @@ class Unit {
     this.buffed = false;
     this.stunned = false;
     this.dead = false;
+    this.attackValidationStatus = false;
 
     // 쿨타임 관련
     this.cooldown = unitData.cd;
@@ -352,6 +353,17 @@ class Unit {
    */
   getOpponentBaseLocation() {
     return this.path[this.path.length - 1];
+  }
+
+  getAttackValidationStatus() {
+    return this.attackValidationStatus;
+  }
+
+  setAttackValidationStatus(status) {
+    if (typeof status !== 'boolean') {
+      throw new Error('Invalid value: status must be a boolean');
+    }
+    this.attackValidationStatus = status;
   }
 
   /**
