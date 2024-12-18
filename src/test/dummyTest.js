@@ -5,7 +5,7 @@ import { MARK_1, MARK_2 } from './contents.js';
 
 class DummyTest {
   constructor() {
-    this.host = 'ddori.site';
+    this.host = 'ddori.site'; // spellchecker: disable-line
     this.loginPort = 5555;
     this.lobbyPort = 5959;
     this.token = null;
