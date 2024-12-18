@@ -96,6 +96,7 @@ message C2SAttackUnitRequest {
 message S2CAttackUnitNotification {
   int32 attackingUnitId = 1;
   repeated int32 targetUnitIds = 2;
+  bool success = 3;
 }
 
 message C2SDamageUnitRequest {

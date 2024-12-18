@@ -1,9 +1,8 @@
 import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
 import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { PACKET_TYPE } from '../../constants/header.js';
-import CustomErr from '../../utils/error/customErr.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
+import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import validateTarget from '../../utils/unit/validationTarget.js';
@@ -21,9 +20,25 @@ const attackUnitRequest = (socket, payload) => {
 
     const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
 
-    const attackingUnit = validateAttackingUnit(userGameData, attackingUnitId);
+    const attackingUnit = userGameData.getUnit(attackingUnitId);
+    if (!attackingUnit) {
+      logger.error('Unit not found');
+      sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
+        attackingUnitId,
+        targetUnitIds: validatedTargetUnits,
+        success: false,
+      });
+      return;
+    }
 
-    attackingUnit.checkAttackCooldown(timestamp);
+    if (attackingUnit.isAttackOnCooldown(timestamp)) {
+      sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
+        attackingUnitId,
+        targetUnitIds: validatedTargetUnits,
+        success: false,
+      });
+      return;
+    }
 
     attackingUnit.resetLastAttackTime(timestamp);
 
@@ -37,32 +52,30 @@ const attackUnitRequest = (socket, payload) => {
       validatedTargetUnits.push(targetUnitId);
     }
 
+    // 사거리 검증 실패로 타겟 유닛이 없음
+    if (validatedTargetUnits.length === 0) {
+      sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
+        attackingUnitId,
+        targetUnitIds: validatedTargetUnits,
+        success: false,
+      });
+      return;
+    }
+
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,
+      success: true,
     });
 
     sendPacket(opponentSocket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,
+      success: true,
     });
   } catch (err) {
     handleErr(socket, err);
   }
-};
-
-/**
- * 공격 유닛 검증 및 반환
- * @param {PlayerGameData} userGameData
- * @param {int32} unitId
- * @returns {Unit}
- */
-const validateAttackingUnit = (userGameData, unitId) => {
-  const unit = userGameData.getUnit(unitId);
-  if (!unit) {
-    throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
-  }
-  return unit;
 };
 
 export default attackUnitRequest;
