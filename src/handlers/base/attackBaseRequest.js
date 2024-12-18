@@ -1,8 +1,7 @@
 import { PACKET_TYPE } from '../../constants/header.js';
-import { ERR_CODES } from '../../utils/error/errCodes.js';
+import logger from '../../utils/log/logger.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
-import CustomErr from './../../utils/error/customErr.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
 /**
@@ -18,28 +17,38 @@ const attackBaseRequest = (socket, payload) => {
     const { userGameData, opponentSocket, gameSession } = checkSessionInfo(socket);
 
     const unit = userGameData.getUnit(unitId);
-    if (!unit) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
+    if (!unit) {
+      logger.error('유닛 정보를 찾을 수 없습니다.');
+      sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      return;
+    }
 
     // 쿨타임 검증
-    unit.checkAttackCooldown(timestamp);
+    if (!unit.isAttackAvailable(timestamp)) {
+      sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      return;
+    }
 
     unit.resetLastAttackTime(timestamp);
 
     if (unit.isTargetOutOfRange(unit.getOpponentBaseLocation())) {
-      throw new CustomErr(ERR_CODES.OUT_OF_RANGE, '대상 (성채)가 사거리 밖에 있습니다.');
+      sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      return;
     }
 
     // 미점령 상태 성채 공격은 가능할 수 없음.
     const checkPointManager = gameSession.getCheckPointManager();
     if (!checkPointManager.getCheckPointState(unitId)) {
-      throw new CustomErr(
-        ERR_CODES.UNOCCUPIED_STATE_CHECKPOINT,
-        '체크포인트가 점령되지 않은 상태에서는 공격할 수 없습니다.',
-      );
+      logger.error('체크포인트가 점령되지 않은 상태에서는 공격할 수 없습니다.');
+      sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
+      return;
     }
 
-    sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId });
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_BASE_NOTIFICATION, { unitId });
+    sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: true });
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_BASE_NOTIFICATION, {
+      unitId,
+      success: true,
+    });
   } catch (err) {
     handleErr(socket, err);
   }

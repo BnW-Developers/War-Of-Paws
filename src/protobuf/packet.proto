@@ -143,10 +143,12 @@ message C2SAttackBaseRequest {
 
 message S2CAttackBaseResponse {
   int32 unitId = 1;
+  bool success = 2;
 }
 
 message S2CEnemyAttackBaseNotification {
   int32 unitId = 1;
+  bool success = 2;
 }
 
 message C2SDamageBaseRequest {
