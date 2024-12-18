@@ -44,7 +44,6 @@ export const PACKET_TYPE = Object.freeze({
 
   // 유닛 사망
   UNIT_DEATH_NOTIFICATION: 400,
-  ENEMY_UNIT_DEATH_NOTIFICATION: 401,
 
   // 체크포인트 점령
   ENTER_CHECKPOINT_NOTIFICATION: 500,

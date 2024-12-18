@@ -120,10 +120,6 @@ message S2CUnitDeathNotification {
   repeated int32 unitIds = 1;
 }
 
-message S2CEnemyUnitDeathNotification {
-  repeated int32 unitIds = 1;
-}
-
 message C2SEnterCheckpointNotification {
   int32 unitId = 1;
 }
@@ -353,7 +349,6 @@ message GamePacket {
 
     // 유닛 사망
     S2CUnitDeathNotification unitDeathNotification = 400;
-    S2CEnemyUnitDeathNotification enemyUnitDeathNotification = 401;
 
     // 체크포인트 점령
     C2SEnterCheckpointNotification enterCheckpointNotification = 500;

@@ -37,7 +37,7 @@ const damageUnitRequest = (socket, payload) => {
           unitIds: deathUnits,
         });
 
-        sendPacket(socket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
+        sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
           unitIds: deathUnits,
         });
       }
