@@ -356,8 +356,8 @@ message GamePacket {
     S2CEnemyAttackBaseNotification enemyAttackBaseNotification = 602;
 
     // 성채 공격
-    C2SBaseDamagedRequest damageBaseRequest = 603;
-    S2CBaseDamagedResponse damageBaseResponse = 604;
+    C2SDamageBaseRequest damageBaseRequest = 603;
+    S2CDamageBaseResponse damageBaseResponse = 604;
     S2CEnemyDamageBaseNotification enemyDamageBaseNotification = 605;
 
     // 게임 종료
