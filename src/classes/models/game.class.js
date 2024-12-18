@@ -27,6 +27,15 @@ class Game {
     this.mineralSyncManager = new MineralSyncManager();
     this.unitIdCounter = 1;
     this.winTeam = null;
+    this.checker = setTimeout(() => this.checkerFunc(), 5 * 1000);
+  }
+
+  checkerFunc() {
+    clearTimeout(this.checker);
+    if (!this.isInProgress()) {
+      gameSessionManager.removeGameSession(this.gameId);
+      console.log(`${this.gameId} 비정상 게임세션을 삭제합니다.`);
+    }
   }
 
   getGameId() {
