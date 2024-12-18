@@ -172,7 +172,11 @@
 ### 관련 링크
 
 - 📗 [팀 노션](https://www.notion.so/teamsparta/e3e44c9e021e4f7b9701144fadb9187f)
-- 🔑 [인증서버](https://github.com/BnW-Developers/War-Of-Paws-Auth-Server)  
-- 🎯 [로비-매칭서버](https://github.com/BnW-Developers/War-Of-Paws-Lobby-Matching-Server)  
-- 💊 [Nginx-헬퍼 서버](https://github.com/BnW-Developers/Nginx-Helper-Server)  
-- ✅ [헬스체크 서버](https://github.com/BnW-Developers/War-Of-Paws-Health-Server)  
+- 📁 **GitHub Repositories**:
+  - ![GitHub](https://shields.io/badge/인증서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [인증서버](https://github.com/BnW-Developers/War-Of-Paws-Auth-Server)
+  - ![GitHub](https://shields.io/badge/로비-매칭서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [로비-매칭서버](https://github.com/BnW-Developers/War-Of-Paws-Lobby-Matching-Server)
+  - ![GitHub](https://shields.io/badge/Nginx-헬퍼서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [Nginx-헬퍼 서버](https://github.com/BnW-Developers/Nginx-Helper-Server)
+  - ![GitHub](https://shields.io/badge/헬스체크-서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [헬스체크 서버](https://github.com/BnW-Developers/War-Of-Paws-Health-Server)
+
+
+
