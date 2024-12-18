@@ -150,7 +150,7 @@ class Unit {
    * @param {int64} timestamp
    * @returns {boolean}
    */
-  isAttackAvailable(timestamp) {
+  isAttackOnCooldown(timestamp) {
     const elapsed = timestamp - this.lastAttackTime; // 경과 시간 계산
     const requiredTime = this.cooldown - ATTACK_COOLDOWN_ERROR_MARGIN; // 쿨타임 기준 계산
 
@@ -160,9 +160,9 @@ class Unit {
         `유닛 (${this.unitId})이 아직 공격할 수 없습니다` +
           ` (남은 시간: ${requiredTime - elapsed}ms)`,
       );
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   /**

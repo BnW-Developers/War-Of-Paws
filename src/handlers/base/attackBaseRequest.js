@@ -24,7 +24,7 @@ const attackBaseRequest = (socket, payload) => {
     }
 
     // 쿨타임 검증
-    if (!unit.isAttackAvailable(timestamp)) {
+    if (unit.isAttackOnCooldown(timestamp)) {
       sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: false });
       return;
     }
