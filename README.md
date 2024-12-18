@@ -23,38 +23,38 @@
   <summary>목차 확인</summary>
   <ol>
     <li>
-      <a href="#🎮-프로젝트-설명">🎮 프로젝트 설명</a>
+      <a href="#project-description">🎮 프로젝트 설명</a>
     </li>
     <li>
-      <a href="#🛠️-기술-스택">🛠️ 기술 스택</a>
+      <a href="#tech-stack">🛠️ 기술 스택</a>
     </li>
     <li>
-      <a href="#🎯-기술적-목표">🎯 기술적 목표</a>
+      <a href="#technical-goals">🎯 기술적 목표</a>
     </li>
     <li>
-      <a href="#🗺️-서버-아키텍쳐">🗺️ 서버 아키텍쳐</a>
+      <a href="#server-architecture">🗺️ 서버 아키텍쳐</a>
     </li>
     <li>
-      <a href="#📌-핵심-코드">📌 핵심 코드</a>
+      <a href="#key-code">📌 핵심 코드</a>
     </li>
     <li>
-      <a href="#🚨-트러블-슈팅">🚨 트러블 슈팅</a>
+      <a href="#troubleshooting">🚨 트러블 슈팅</a>
     </li>
     <li>
-      <a href="#팀원">팀원</a>
+      <a href="#team-members">팀원</a>
     </li>
     <li>
       <a href="#etc">etc</a>
       <ul>
-        <li><a href="#게임-데이터-저장-및-관리">게임 데이터 저장 및 관리</a></li>
-        <li><a href="#기술적-의사-결정">기술적 의사 결정</a></li>
-        <li><a href="#관련-링크">관련 링크</a></li>
+        <li><a href="#data-management">게임 데이터 저장 및 관리</a></li>
+        <li><a href="#technical-decisions">기술적 의사 결정</a></li>
+        <li><a href="#related-links">관련 링크</a></li>
       </ul>
     </li>
   </ol>
 </details>
 
-## 🎮 프로젝트 설명
+<h2 id="project-description">🎮 프로젝트 설명</h2>
 
 <!-- 브로슈어에 들어갈 주요 컨텐츠의 이미지를 여기 넣으면 될듯. 아래 이미지는 임시 -->
 
@@ -62,7 +62,7 @@
 
 2명의 플레이어가 고양이파 vs 강아지파로 나뉘어 상대방의 기지를 무너뜨리는 **RTS 게임**입니다.
 
-## 🛠️ 기술 스택
+<h2 id="tech-stack">🛠️ 기술 스택</h2>
 
 ### ☁️ 서버
 
@@ -98,7 +98,7 @@
 <img src="https://shields.io/badge/GitHub_Actions-2088FF?logo=GitHubActions&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/GCP-4285F4?logo=GoogleCloud&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 
-## 🎯 기술적 목표
+<h2 id="technical-goals">🎯 기술적 목표</h2>
 
 - **실시간 대전**
   - 안정적이고 신뢰성 있는 실시간 데이터 전송을 위해 **TCP 소켓**을 기반으로 멀티플레이 환경을 구현
@@ -111,15 +111,15 @@
   - 코드 품질과 배포 신뢰성을 높이고, 반복적인 작업을 자동화하여 개발 속도와 효율성을 극대화
   - 클라우드 환경에서 손쉬운 배포와 스케일링 지원
 
-## 🗺️ 서버 아키텍쳐
+<h2 id="server-architecture">🗺️ 서버 아키텍쳐</h2>
 
 ![server architecture](docs/images/서버아키텍처.png)
 
-## 📌 핵심 코드
+<h2 id="key-code">📌 핵심 코드</h2>
 
 <!-- 이게 필수라고 본다고 함.. -->
 
-## 🚨 트러블 슈팅
+<h2 id="troubleshooting">🚨 트러블 슈팅</h2>
 
 - [🎯 중복된 매칭 완료](https://teamsparta.notion.site/15f2dc3ef514816eaf39e3831fb5567c)
 - [🏹 연속 패킷 처리 오류](https://www.notion.so/teamsparta/15f2dc3ef514816895dedb7084fac5fc)
@@ -130,7 +130,7 @@
 <!-- 모든 트러블슈팅을 넣기 보다는 중요한 것만 추려서 넣고
 나머지 트러블슈팅은 따로 TROUBLE-SHOOTING.md 같은 파일 파서 넣는게 좋을듯 -->
 
-## 팀원
+<h2 id="team-members">팀원</h2>
 
 ### 서버
 
@@ -155,21 +155,21 @@
 | ------ | ----- | ------ |
 | 서정재 |       |        |
 
-## etc
+<h2 id="etc">etc</h2>
 
-### 게임 데이터 저장 및 관리
+<h3 id="data-management">게임 데이터 저장 및 관리</h3>
 
 - [패킷 명세서](https://www.notion.so/teamsparta/15f2dc3ef51481238d03cd280a77e0aa)
 - [API 명세서](https://www.notion.so/teamsparta/API-15f2dc3ef5148102a213f122efe75412)
 
-### 기술적 의사 결정
+<h3 id="technical-decisions">기술적 의사 결정</h3>
 
 - [Game Server](https://www.notion.so/teamsparta/Game-Server-15f2dc3ef5148149b6a2e257b4bded30)
 - [Distributed Server](https://www.notion.so/teamsparta/Distributed-Server-15f2dc3ef5148111af18ee0074540db4)
 - [DataBase](https://www.notion.so/teamsparta/DataBase-15f2dc3ef514812082b5c52d755dd017)
 - [DevOps](https://www.notion.so/teamsparta/DevOps-15f2dc3ef51481f1a560eb23c4fd1e0b)
 
-### 관련 링크
+<h3 id="related-links">관련 링크</h3>
 
 - 📗 [팀 노션](https://www.notion.so/teamsparta/e3e44c9e021e4f7b9701144fadb9187f)
 - 📁 **GitHub Repositories**:
