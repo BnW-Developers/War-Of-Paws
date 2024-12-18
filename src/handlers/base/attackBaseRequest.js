@@ -5,6 +5,11 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 import CustomErr from './../../utils/error/customErr.js';
 import { handleErr } from './../../utils/error/handlerErr.js';
 
+/**
+ * 성채 공격 처리
+ * @param {net.Socket} socket
+ * @param {{ unitId: int32}} payload
+ */
 const attackBaseRequest = (socket, payload) => {
   try {
     const { unitId } = payload;

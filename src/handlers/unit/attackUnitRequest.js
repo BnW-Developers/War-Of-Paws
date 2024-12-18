@@ -11,40 +11,40 @@ import validateTarget from '../../utils/unit/validationTarget.js';
 /**
  * 클라이언트로부터 공격 요청을 처리하고, 공격 로직을 수행한 뒤 결과를 응답으로 전송
  * @param {net.Socket} socket
- * @param {{ unitId: int32, opponentUnitIds: Array<int32> }} payload
+ * @param {{ attackingUnitId: int32, targetUnitIds: Array<int32> }} payload
  */
 const attackUnitRequest = (socket, payload) => {
   try {
-    const { attackingUnitId, attackedUnitIds } = payload;
+    const { attackingUnitId, targetUnitIds } = payload;
     const timestamp = Date.now();
-    const validatedAttackedUnits = [];
+    const validatedTargetUnits = [];
 
     const { userGameData, opponentGameData, opponentSocket } = checkSessionInfo(socket);
 
-    const attackingUnit = validateAttackUnit(userGameData, attackingUnitId);
+    const attackingUnit = validateAttackingUnit(userGameData, attackingUnitId);
 
     attackingUnit.checkAttackCooldown(timestamp);
 
     attackingUnit.resetLastAttackTime(timestamp);
 
-    for (const attackedUnitId of attackedUnitIds) {
-      const attackedUnit = opponentGameData.getUnit(attackedUnitId);
+    for (const targetUnitId of targetUnitIds) {
+      const targetUnit = opponentGameData.getUnit(targetUnitId);
 
-      if (!validateTarget(attackingUnit, attackedUnit, 'attack')) {
+      if (!validateTarget(attackingUnit, targetUnit, 'attack')) {
         continue;
       }
 
-      validatedAttackedUnits.push(attackedUnitIds);
+      validatedTargetUnits.push(targetUnitId);
     }
 
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {
       attackingUnitId,
-      attackedUnitIds: validatedAttackedUnits,
+      targetUnitIds: validatedTargetUnits,
     });
 
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_ATTACK_NOTIFICATION, {
+    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
-      attackedUnitIds: validatedAttackedUnits,
+      targetUnitIds: validatedTargetUnits,
     });
   } catch (err) {
     handleErr(socket, err);
@@ -57,7 +57,7 @@ const attackUnitRequest = (socket, payload) => {
  * @param {int32} unitId
  * @returns {Unit}
  */
-const validateAttackUnit = (userGameData, unitId) => {
+const validateAttackingUnit = (userGameData, unitId) => {
   const unit = userGameData.getUnit(unitId);
   if (!unit) {
     throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, 'Unit not found');
