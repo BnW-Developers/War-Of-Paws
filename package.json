@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon ./src/server.js",
     "migrate": "node src/mysql/migration/createSchemas.js",
-    "dummy-test": "nodemon ./src/test/dummyTest.js"
+    "test": "nodemon ./src/test/dummyTest.js"
   },
   "keywords": [],
   "author": "BnW-Developers",
