@@ -19,7 +19,7 @@ class DummyClient {
     this.GamePacket = null;
     this.lastReceivedPacket = null;
     this.myUnit = [];
-    this.oppoUnit = [];
+    this.opponentUnit = [];
   }
 
   async initialize() {
@@ -250,7 +250,7 @@ class DummyClient {
             console.log(this.myUnit);
             break;
           case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION:
-            this.oppoUnit.push({
+            this.opponentUnit.push({
               assetId: response.assetId,
               unitId: response.unitId,
               isTop: response.toTop,
