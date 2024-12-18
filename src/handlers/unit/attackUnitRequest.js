@@ -1,5 +1,3 @@
-import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
-import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { PACKET_TYPE } from '../../constants/header.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/log/logger.js';
@@ -28,6 +26,7 @@ const attackUnitRequest = (socket, payload) => {
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
+      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
@@ -37,6 +36,7 @@ const attackUnitRequest = (socket, payload) => {
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
+      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
@@ -59,9 +59,12 @@ const attackUnitRequest = (socket, payload) => {
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
+      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
+    // 검증 성공
+    attackingUnit.setAttackValidationStatus(true);
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,

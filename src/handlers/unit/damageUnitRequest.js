@@ -1,4 +1,6 @@
 import { PACKET_TYPE } from '../../constants/header.js';
+import CustomErr from '../../utils/error/customErr.js';
+import { ERR_CODES } from '../../utils/error/errCodes.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import { sendPacket } from '../../utils/packet/packetManager.js';
 import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
@@ -16,9 +18,15 @@ const damageUnitRequest = (socket, payload) => {
     const { userGameData, opponentGameData, opponentSocket, gameSession } =
       checkSessionInfo(socket);
 
-    // unitId가 피공격자, opponent가 공격자
     const targetUnit = opponentGameData.getUnit(targetUnitId);
     const attackingUnit = userGameData.getUnit(attackingUnitId);
+
+    if (!attackingUnit.getAttackValidationStatus()) {
+      throw new CustomErr(
+        ERR_CODES.ATTACK_VALIDATION_FAILED,
+        '공격 검증에 통과하지 못한 요청입니다.',
+      );
+    }
 
     const resultHp = targetUnit.applyDamage(attackingUnit.getAttackPower());
 
@@ -55,6 +63,8 @@ const damageUnitRequest = (socket, payload) => {
     sendPacket(socket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
       unitInfo,
     });
+
+    attackingUnit.setAttackValidationStatus(false);
   } catch (error) {
     handleErr(socket, error);
   }
