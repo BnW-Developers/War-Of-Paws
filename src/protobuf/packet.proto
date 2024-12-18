@@ -336,8 +336,8 @@ message GamePacket {
     S2CAttackUnitNotification attackUnitNotification = 201;
 
     // 유닛 피격
-    C2SUnitAttackedRequest damageUnitRequest = 300;
-    S2CUnitAttackedNotification damageUnitNotification = 301;
+    C2SDamageUnitRequest damageUnitRequest = 300;
+    S2CDamageUnitNotification damageUnitNotification = 301;
 
     // 유닛 사망
     S2CUnitDeathNotification unitDeathNotification = 400;
@@ -356,8 +356,8 @@ message GamePacket {
     S2CEnemyAttackBaseNotification enemyAttackBaseNotification = 602;
 
     // 성채 공격
-    C2SBaseDamagedRequest baseAttackedRequest = 603;
-    S2CBaseDamagedResponse baseAttackedResponse = 604;
+    C2SBaseDamagedRequest damageBaseRequest = 603;
+    S2CBaseDamagedResponse damageBaseResponse = 604;
     S2CEnemyDamageBaseNotification enemyDamageBaseNotification = 605;
 
     // 게임 종료
