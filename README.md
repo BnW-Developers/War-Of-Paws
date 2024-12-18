@@ -64,34 +64,34 @@
 
 ## 🛠️ 기술 스택
 
-### 서버
+### ☁️ 서버
 
 <img src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=000&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/Node.js-339933?logo=Node.js&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/Express-000000?logo=Express&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/NGINX-009639?logo=NGINX&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 
-### 클라이언트
+### 🖥️ 클라이언트
 
 <img src="https://shields.io/badge/C%23-800080?logo=CSharp&logoColor=fff&style=flat-square" style="height : 25px;"/>&nbsp;
 <img src="https://shields.io/badge/Unity-000000?logo=Unity&logoColor=fff&style=flat-square" style="height : 25px;"/>&nbsp;
 
-### Socket Programming
+### 🔌 Socket Programming
 
 <img src="https://shields.io/badge/TCP/IP-FF6F00?style=flat-square" style="height : 25px; "/> &nbsp;
 <img src="https://shields.io/badge/PROTOBUF-00599C?logo=Protocol-Buffers&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 
-### 인증
+### 🔐 인증
 
 <img src="https://shields.io/badge/JWT-000000?logo=JSONWebTokens&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/OAuth2-3C873A?logo=OAuth&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 
-### 데이터베이스
+### 🗂️ 데이터베이스
 
 <img src="https://shields.io/badge/MySQL-4479A1?logo=MySQL&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/Redis-DC382D?logo=Redis&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 
-### DevOps/Infra
+### 🚀 DevOps/Infra
 
 <img src="https://shields.io/badge/Docker-2496ED?logo=Docker&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
 <img src="https://shields.io/badge/Docker_Compose-2496ED?logo=Docker&logoColor=fff&style=flat-square" style="height : 25px; "/>&nbsp;
@@ -171,4 +171,8 @@
 
 ### 관련 링크
 
-- [팀 노션](https://www.notion.so/teamsparta/e3e44c9e021e4f7b9701144fadb9187f)
+- 📗 [팀 노션](https://www.notion.so/teamsparta/e3e44c9e021e4f7b9701144fadb9187f)
+- 🔑 [인증서버](https://github.com/BnW-Developers/War-Of-Paws-Auth-Server)  
+- 🎯 [로비-매칭서버](https://github.com/BnW-Developers/War-Of-Paws-Lobby-Matching-Server)  
+- 💊 [Nginx-헬퍼 서버](https://github.com/BnW-Developers/Nginx-Helper-Server)  
+- ✅ [헬스체크 서버](https://github.com/BnW-Developers/War-Of-Paws-Health-Server)  
