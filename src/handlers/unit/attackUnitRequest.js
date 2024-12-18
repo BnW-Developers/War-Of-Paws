@@ -1,4 +1,3 @@
-import Game from '../../classes/models/game.class.js'; // eslint-disable-line
 import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
 import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { PACKET_TYPE } from '../../constants/header.js';
@@ -35,9 +34,7 @@ const attackUnitRequest = (socket, payload) => {
         continue;
       }
 
-      validatedAttackedUnits.push({
-        attackedUnitIds,
-      });
+      validatedAttackedUnits.push(attackedUnitIds);
     }
 
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_RESPONSE, {

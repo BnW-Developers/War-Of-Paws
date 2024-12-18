@@ -17,22 +17,29 @@ const unitAttackedRequest = (socket, payload) => {
       checkSessionInfo(socket);
 
     // unitId가 피공격자, opponent가 공격자
-    const attackedUnit = userGameData.getUnit(attackedUnitId);
-    const attackingUnit = opponentGameData.getUnit(attackingUnitId);
+    const attackedUnit = opponentGameData.getUnit(attackedUnitId);
+    const attackingUnit = userGameData.getUnit(attackingUnitId);
 
     const resultHp = attackedUnit.applyDamage(attackingUnit.getAttackPower());
 
     // 사망 체크
     if (attackedUnit.getHp() <= 0) {
-      if (!attackedUnit.isDead()) {
+      if (attackedUnit.isDead()) {
         attackedUnit.markAsDead();
         const checkPointManager = gameSession.getCheckPointManager();
         if (checkPointManager.isExistUnit(attackedUnit)) {
           checkPointManager.removeUnit(attackedUnit);
         }
 
-        userGameData.removeUnit(attackedUnitId);
+        opponentGameData.removeUnit(attackedUnitId);
         deathUnits.push(attackedUnitId);
+        sendPacket(opponentSocket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
+          unitIds: deathUnits,
+        });
+
+        sendPacket(socket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
+          unitIds: deathUnits,
+        });
       }
     }
 
@@ -41,20 +48,12 @@ const unitAttackedRequest = (socket, payload) => {
       unitHp: resultHp,
     };
 
-    sendPacket(socket, PACKET_TYPE.UNIT_ATTACKED_RESPONSE, {
+    sendPacket(opponentSocket, PACKET_TYPE.UNIT_ATTACKED_RESPONSE, {
       unitInfo: unitInfo,
     });
 
-    sendPacket(opponentSocket, PACKET_TYPE.ENEMY_UNIT_ATTACKED_NOTIFICATION, {
+    sendPacket(socket, PACKET_TYPE.ENEMY_UNIT_ATTACKED_NOTIFICATION, {
       unitInfo: unitInfo,
-    });
-
-    sendPacket(socket, PACKET_TYPE.UNIT_DEATH_NOTIFICATION, {
-      unitIds: deathUnits,
-    });
-
-    sendPacket(socket, PACKET_TYPE.ENEMY_UNIT_DEATH_NOTIFICATION, {
-      unitIds: deathUnits,
     });
   } catch (error) {
     handleErr(socket, error);
