@@ -94,6 +94,7 @@ class DummyTest {
       const species = answer === '1' ? 'cat' : 'dog';
       console.log(`선택된 동물: ${species}`);
 
+      this.client.species = species;
       this.client.sendMatchRequest(species);
 
       // match notification 처리

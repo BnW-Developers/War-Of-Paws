@@ -2,8 +2,19 @@ import { PACKET_TYPE } from '../constants/header.js';
 
 export const MARK_1 = [
   {
+    packetType: PACKET_TYPE.DRAW_CARD_REQUEST,
+    payload: {},
+    duration: 2000,
+  },
+
+  {
     packetType: PACKET_TYPE.SPAWN_UNIT_REQUEST,
-    payload: { assetId: 2001, toTop: false },
+    payload: {},
+    duration: 0,
+  },
+  {
+    packetType: PACKET_TYPE.LOCATION_NOTIFICATION,
+    payload: {},
     duration: 1000,
   },
   {

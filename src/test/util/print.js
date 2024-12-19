@@ -1,4 +1,4 @@
-import formatTime from '../utils/formatter/timeFormatter.js';
+import formatTime from '../../utils/formatter/timeFormatter.js';
 import chalk from 'chalk';
 
 export const printHeader = (tag, outgoing = false, error = false) => {
