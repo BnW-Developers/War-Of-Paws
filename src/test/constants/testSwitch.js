@@ -21,7 +21,7 @@ export const UNIT_TEST = Object.freeze({
 /**
  * 유닛 테스트 스위치
  */
-export const CURRENT_TEST = UNIT_TEST.EXCEED_MAX_SLOTS;
+export const CURRENT_TEST = UNIT_TEST.LOCATION_BASIC;
 
 /**
  * 로그 스위치
@@ -37,7 +37,7 @@ export const TEST_LOG_ENABLED_MATCH = true;
 export const TEST_LOG_ENABLED_GAME_START = true;
 
 // 동기화
-export const TEST_LOG_ENABLED_LOCATION_SYNC = false;
+export const TEST_LOG_ENABLED_LOCATION_SYNC = true;
 export const TEST_LOG_ENABLED_MINERAL_SYNC = false;
 
 // 카드 & 유닛소환

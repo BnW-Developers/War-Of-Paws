@@ -38,7 +38,6 @@ import chalk from 'chalk';
 import formatCoords from '../utils/formatter/formatCoords.js';
 import { LOCATION_SYNC_INTERVAL } from './constants/testConfig.js';
 import { INITIAL_MINERAL } from '../constants/game.constants.js';
-import updateContent from './util/updateContent.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -476,7 +475,6 @@ class DummyClient {
 
   async playContents() {
     const contents = this.content;
-    updateContent(contents);
 
     for (const content of contents) {
       const packetType = content.packetType;
@@ -498,13 +496,17 @@ class DummyClient {
                 printMessage(`버튼: ${payload.buttonType}`, true);
               }
 
+              const buttonType = Math.floor(Math.random() * 3) + 1;
+              payload = { buttonType };
               // 패킷 생성 및 전송 부분
               let encodedPayload = { [snakeToCamel(packetName)]: payload };
               let packet = this.createPacket(packetType, encodedPayload);
-
               this.socket.write(packet);
             }, 100); // n초마다 실행
           } else {
+            const buttonType = Math.floor(Math.random() * 3) + 1;
+            payload = { buttonType };
+
             if (TEST_LOG_ENABLED_DRAW_CARD) {
               printHeader('발신', true);
               printMessage(packetName, true);
@@ -528,11 +530,6 @@ class DummyClient {
         }
 
         case PACKET_TYPE.LOCATION_NOTIFICATION: {
-          if (TEST_LOG_ENABLED_LOCATION_SYNC) {
-            printHeader('발신', true);
-            printMessage(packetName, true);
-          }
-
           // 기존 타이머가 있다면 제거
           if (this.locationSyncTimer) {
             clearInterval(this.locationSyncTimer);
@@ -541,6 +538,10 @@ class DummyClient {
 
           this.locationSyncTimer = setInterval(() => {
             if (this.movingUnits > 0) {
+              if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+                printHeader('발신', true);
+                printMessage(packetName, true);
+              }
               // 유닛 업데이트 부분
               const unitPositions = [];
               for (const unit of this.myUnits) {
