@@ -20,7 +20,7 @@ const damageBaseRequest = (socket, payload) => {
     const unit = userGameData.getUnit(unitId);
     if (!unit) throw new CustomErr(ERR_CODES.UNIT_NOT_FOUND, '유닛 정보를 찾을 수 없습니다.');
 
-    if (!unit.getAttackValidationStatus()) {
+    if (!unit.hasRemainingProjectile()) {
       throw new CustomErr(
         ERR_CODES.ATTACK_VALIDATION_FAILED,
         '공격 검증에 통과하지 못한 요청입니다.',
@@ -30,10 +30,11 @@ const damageBaseRequest = (socket, payload) => {
     const damage = unit.getAttackPower();
     const newBaseHp = opponentGameData.attackBase(damage);
 
+    unit.removeProjectile();
+
     sendPacket(socket, PACKET_TYPE.DAMAGE_BASE_RESPONSE, { baseHp: newBaseHp });
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_DAMAGE_BASE_NOTIFICATION, { baseHp: newBaseHp });
 
-    unit.disableAttackStatus();
     if (newBaseHp <= 0) {
       gameSession.endGame();
     }

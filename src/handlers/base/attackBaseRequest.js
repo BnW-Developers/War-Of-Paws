@@ -44,7 +44,7 @@ const attackBaseRequest = (socket, payload) => {
       return;
     }
 
-    unit.enableAttackStatus();
+    unit.addProjectile(1);
     sendPacket(socket, PACKET_TYPE.ATTACK_BASE_RESPONSE, { unitId, success: true });
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_ATTACK_BASE_NOTIFICATION, {
       unitId,
