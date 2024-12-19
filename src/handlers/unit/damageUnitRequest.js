@@ -30,6 +30,19 @@ const damageUnitRequest = (socket, payload) => {
 
     const resultHp = targetUnit.applyDamage(attackingUnit.getAttackPower());
 
+    const unitInfo = {
+      unitId: targetUnitId,
+      unitHp: resultHp,
+    };
+
+    sendPacket(opponentSocket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
+      unitInfo,
+    });
+
+    sendPacket(socket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
+      unitInfo,
+    });
+
     // 사망 체크
     if (targetUnit.getHp() <= 0) {
       if (!targetUnit.isDead()) {
@@ -50,19 +63,6 @@ const damageUnitRequest = (socket, payload) => {
         });
       }
     }
-
-    const unitInfo = {
-      unitId: targetUnitId,
-      unitHp: resultHp,
-    };
-
-    sendPacket(opponentSocket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
-      unitInfo,
-    });
-
-    sendPacket(socket, PACKET_TYPE.DAMAGE_UNIT_NOTIFICATION, {
-      unitInfo,
-    });
 
     attackingUnit.removeProjectile();
   } catch (error) {
