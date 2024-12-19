@@ -237,13 +237,13 @@ async handleUserDisconnect(eventData) {
 | ------ | ---------------------- | ------------------------------------------------------------------ |
 | 윤치훈 | smartb12@naver.com     | [https://github.com/CHICHIBAEBAE](https://github.com/CHICHIBAEBAE) |
 | 박창우 | changwoo1208@naver.com | [https://github.com/ckd0dn](https://github.com/ckd0dn)             |
-| 이현장 |                        |                                                                    |
+| 이현장 | makelee1379@gmail.com  | [https://github.com/Leehj950](https://github.com/Leehj950)         |
 
 ### 기획
 
 | 이름   | email | github |
 | ------ | ----- | ------ |
-| 서정재 |       |        |
+| 서정재 | 0321sjj@naver.com | [https://github.com/Besin](https://github.com/Besin)       |
 
 <h2 id="etc">etc</h2>
 
