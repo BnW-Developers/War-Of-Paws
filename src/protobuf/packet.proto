@@ -189,14 +189,10 @@ message C2SHealUnitRequest {
   int32 healAmount = 3;
 }
 
-message S2CHealUnitResponse {
+message S2CHealUnitNotification {
   int32 unitId = 1;
   int32 unitHp = 2;
-}
-
-message S2CEnemyHealUnitNotification {
-  int32 unitId = 1;
-  int32 unitHp = 2;
+  bool success = 3;
 }
 
 message C2SBuffUnitRequest {
@@ -206,16 +202,11 @@ message C2SBuffUnitRequest {
   int32 buffDuration = 4;
 }
 
-message S2CBuffUnitResponse {
+message S2CBuffUnitNotification {
   repeated int32 unitIds = 1;
   int32 buffAmount = 2;
   int32 buffDuration = 3;
-}
-
-message S2CEnemyBuffUnitNotification {
-  repeated int32 unitIds = 1;
-  int32 buffAmount = 2;
-  int32 buffDuration = 3;
+  bool success = 4;
 }
 
 message C2SUnitAnimationNotification {
@@ -373,13 +364,11 @@ message GamePacket {
 
     // Heal 관련
     C2SHealUnitRequest healUnitRequest = 1000;
-    S2CHealUnitResponse healUnitResponse = 1001;
-    S2CEnemyHealUnitNotification enemyHealUnitNotification = 1002;
+    S2CHealUnitNotification HealUnitNotification = 1001;
 
     // Buff 관련
     C2SBuffUnitRequest buffUnitRequest = 1100;
-    S2CBuffUnitResponse buffUnitResponse = 1101;
-    S2CEnemyBuffUnitNotification enemyBuffUnitNotification = 1102;
+    S2CBuffUnitNotification BuffUnitNotification = 1101;
 
     // 애니메이션 관련
     C2SUnitAnimationNotification unitAnimationNotification = 1200;
