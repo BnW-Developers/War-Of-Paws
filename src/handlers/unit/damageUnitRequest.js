@@ -35,8 +35,8 @@ const damageUnitRequest = (socket, payload) => {
       if (targetUnit.isDead()) {
         targetUnit.markAsDead();
         const checkPointManager = gameSession.getCheckPointManager();
-        if (checkPointManager.isExistUnit(targetUnit)) {
-          checkPointManager.removeUnit(targetUnit);
+        if (checkPointManager.isExistUnit(targetUnitId)) {
+          checkPointManager.removeUnit(targetUnitId);
         }
 
         opponentGameData.removeUnit(targetUnitId);
