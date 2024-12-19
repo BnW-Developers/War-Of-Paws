@@ -33,7 +33,7 @@ const damageBaseRequest = (socket, payload) => {
     sendPacket(socket, PACKET_TYPE.DAMAGE_BASE_RESPONSE, { baseHp: newBaseHp });
     sendPacket(opponentSocket, PACKET_TYPE.ENEMY_DAMAGE_BASE_NOTIFICATION, { baseHp: newBaseHp });
 
-    unit.setAttackValidationStatus(false);
+    unit.disableAttackStatus();
     if (newBaseHp <= 0) {
       gameSession.endGame();
     }
