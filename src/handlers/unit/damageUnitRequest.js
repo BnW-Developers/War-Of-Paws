@@ -32,7 +32,7 @@ const damageUnitRequest = (socket, payload) => {
 
     // 사망 체크
     if (targetUnit.getHp() <= 0) {
-      if (targetUnit.isDead()) {
+      if (!targetUnit.isDead()) {
         targetUnit.markAsDead();
         const checkPointManager = gameSession.getCheckPointManager();
         if (checkPointManager.isExistUnit(targetUnitId)) {
