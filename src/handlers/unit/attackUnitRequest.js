@@ -1,5 +1,3 @@
-import PlayerGameData from '../../classes/models/playerGameData.class.js'; // eslint-disable-line
-import Unit from '../../classes/models/unit.class.js'; // eslint-disable-line
 import { PACKET_TYPE } from '../../constants/header.js';
 import { handleErr } from '../../utils/error/handlerErr.js';
 import logger from '../../utils/log/logger.js';
@@ -52,7 +50,7 @@ const attackUnitRequest = (socket, payload) => {
       validatedTargetUnits.push(targetUnitId);
     }
 
-    // 사거리 검증 실패로 타겟 유닛이 없음
+    // 검증 실패로 타겟 유닛이 없음
     if (validatedTargetUnits.length === 0) {
       sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
         attackingUnitId,
@@ -61,6 +59,9 @@ const attackUnitRequest = (socket, payload) => {
       });
       return;
     }
+
+    // validatedTargetUnits 배열 크기만큼 투사체 생성
+    attackingUnit.addProjectile(validatedTargetUnits.length);
 
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,

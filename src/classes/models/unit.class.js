@@ -36,6 +36,8 @@ class Unit {
     this.buffed = false;
     this.stunned = false;
     this.dead = false;
+    this.attackValidationStatus = false;
+    this.activeProjectiles = 0; // 활성화된 투사체 개수
 
     // 쿨타임 관련
     this.cooldown = unitData.cd;
@@ -352,6 +354,20 @@ class Unit {
    */
   getOpponentBaseLocation() {
     return this.path[this.path.length - 1];
+  }
+
+  hasRemainingProjectile() {
+    return this.activeProjectiles > 0;
+  }
+
+  addProjectile(count) {
+    this.activeProjectiles += count;
+  }
+
+  removeProjectile() {
+    if (this.activeProjectiles > 0) {
+      this.activeProjectiles -= 1;
+    }
   }
 
   /**
