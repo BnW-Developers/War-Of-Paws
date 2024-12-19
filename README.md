@@ -122,9 +122,9 @@
    <summary>[로비-매칭 서버]패킷 라우팅 프로세스</summary>
   마이크로서비스에 패킷 라우팅 로직
 
-  - 동적 마이크로서비스 라우팅
-  - 라운드 로빈 알고리즘 적용
-  - 서비스 부하 분산 처리
+- 동적 마이크로서비스 라우팅
+- 라운드 로빈 알고리즘 적용
+- 서비스 부하 분산 처리
 
 ```javascript
 static routePacket(packetRoutingMap, socket, packet) {
@@ -170,8 +170,8 @@ static routePacket(packetRoutingMap, socket, packet) {
   사용자 연결 해제 시 매칭 취소 로직 <br>
   Redis의 Pub/Sub 기능을 이용해 로비 서버에서 모든 마이크로서비스에게 사용자의 접속 종료를 알림
 
-  - 분산 락으로 동시성 문제 방지
-  - 락의 TTL로 deadlock 방지
+- 분산 락으로 동시성 문제 방지
+- 락의 TTL로 deadlock 방지
 
 ```javascript
 // Redis Pub/Sub 구독 초기화
@@ -212,15 +212,13 @@ async handleUserDisconnect(eventData) {
 </details>
 
 <h2 id="troubleshooting">🚨 트러블 슈팅</h2>
+<!-- 2-3개 더 추가 -->
 
-- [🎯 중복된 매칭 완료](https://teamsparta.notion.site/15f2dc3ef514816eaf39e3831fb5567c)
 - [🏹 연속 패킷 처리 오류](https://www.notion.so/teamsparta/15f2dc3ef514816895dedb7084fac5fc)
 - [💣️ 비정상 클라이언트의 무차별 패킷 전송으로 인한 아이피 차단](https://www.notion.so/teamsparta/15f2dc3ef514814e81dadfd75425d30d)
-- [😈 분산서버 도입 후 IP 밴 기능 사용 불가](https://www.notion.so/teamsparta/IP-15f2dc3ef5148197a364d648c411e7f1)
 - [⚙️ README 수정만으로 실행되는 Github Actions](https://www.notion.so/teamsparta/README-Github-Actions-0642a09ce459464aa7b3dfee076ee047)
 
-<!-- 모든 트러블슈팅을 넣기 보다는 중요한 것만 추려서 넣고
-나머지 트러블슈팅은 따로 TROUBLE-SHOOTING.md 같은 파일 파서 넣는게 좋을듯 -->
+이 외에도 클라이언트 팀의 트러블 슈팅과 서버 팀의 다른 트러블 슈팅은 [TROUBLE-SHOOTING.md](./TROUBLE-SHOOTING.md)에서 확인할 수 있습니다.
 
 <h2 id="team-members">팀원</h2>
 
@@ -269,7 +267,3 @@ async handleUserDisconnect(eventData) {
   - ![GitHub](https://shields.io/badge/로비-매칭서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [로비-매칭서버](https://github.com/BnW-Developers/War-Of-Paws-Lobby-Matching-Server)
   - ![GitHub](https://shields.io/badge/Nginx-헬퍼서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [Nginx-헬퍼 서버](https://github.com/BnW-Developers/Nginx-Helper-Server)
   - ![GitHub](https://shields.io/badge/헬스체크-서버-000000?logo=GitHub&logoColor=fff&style=flat-square) [헬스체크 서버](https://github.com/BnW-Developers/War-Of-Paws-Health-Server)
-
-```
-
-```
