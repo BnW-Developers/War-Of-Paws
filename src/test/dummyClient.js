@@ -5,6 +5,40 @@ import { fileURLToPath } from 'url';
 import { PACKET_TYPE, PACKET_TYPE_REVERSED } from '../constants/header.js';
 import { snakeToCamel } from '../utils/formatter/snakeToCamel.js';
 import { delay } from '../utils/util/delay.js';
+import { printHeader, printMessage } from './util/print.js';
+import {
+  CURRENT_TEST,
+  TEST_LOG_ENABLED_ATTACK_BASE,
+  TEST_LOG_ENABLED_DRAW_CARD,
+  TEST_LOG_ENABLED_ERROR,
+  TEST_LOG_ENABLED_GAME_OVER,
+  TEST_LOG_ENABLED_GAME_START,
+  TEST_LOG_ENABLED_LOCATION_SYNC,
+  TEST_LOG_ENABLED_MATCH,
+  TEST_LOG_ENABLED_MINERAL_SYNC,
+  TEST_LOG_ENABLED_PAYLOAD,
+  TEST_LOG_ENABLED_SPAWN_UNIT,
+  UNIT_TEST,
+} from './constants/testSwitch.js';
+import { loadGameAssets } from '../init/loadAssets.js';
+import {
+  client_checkCardValidity,
+  client_addCard,
+  client_addEliteCard,
+  client_addMyUnit,
+  client_addOpponentUnit,
+  client_getRandomCard,
+  client_removeCard,
+  client_setUnitPosition,
+  client_startMovingUnits,
+  client_stopMovingUnits,
+  client_checkMergeCondition,
+} from './util/unit.js';
+import chalk from 'chalk';
+import formatCoords from '../utils/formatter/formatCoords.js';
+import { LOCATION_SYNC_INTERVAL } from './constants/testConfig.js';
+import { INITIAL_MINERAL } from '../constants/game.constants.js';
+import updateContent from './util/updateContent.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,8 +52,16 @@ class DummyClient {
     this.root = null;
     this.GamePacket = null;
     this.lastReceivedPacket = null;
-    this.myUnit = [];
-    this.oppoUnit = [];
+    this.species = null;
+    this.cards = new Map();
+    this.numCards = 0;
+    this.myUnits = [];
+    this.opponentUnits = [];
+    this.myUnitMap = new Map();
+    this.opponentUnitMap = new Map();
+    this.mineral = INITIAL_MINERAL;
+    this.moveTimer = null;
+    this.movingUnits = 0;
   }
 
   async initialize() {
@@ -34,12 +76,13 @@ class DummyClient {
   connect(host, port) {
     return new Promise((resolve, reject) => {
       this.socket.connect(port, host, () => {
-        console.log('서버에 연결됨');
+        printHeader('연결');
         resolve();
       });
 
       this.socket.on('error', (error) => {
-        console.error('소켓 에러:', error);
+        printHeader('소켓 에러', false, true);
+        printMessage(error, false, true);
         reject(error);
       });
     });
@@ -135,7 +178,8 @@ class DummyClient {
         payload,
       };
     } catch (err) {
-      console.error(err);
+      printHeader('패킷 파싱 오류', false, true);
+      printMessage(err, false, true);
     }
   }
 
@@ -190,7 +234,8 @@ class DummyClient {
     // 패킷 타입이랑 payload 이름 맞춰줘야 함
     const packet = this.createPacket(PACKET_TYPE.MATCH_REQUEST, matchRequest);
     this.socket.write(packet);
-    console.log('매칭 요청을 보냈습니다');
+    printHeader('발신', true);
+    printMessage('매칭 요청', true);
   }
 
   sendMatchCancelRequest() {
@@ -207,7 +252,8 @@ class DummyClient {
     // 패킷 타입이랑 payload 이름 맞춰줘야 함
     const packet = this.createPacket(PACKET_TYPE.MATCH_CANCEL_REQUEST, matchCancelRequest);
     this.socket.write(packet);
-    console.log('매칭 취소 요청을 보냈습니다');
+    printHeader('발신', true);
+    printMessage('매칭 취소 요청', true);
   }
 
   sendGameStartRequest() {
@@ -223,82 +269,360 @@ class DummyClient {
     // 패킷 타입이랑 payload 이름 맞춰줘야 함
     const packet = this.createPacket(PACKET_TYPE.GAME_START_REQUEST, gameStartRequest);
     this.socket.write(packet);
-    console.log('게임 시작 요청을 보냈습니다');
+    printHeader(`발신`, true);
+    printMessage('게임 시작 요청', true);
   }
 
   // 패킷 받았을 때 처리
   handlePacket(packet) {
     try {
       const packetType = packet.packetType;
-      console.log('packetType: ', packetType);
       const decodedPayload = this.GamePacket.decode(packet.payload);
-      console.log('decodedPayload: ', decodedPayload);
       this.lastReceivedPacket = decodedPayload;
 
       if (packetType) {
         const packetName = PACKET_TYPE_REVERSED[packetType];
-        console.log(packetName + ' 받았음!');
         const response = { ...decodedPayload[snakeToCamel(packetName)] };
-        console.log('response: ', response);
+
         switch (packetType) {
-          case PACKET_TYPE.SPAWN_UNIT_RESPONSE:
-            this.myUnit.push({
-              assetId: response.assetId,
-              unitId: response.unitId,
-              isTop: response.toTop,
+          case PACKET_TYPE.ERROR_NOTIFICATION: {
+            if (TEST_LOG_ENABLED_ERROR) {
+              printHeader('수신', false, true);
+              printMessage(packetName, false, true);
+              printMessage(
+                `errorCode: ${response.errorCode}, errorMessage: ${response.errorMessage}`,
+              );
+            }
+
+            break;
+          }
+          case PACKET_TYPE.MATCH_NOTIFICATION: {
+            if (TEST_LOG_ENABLED_MATCH) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            loadGameAssets();
+            break;
+          }
+          case PACKET_TYPE.GAME_START_NOTIFICATION: {
+            if (TEST_LOG_ENABLED_GAME_START) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            client_startMovingUnits(this);
+            break;
+          }
+          case PACKET_TYPE.DRAW_CARD_RESPONSE: {
+            const { assetId } = response;
+            if (TEST_LOG_ENABLED_DRAW_CARD) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            client_checkCardValidity(this, assetId);
+            client_addCard(this, assetId);
+
+            if (TEST_LOG_ENABLED_DRAW_CARD) {
+              printMessage(`뽑은 카드: ${assetId}`);
+              printMessage(`남은 자원: ${this.mineral}`);
+            }
+
+            break;
+          }
+          case PACKET_TYPE.ELITE_CARD_NOTIFICATION: {
+            const { consumedAssetId, eliteAssetId } = response;
+            if (TEST_LOG_ENABLED_DRAW_CARD) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            client_checkMergeCondition(this, consumedAssetId);
+            client_addEliteCard(this, consumedAssetId, eliteAssetId);
+
+            if (TEST_LOG_ENABLED_DRAW_CARD) {
+              printMessage(`뽑은 엘리트 카드: ${consumedAssetId}`);
+            }
+
+            break;
+          }
+          case PACKET_TYPE.SPAWN_UNIT_RESPONSE: {
+            const { assetId, unitId, toTop } = response;
+            client_removeCard(this, assetId);
+            const unit = client_addMyUnit(this, assetId, unitId, toTop);
+            const position = unit.getPosition();
+            const rotation = unit.getRotation();
+
+            if (TEST_LOG_ENABLED_SPAWN_UNIT) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+
+              const message = chalk.greenBright(
+                `유닛 ${unitId} 소환: ${formatCoords(position, 2)}`,
+              );
+              printMessage(message);
+              if (CURRENT_TEST === UNIT_TEST.ROTATION)
+                printMessage(chalk.greenBright(`rotation: ${rotation.y}`));
+            }
+
+            break;
+          }
+          case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION: {
+            const { assetId, unitId, toTop } = response;
+            const unit = client_addOpponentUnit(this, assetId, unitId, toTop);
+            const position = unit.getPosition();
+            const rotation = unit.getRotation();
+
+            if (TEST_LOG_ENABLED_SPAWN_UNIT) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+
+              const message = chalk.yellowBright(
+                `유닛 ${unitId} 소환: ${formatCoords(position, 2)}`,
+              );
+              printMessage(message);
+              if (CURRENT_TEST === UNIT_TEST.ROTATION)
+                printMessage(chalk.yellowBright(`rotation: ${rotation.y}`));
+            }
+
+            break;
+          }
+          case PACKET_TYPE.LOCATION_SYNC_NOTIFICATION: {
+            if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            const { unitPositions } = response;
+            unitPositions.forEach((unitPosition) => {
+              const { unitId, position, rotation } = unitPosition;
+              let unit = this.myUnitMap.get(unitId);
+              let isMyUnit = true;
+              if (!unit) {
+                unit = this.opponentUnitMap.get(unitId);
+                isMyUnit = false;
+              }
+              const pos_before = unit.getPosition();
+              const rot_before = unit.getRotation();
+              client_setUnitPosition(unit, position, rotation);
+              const pos_after = unit.getPosition();
+              const rot_after = unit.getRotation();
+              if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+                if (isMyUnit) {
+                  const message = chalk.greenBright(
+                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
+                  );
+                  printMessage(message);
+                  if (CURRENT_TEST === UNIT_TEST.ROTATION)
+                    printMessage(chalk.greenBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
+                } else {
+                  const message = chalk.yellowBright(
+                    `유닛${unitId}:${formatCoords(pos_before, 2)}->${formatCoords(pos_after, 2)}`,
+                  );
+                  printMessage(message);
+                  if (CURRENT_TEST === UNIT_TEST.ROTATION)
+                    printMessage(chalk.yellowBright(`rotation:${rot_before.y} -> ${rot_after.y}`));
+                }
+              }
             });
-            console.log(this.myUnit);
             break;
-          case PACKET_TYPE.SPAWN_ENEMY_UNIT_NOTIFICATION:
-            this.oppoUnit.push({
-              assetId: response.assetId,
-              unitId: response.unitId,
-              isTop: response.toTop,
-            });
+          }
+          case PACKET_TYPE.MINERAL_SYNC_NOTIFICATION: {
+            const { mineral } = response;
+            const prevMineral = this.mineral;
+            this.mineral = mineral;
+
+            if (TEST_LOG_ENABLED_MINERAL_SYNC) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+              printMessage(`자원: ${prevMineral} -> ${mineral}`);
+            }
+
             break;
-          default:
+          }
+          case PACKET_TYPE.GAME_OVER_NOTIFICATION: {
+            if (TEST_LOG_ENABLED_GAME_OVER) {
+              printHeader('수신');
+              printMessage(packetName);
+              if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+            }
+
+            client_stopMovingUnits(this);
             break;
+          }
+          default: {
+            printHeader('수신');
+            printMessage(packetName);
+            if (TEST_LOG_ENABLED_PAYLOAD) printMessage(decodedPayload);
+
+            break;
+          }
         }
       }
     } catch (error) {
-      console.error('패킷 처리 중 오류 발생:', error);
+      printHeader('패킷 처리 오류', false, true);
+      console.error(error);
     }
   }
 
   async playContents() {
     const contents = this.content;
+    updateContent(contents);
+
     for (const content of contents) {
       const packetType = content.packetType;
+      const packetName = PACKET_TYPE_REVERSED[packetType];
       let payload = content.payload;
 
       switch (packetType) {
-        case PACKET_TYPE.ENTER_CHECKPOINT_NOTIFICATION:
-          console.log(this.myUnit[0]);
-          payload = { isTop: this.myUnit[0].isTop, unitId: this.myUnit[0].unitId };
-          break;
+        case PACKET_TYPE.DRAW_CARD_REQUEST: {
+          if (CURRENT_TEST === UNIT_TEST.EXCEED_MAX_SLOTS) {
+            // 기존 타이머가 있다면 제거
+            if (this.drawCardTimer) {
+              clearInterval(this.drawCardTimer);
+            }
 
-        case PACKET_TYPE.ATTACK_BASE_REQUEST:
-          payload = { unitId: this.myUnit[0].unitId };
-          break;
+            this.drawCardTimer = setInterval(() => {
+              if (TEST_LOG_ENABLED_DRAW_CARD) {
+                printHeader('발신', true);
+                printMessage(packetName, true);
+                printMessage(`버튼: ${payload.buttonType}`, true);
+              }
 
-        default:
+              // 패킷 생성 및 전송 부분
+              let encodedPayload = { [snakeToCamel(packetName)]: payload };
+              let packet = this.createPacket(packetType, encodedPayload);
+
+              this.socket.write(packet);
+            }, 100); // n초마다 실행
+          } else {
+            if (TEST_LOG_ENABLED_DRAW_CARD) {
+              printHeader('발신', true);
+              printMessage(packetName, true);
+              printMessage(`버튼: ${payload.buttonType}`, true);
+            }
+          }
+
           break;
+        }
+        case PACKET_TYPE.SPAWN_UNIT_REQUEST: {
+          const assetId = client_getRandomCard(this);
+          const toTop = Boolean(Math.floor(Math.random() * 2));
+          payload = { assetId, toTop };
+
+          if (TEST_LOG_ENABLED_SPAWN_UNIT) {
+            printHeader('발신', true);
+            printMessage(packetName, true);
+            printMessage(`assetId: ${assetId}, toTop: ${toTop}`);
+          }
+          break;
+        }
+
+        case PACKET_TYPE.LOCATION_NOTIFICATION: {
+          if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+            printHeader('발신', true);
+            printMessage(packetName, true);
+          }
+
+          // 기존 타이머가 있다면 제거
+          if (this.locationSyncTimer) {
+            clearInterval(this.locationSyncTimer);
+            this.moveTimer = null;
+          }
+
+          this.locationSyncTimer = setInterval(() => {
+            if (this.movingUnits > 0) {
+              // 유닛 업데이트 부분
+              const unitPositions = [];
+              for (const unit of this.myUnits) {
+                if (unit.arrived) continue;
+
+                const unitId = unit.getUnitId();
+                const position = unit.getPosition();
+                const rotation = unit.getRotation();
+                unitPositions.push({ unitId, position, rotation });
+
+                if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+                  const message = chalk.greenBright(`유닛${unitId}:${formatCoords(position, 2)}`);
+                  printMessage(message, true);
+                  if (CURRENT_TEST === UNIT_TEST.ROTATION)
+                    printMessage(chalk.yellowBright(`rotation:${rotation.y}`), true);
+                }
+              }
+
+              payload = { unitPositions };
+              if (TEST_LOG_ENABLED_LOCATION_SYNC) {
+                if (TEST_LOG_ENABLED_PAYLOAD) printMessage(payload);
+              }
+
+              // 패킷 생성 및 전송 부분
+              let encodedPayload = { [snakeToCamel(packetName)]: payload };
+              let packet = this.createPacket(packetType, encodedPayload);
+
+              this.socket.write(packet);
+            }
+          }, LOCATION_SYNC_INTERVAL); // n초마다 실행
+          break;
+        }
+
+        case PACKET_TYPE.ENTER_CHECKPOINT_NOTIFICATION: {
+          payload = { isTop: this.myUnits[0].isTop, unitId: this.myUnits[0].unitId };
+
+          if (TEST_LOG_ENABLED_SPAWN_UNIT) {
+            printHeader('발신', true);
+            printMessage(packetName, true);
+            if (TEST_LOG_ENABLED_PAYLOAD) printMessage(payload);
+          }
+
+          break;
+        }
+
+        case PACKET_TYPE.ATTACK_BASE_REQUEST: {
+          payload = { unitId: this.myUnits[0].unitId };
+
+          if (TEST_LOG_ENABLED_ATTACK_BASE) {
+            printHeader('발신', true);
+            printMessage(packetName, true);
+            if (TEST_LOG_ENABLED_PAYLOAD) printMessage(payload);
+          }
+
+          break;
+        }
+
+        default: {
+          printHeader('발신', true);
+          printMessage(packetName, true);
+          if (TEST_LOG_ENABLED_PAYLOAD) printMessage(payload);
+
+          break;
+        }
       }
 
-      const encodedPayload = { [snakeToCamel(PACKET_TYPE_REVERSED[packetType])]: payload };
-      const packet = this.createPacket(packetType, encodedPayload);
+      const cond1 = packetType === PACKET_TYPE.LOCATION_NOTIFICATION;
+      const cond2 =
+        packetType === PACKET_TYPE.DRAW_CARD_REQUEST && CURRENT_TEST === UNIT_TEST.EXCEED_MAX_SLOTS;
+      if (!cond1 && !cond2) {
+        const encodedPayload = { [snakeToCamel(packetName)]: payload };
+        const packet = this.createPacket(packetType, encodedPayload);
+        this.socket.write(packet);
+      }
 
-      this.socket.write(packet);
-      console.log(`${PACKET_TYPE_REVERSED[packetType]} 패킷을 전송하였습니다.`);
-      console.log('packetType: ', packetType);
-      console.log('payload: ', payload);
       await delay(content.duration);
     }
   }
 
   close() {
     this.socket.destroy();
-    console.log('연결이 종료되었습니다');
+    printHeader(`연결 종료`);
   }
 }
 

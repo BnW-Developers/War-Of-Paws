@@ -12,7 +12,7 @@ import checkSessionInfo from '../../utils/sessions/checkSessionInfo.js';
 /**
  * 카드 뽑기 요청 핸들러
  * @param {Object} socket - 카드 뽑기 요청을 보낸 플레이어의 소켓 객체
- * @param {number} payload.buttonType - 버튼 등급 (0: 낮음, 1: 중간, 2: 높음)
+ * @param {number} payload.buttonType - 버튼 등급 (1: 낮음, 2: 중간, 3: 높음)
  */
 const drawCardRequest = (socket, payload) => {
   try {
