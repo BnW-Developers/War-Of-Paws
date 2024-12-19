@@ -359,11 +359,12 @@ class Unit {
     return this.attackValidationStatus;
   }
 
-  setAttackValidationStatus(status) {
-    if (typeof status !== 'boolean') {
-      throw new Error('Invalid value: status must be a boolean');
-    }
-    this.attackValidationStatus = status;
+  enableAttackStatus() {
+    this.attackValidationStatus = true;
+  }
+
+  disableAttackStatus() {
+    this.attackValidationStatus = false;
   }
 
   /**
