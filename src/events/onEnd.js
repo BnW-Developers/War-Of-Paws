@@ -24,6 +24,7 @@ export const onEnd = (socket) => () => {
       redisClient.hset(sessionKey, 'isLoggedIn', false);
       redisClient.expire(sessionKey, 300);
     }
+    if (socket.authTimeout) clearTimeout(socket.authTimeout);
   } catch (err) {
     handleErr(null, err);
   } finally {
