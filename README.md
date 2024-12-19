@@ -218,7 +218,7 @@ async handleUserDisconnect(eventData) {
 - [💣️ 비정상 클라이언트의 무차별 패킷 전송으로 인한 아이피 차단](https://www.notion.so/teamsparta/15f2dc3ef514814e81dadfd75425d30d)
 - [⚙️ README 수정만으로 실행되는 Github Actions](https://www.notion.so/teamsparta/README-Github-Actions-0642a09ce459464aa7b3dfee076ee047)
 
-이 외에도 클라이언트 팀의 트러블 슈팅과 서버 팀의 다른 트러블 슈팅은 [TROUBLE-SHOOTING.md](./TROUBLE-SHOOTING.md)에서 확인할 수 있습니다.
+이 외에도 **클라이언트 팀의 트러블 슈팅**과 **서버 팀의 다른 트러블 슈팅**은 [TROUBLE-SHOOTING.md](./TROUBLE-SHOOTING.md)에서 확인할 수 있습니다.
 
 <h2 id="team-members">팀원</h2>
 
