@@ -19,7 +19,7 @@ import {
   TEST_LOG_ENABLED_PAYLOAD,
   TEST_LOG_ENABLED_SPAWN_UNIT,
   UNIT_TEST,
-} from './testSwitch.js';
+} from './constants/testSwitch.js';
 import { loadGameAssets } from '../init/loadAssets.js';
 import {
   client_checkCardValidity,
@@ -36,7 +36,7 @@ import {
 } from './util/unit.js';
 import chalk from 'chalk';
 import formatCoords from '../utils/formatter/formatCoords.js';
-import { LOCATION_SYNC_INTERVAL } from './testConfig.js';
+import { LOCATION_SYNC_INTERVAL } from './constants/testConfig.js';
 import { INITIAL_MINERAL } from '../constants/game.constants.js';
 import updateContent from './util/updateContent.js';
 

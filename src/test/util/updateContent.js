@@ -1,5 +1,5 @@
 import { PACKET_TYPE } from '../../constants/header.js';
-import { CURRENT_TEST, UNIT_TEST } from '../testSwitch.js';
+import { CURRENT_TEST, UNIT_TEST } from '../constants/testSwitch.js';
 
 const updateContent = (contents) => {
   switch (CURRENT_TEST) {

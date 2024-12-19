@@ -3,8 +3,12 @@ import { ASSET_TYPE, DIRECTION, SPECIES, UNIT_TYPE } from '../../constants/asset
 import { MAX_CARDS_COUNT } from '../../constants/game.constants.js';
 import { getGameAssetById } from '../../utils/assets/getAssets.js';
 import calcDist from '../../utils/location/calcDist.js';
-import { UNIT_MOVE_INTERVAL } from '../testConfig.js';
-import { CURRENT_TEST, TEST_LOG_ENABLED_LOCATION_SYNC, UNIT_TEST } from '../testSwitch.js';
+import { UNIT_MOVE_INTERVAL } from '../constants/testConfig.js';
+import {
+  CURRENT_TEST,
+  TEST_LOG_ENABLED_LOCATION_SYNC,
+  UNIT_TEST,
+} from '../constants/testSwitch.js';
 import { printMessage } from './print.js';
 import chalk from 'chalk';
 
