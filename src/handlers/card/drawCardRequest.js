@@ -23,7 +23,7 @@ const drawCardRequest = (socket, payload) => {
     const species = user.getCurrentSpecies();
 
     // 소지 카드 제한 확인
-    if (userGameData.getCardCount() > MAX_CARDS_COUNT) {
+    if (userGameData.getCardCount() >= MAX_CARDS_COUNT) {
       throw new CustomErr(ERR_CODES.MAX_CARDS_REACHED, 'Maximum cards limit reached');
     }
 
