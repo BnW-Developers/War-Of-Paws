@@ -26,7 +26,6 @@ const attackUnitRequest = (socket, payload) => {
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
-      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
@@ -36,7 +35,6 @@ const attackUnitRequest = (socket, payload) => {
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
-      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
@@ -52,19 +50,19 @@ const attackUnitRequest = (socket, payload) => {
       validatedTargetUnits.push(targetUnitId);
     }
 
-    // 사거리 검증 실패로 타겟 유닛이 없음
+    // 검증 실패로 타겟 유닛이 없음
     if (validatedTargetUnits.length === 0) {
       sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
         attackingUnitId,
         targetUnitIds: validatedTargetUnits,
         success: false,
       });
-      attackingUnit.setAttackValidationStatus(false);
       return;
     }
 
-    // 검증 성공
-    attackingUnit.setAttackValidationStatus(true);
+    // validatedTargetUnits 배열 크기만큼 투사체 생성
+    attackingUnit.addProjectile(validatedTargetUnits.length);
+
     sendPacket(socket, PACKET_TYPE.ATTACK_UNIT_NOTIFICATION, {
       attackingUnitId,
       targetUnitIds: validatedTargetUnits,

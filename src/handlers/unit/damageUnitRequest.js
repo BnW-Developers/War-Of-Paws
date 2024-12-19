@@ -21,7 +21,7 @@ const damageUnitRequest = (socket, payload) => {
     const targetUnit = opponentGameData.getUnit(targetUnitId);
     const attackingUnit = userGameData.getUnit(attackingUnitId);
 
-    if (!attackingUnit.getAttackValidationStatus()) {
+    if (!attackingUnit.hasRemainingProjectile()) {
       throw new CustomErr(
         ERR_CODES.ATTACK_VALIDATION_FAILED,
         '공격 검증에 통과하지 못한 요청입니다.',
@@ -64,7 +64,7 @@ const damageUnitRequest = (socket, payload) => {
       unitInfo,
     });
 
-    attackingUnit.setAttackValidationStatus(false);
+    attackingUnit.removeProjectile();
   } catch (error) {
     handleErr(socket, error);
   }
