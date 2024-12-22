@@ -10,7 +10,7 @@
   <p align="center">
   2024.11.13 ~ 12.23 <br>
     <br />
-    <a href="https://github.com/BnW-Developers/War-Of-Paws-Game-Server">Download</a>
+    <a href="https://ckd0dn.itch.io/catdogwar">Download</a>
     ·
     <a href="https://crimson-canary-811.notion.site/even-135098b94410807aa5efd3432802f6b8">냥멍대전 기획안</a>
     ·
