@@ -7,6 +7,7 @@
 - [😈 분산서버 도입 후 IP 밴 기능 사용 불가](https://www.notion.so/teamsparta/IP-15f2dc3ef5148197a364d648c411e7f1)
 - [🏹 연속 패킷 처리 오류](https://www.notion.so/teamsparta/15f2dc3ef514816895dedb7084fac5fc)
 - [⚙️ README 수정만으로 실행되는 Github Actions](https://www.notion.so/teamsparta/README-Github-Actions-0642a09ce459464aa7b3dfee076ee047)
+- [🔃 위치동기화 주기가 설정 값의 2배로 적용](https://www.notion.so/teamsparta/2-49fb9a39b50440aa9794e10cdf63dfed)
 
 ## 🚨 클라이언트팀 트러블 슈팅
 
